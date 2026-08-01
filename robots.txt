@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.projetoanonimo.org/sitemap.xml
