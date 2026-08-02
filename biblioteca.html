@@ -1,1 +1,115 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Biblioteca Viva — Projeto Anônimo</title><meta name="description" content="Guias e materiais gratuitos."><link rel="stylesheet" href="/assets/css/main.css"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/assets/img/favicon.svg"><meta property="og:title" content="Biblioteca Viva — Projeto Anônimo"><meta property="og:description" content="Guias e materiais gratuitos."><meta property="og:image" content="https://projetoanonimo.org/assets/img/og-image.svg"></head><body><header class="site-header"><div class="container nav-wrap"><a class="brand" href="/"><span class="brand-mark">PA</span><span>Projeto Anônimo</span></a><button class="menu-toggle" aria-expanded="false">Menu</button><nav class="main-menu"><a href="/sobre.html">Quem Somos</a><a href="/projetos.html">Projetos</a><a href="/biblioteca.html">Biblioteca Viva</a><a href="/transparencia.html">Transparência</a><a href="/contato.html">Contato</a></nav></div></header><main><section class="page-hero"><div class="container narrow"><span class="eyebrow">Biblioteca Viva</span><h1>Conhecimento gratuito para colocar em prática.</h1></div></section><section class="section"><div class="container cards"><article class="card"><span class="badge">Guia</span><h2>IA para organizações sociais</h2><p>Introdução prática.</p></article><article class="card"><span class="badge">Guia</span><h2>Google Workspace para OSCs</h2><p>Organização colaborativa.</p></article><article class="card"><span class="badge">Checklist</span><h2>Diagnóstico digital</h2><p>Avaliação de presença e segurança.</p></article></div></section></main><footer class="site-footer"><div class="container footer-grid"><div><h2>Projeto Anônimo</h2><p>Tecnologia aberta para fortalecer pessoas, organizações e comunidades.</p></div><div><h3>Navegação</h3><a href="/projetos.html">Projetos</a><a href="/biblioteca.html">Biblioteca Viva</a><a href="/transparencia.html">Transparência</a></div><div><h3>Canais</h3><a href="https://www.instagram.com/projetoanonimoofc/">Instagram</a><a href="https://www.linkedin.com/company/projeto-anonimo">LinkedIn</a><a href="https://www.facebook.com/profile.php?id=61592700932684">Facebook</a><a href="https://github.com/diretoria-projeto-anonimo">GitHub</a></div><div><h3>Institucional</h3><a href="/privacidade.html">Privacidade</a><a href="/termos.html">Termos</a></div></div><div class="container footer-bottom"><small>© <span id="year"></span> Projeto Anônimo.</small></div></footer><script src="/assets/js/app.js" defer></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Biblioteca Viva | Projeto Anônimo</title>
+  <meta name="description" content="Biblioteca Viva com materiais institucionais e recursos para aprender, aplicar e transformar.">
+  <meta name="theme-color" content="#171b19">
+  <meta property="og:title" content="Biblioteca Viva | Projeto Anônimo">
+  <meta property="og:description" content="Biblioteca Viva com materiais institucionais e recursos para aprender, aplicar e transformar.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="mark">PA</span><span>Projeto Anônimo</span></a>
+      <button class="toggle" aria-expanded="false" aria-label="Abrir menu">Menu</button>
+      <nav class="links" aria-label="Navegação principal">
+        <a href="index.html">Início</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="projetos.html">Projetos</a>
+        <a href="solucoes.html">Soluções</a>
+        <a href="biblioteca.html" aria-current="page">Biblioteca</a>
+        <a class="btn primary" href="contato.html">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="pagehero">
+      <div class="container">
+        <div class="crumb">Início / Biblioteca</div>
+        <span class="eyebrow">Biblioteca Viva</span>
+        <h1>Biblioteca Viva</h1>
+        <p class="lead">Conhecimento aberto para aprender, aplicar e transformar.</p>
+      </div>
+    </section>
+
+    <section class="section filters">
+      <div class="container">
+        <div class="filter-panel">
+          <label class="search-field" for="search-input">
+            <span class="visually-hidden">Buscar materiais</span>
+            <input id="search-input" type="search" placeholder="Buscar por título, categoria ou palavra-chave">
+          </label>
+          <div class="selectors">
+            <div class="field">
+              <label for="categoria-select">Categoria</label>
+              <select id="categoria-select">
+                <option value="">Todas as categorias</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="formato-select">Formato</label>
+              <select id="formato-select">
+                <option value="">Todos os formatos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="status-row">
+          <p id="resultado-contador">Carregando biblioteca...</p>
+          <p id="biblioteca-status" class="status-message" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div id="biblioteca-lista" class="biblioteca-grid" aria-live="polite"></div>
+        <div id="biblioteca-vazio" class="empty-message hidden">Nenhum resultado encontrado para sua pesquisa.</div>
+      </div>
+    </section>
+
+    <section class="section cta-section">
+      <div class="container cta-panel">
+        <div>
+          <span class="eyebrow">Parceria</span>
+          <h2>Trabalhe conosco para construir recursos que fazem a diferença.</h2>
+          <p>Quer incluir sua organização, projeto ou material na Biblioteca Viva? Conte com nosso apoio para divulgar e tornar o conhecimento acessível.</p>
+        </div>
+        <a class="btn primary" href="contato.html">Fale com a equipe</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footgrid">
+        <div>
+          <a class="brand" href="index.html"><span class="mark">PA</span><span>Projeto Anônimo</span></a>
+          <p class="muted">Tecnologia com propósito. Conhecimento que transforma pessoas, organizações e comunidades.</p>
+        </div>
+        <div>
+          <h3>Contato</h3>
+          <a href="mailto:diretoria@projetoanonimo.org">diretoria@projetoanonimo.org</a>
+          <a href="https://wa.me/5511999999999" target="_blank" rel="noopener">WhatsApp</a>
+          <a href="#">Instagram</a>
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="bottom"><span>© <span data-year></span> Projeto Anônimo.</span><span>Conhecimento aberto • Tecnologia responsável</span></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>
