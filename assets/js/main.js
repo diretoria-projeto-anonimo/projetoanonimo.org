@@ -48,42 +48,54 @@ function getField(item, ...keys) {
   return undefined;
 }
 
-function isValidUrl(value) {
+function isEmail(value) {
   if (!value || typeof value !== "string") return false;
-  const trimmed = value.trim();
-  if (!trimmed) return false;
-  if (/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed)) {
-    try {
-      const url = new URL(trimmed);
-      return url.protocol === "http:" || url.protocol === "https:";
-    } catch {
-      return false;
-    }
-  }
-  return true;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-function getSafeUrl(value) {
+function getUrlAttributes(value, fieldName) {
   const trimmed = String(value || "").trim();
-  return isValidUrl(trimmed) ? escapeHTML(trimmed) : "#";
+  if (!trimmed) return null;
+
+  if (fieldName === "email") {
+    return isEmail(trimmed) ? `mailto:${trimmed}` : null;
+  }
+
+  const safeUrl = getSafeUrl(trimmed);
+  return safeUrl !== "#" ? safeUrl : null;
 }
 
-function normalizeModuleItem(rawItem) {
-  const item = rawItem || {};
-  return {
-    titulo: String(getField(item, "titulo", "título") || "").trim(),
-    area: String(getField(item, "area", "área") || "").trim(),
-    publico: String(getField(item, "publico", "público") || "").trim(),
-    resumo: String(getField(item, "resumo", "descricao", "descrição") || "").trim(),
-    categoria: String(getField(item, "categoria") || "").trim(),
-    cta: String(getField(item, "cta") || "").trim(),
-    url: String(getField(item, "url", "paginaUrl") || "").trim(),
-    imagem: String(getField(item, "imagem", "imagemUrl") || "").trim(),
-    atualizacao: String(getField(item, "atualizacao", "dataDeAtualizacao") || "").trim(),
-  };
+function applyConfigToLink(element, value, fieldName) {
+  const href = getUrlAttributes(value, fieldName);
+
+  if (!href) {
+    element.removeAttribute("href");
+    element.removeAttribute("target");
+    element.removeAttribute("rel");
+    element.hidden = true;
+    return;
+  }
+
+  element.hidden = false;
+  element.setAttribute("href", href);
+
+  if (/^https?:\/\//i.test(href)) {
+    element.setAttribute("target", "_blank");
+    element.setAttribute("rel", "noopener");
+  } else {
+    element.removeAttribute("target");
+    element.removeAttribute("rel");
+  }
 }
 
-async function fetchModulo(moduleName) {
+function applyConfigText(element, value) {
+  const text = String(value || "").trim();
+  if (text) {
+    element.textContent = text;
+  }
+}
+
+async function fetchModulo(moduleName, options = {}) {
   const moduleKey = String(moduleName || "").trim();
   if (!moduleKey) {
     throw new Error("Nome do módulo inválido");
@@ -113,7 +125,17 @@ async function fetchModulo(moduleName) {
       throw new Error("Resposta da API inválida ou não é JSON");
     }
 
-    if (!data || !data.ok || !Array.isArray(data.items)) {
+    if (!data || !data.ok) {
+      throw new Error("Dados da API inválidos");
+    }
+
+    if (options.raw) {
+      const result = { ...data, items: data.items };
+      moduleCache[moduleKey] = result;
+      return result;
+    }
+
+    if (!Array.isArray(data.items)) {
       throw new Error("Dados da API inválidos");
     }
 
@@ -129,6 +151,57 @@ async function fetchModulo(moduleName) {
   } finally {
     delete modulePromises[moduleKey];
   }
+}
+
+async function fetchConfig() {
+  const data = await fetchModulo("config", { raw: true });
+  return data && typeof data.config === "object" ? data.config : {};
+}
+
+function isValidUrl(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return false;
+
+  try {
+    const url = new URL(trimmed);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function applyConfigValues(config) {
+  if (!config || typeof config !== "object") return;
+
+  document.querySelectorAll("[data-config-text]").forEach((element) => {
+    const key = element.getAttribute("data-config-text");
+    if (!key) return;
+    applyConfigText(element, config[key]);
+  });
+
+  document.querySelectorAll("[data-config-href]").forEach((element) => {
+    const key = element.getAttribute("data-config-href");
+    if (!key) return;
+    applyConfigToLink(element, config[key], key);
+  });
+
+  document.querySelectorAll("[data-config-year], [data-year]").forEach((element) => {
+    element.textContent = new Date().getFullYear();
+  });
+}
+
+async function initializeConfig() {
+  try {
+    const config = await fetchConfig();
+    applyConfigValues(config);
+  } catch (error) {
+    console.error("Falha ao carregar configurações do site:", error);
+  }
+}
+
+function getSafeUrl(value) {
+  const trimmed = String(value || "").trim();
+  return isValidUrl(trimmed) ? escapeHTML(trimmed) : "#";
 }
 
 function escapeHTML(value) {
@@ -692,7 +765,7 @@ async function carregarBiblioteca() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  attachFilters();
+  initializeConfig();
   if (getElement(SELECTORS.list) || getElement(SELECTORS.homeList)) {
     carregarBiblioteca();
   }
