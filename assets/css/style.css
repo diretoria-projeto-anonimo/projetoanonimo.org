@@ -474,6 +474,13 @@ select:focus-visible {
   font-weight: 700;
 }
 
+.card-media img {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
 .card-body {
   display: flex;
   flex-direction: column;
