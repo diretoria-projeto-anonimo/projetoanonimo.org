@@ -1,9 +1,62 @@
 const API_BIBLIOTECA =
   "https://script.google.com/macros/s/AKfycbzhh37NeK7hAaglGCilFvCME6pxgC7V_EdR5ct3wkmJEpywh50mq3i-xgnP1lQlqQ9PTA/exec";
 
+const PROJETOS = [
+  {
+    titulo: "Robótica para Todos",
+    area: "Educação tecnológica",
+    publico: "Escolas e comunidades",
+    resumo: "Aprenda a programar um robô brincando, com atividades acessíveis, práticas e progressivas.",
+    cta: "Conhecer projeto",
+    url: "contato.html",
+  },
+  {
+    titulo: "IA para Todos",
+    area: "Inteligência artificial",
+    publico: "Educadores, OSCs e comunidades",
+    resumo: "Formação prática, acessível e responsável para compreender e utilizar ferramentas de inteligência artificial.",
+    cta: "Conhecer projeto",
+    url: "contato.html",
+  },
+  {
+    titulo: "Cultura Maker",
+    area: "Cultura digital",
+    publico: "Escolas, coletivos e comunidades",
+    resumo: "Oficinas mão na massa para criar, experimentar, prototipar e resolver problemas de forma colaborativa.",
+    cta: "Conhecer projeto",
+    url: "contato.html",
+  },
+  {
+    titulo: "Transformação Digital para OSCs",
+    area: "Transformação digital",
+    publico: "Organizações sociais",
+    resumo: "Organização de processos, Google Workspace, formulários, CRM e automações para fortalecer a gestão.",
+    cta: "Solicitar diagnóstico",
+    url: "contato.html",
+  },
+  {
+    titulo: "Mídia Solidária",
+    area: "Comunicação",
+    publico: "Cooperativas, redes e projetos sociais",
+    resumo: "Comunicação e campanhas alinhadas à economia solidária, à cultura e ao impacto social.",
+    cta: "Propor campanha",
+    url: "contato.html",
+  },
+  {
+    titulo: "Biblioteca Viva",
+    area: "Conhecimento aberto",
+    publico: "Educadores, organizações e comunidades",
+    resumo: "Guias, modelos, checklists e recursos gratuitos para aprender, aplicar e compartilhar.",
+    cta: "Explorar biblioteca",
+    url: "biblioteca.html",
+  },
+];
+
 const state = {
   items: [],
   filtered: [],
+  projects: [],
+  filteredProjects: [],
 };
 
 const SELECTORS = {
@@ -16,6 +69,13 @@ const SELECTORS = {
   format: "formato-select",
   homeList: "home-biblioteca",
   homeStatus: "home-biblioteca-status",
+  projetosList: "projetos-lista",
+  projetosEmpty: "projetos-vazio",
+  projetosContador: "projetos-contador",
+  projetosStatus: "projetos-status",
+  projetosSearch: "projetos-search",
+  projetosArea: "projetos-area",
+  projetosPublico: "projetos-publico",
 };
 
 function escapeHTML(value) {
@@ -67,6 +127,30 @@ function buildCard(item) {
   `;
 }
 
+function buildProjectCard(project) {
+  const title = escapeHTML(project.titulo || "Sem título");
+  const area = escapeHTML(project.area || "Área não informada");
+  const publico = escapeHTML(project.publico || "Público não informado");
+  const resumo = escapeHTML(project.resumo || "Resumo não disponível.");
+  const cta = escapeHTML(project.cta || "Conhecer projeto");
+  const url = escapeHTML(project.url || "#");
+  const targetAttrs = url !== "#" ? "target=\"_blank\" rel=\"noopener\"" : "";
+
+  return `
+    <article class="project-card">
+      <div class="card-body">
+        <div class="project-meta">
+          <span class="badge">${area}</span>
+          <span class="badge secondary">${publico}</span>
+        </div>
+        <h3>${title}</h3>
+        <p class="summary">${resumo}</p>
+        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
+      </div>
+    </article>
+  `;
+}
+
 function getElement(id) {
   return document.getElementById(id);
 }
@@ -85,6 +169,13 @@ function updateHomeStatus(message, isError = false) {
   status.classList.toggle("error", isError);
 }
 
+function updateProjectStatus(message, isError = false) {
+  const status = getElement(SELECTORS.projetosStatus);
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle("error", isError);
+}
+
 function updateCounter(count, total) {
   const counter = getElement(SELECTORS.contador);
   if (!counter) return;
@@ -92,8 +183,21 @@ function updateCounter(count, total) {
   counter.textContent = `${count} ${label}` + (total ? ` • ${total} disponível${total === 1 ? "" : "s"}` : "");
 }
 
+function updateProjectCounter(count, total) {
+  const counter = getElement(SELECTORS.projetosContador);
+  if (!counter) return;
+  const label = count === 1 ? "projeto disponível" : "projetos disponíveis";
+  counter.textContent = `${count} ${label}` + (total ? ` • ${total} no total` : "");
+}
+
 function toggleEmptyMessage(show) {
   const emptyMessage = getElement(SELECTORS.empty);
+  if (!emptyMessage) return;
+  emptyMessage.classList.toggle("hidden", !show);
+}
+
+function toggleProjectEmpty(show) {
+  const emptyMessage = getElement(SELECTORS.projetosEmpty);
   if (!emptyMessage) return;
   emptyMessage.classList.toggle("hidden", !show);
 }
@@ -131,6 +235,24 @@ function renderHomeLibrary(items) {
   updateHomeStatus(`${highlights.length} ${highlights.length === 1 ? "material selecionado" : "materiais selecionados"}`);
 }
 
+function renderProjects(items) {
+  const list = getElement(SELECTORS.projetosList);
+  if (!list) return;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    list.innerHTML = "";
+    toggleProjectEmpty(true);
+    updateProjectStatus("Nenhum projeto encontrado para os filtros aplicados.");
+    updateProjectCounter(0, state.projects.length);
+    return;
+  }
+
+  toggleProjectEmpty(false);
+  updateProjectStatus("");
+  updateProjectCounter(items.length, state.projects.length);
+  list.innerHTML = items.map(buildProjectCard).join("");
+}
+
 function populateFilter(selectId, values, label) {
   const select = getElement(selectId);
   if (!select) return;
@@ -156,6 +278,18 @@ function populateFilters(items) {
   populateFilter(SELECTORS.format, formats, "Todos os formatos");
 }
 
+function populateProjectFilters(items) {
+  const areas = Array.from(
+    new Set(items.map((item) => String(item.area || "").trim()).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const publicos = Array.from(
+    new Set(items.map((item) => String(item.publico || "").trim()).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+  populateFilter(SELECTORS.projetosArea, areas, "Todas as áreas");
+  populateFilter(SELECTORS.projetosPublico, publicos, "Todos os públicos");
+}
+
 function getSearchTerm() {
   const search = getElement(SELECTORS.search);
   return search ? String(search.value).trim().toLowerCase() : "";
@@ -164,6 +298,11 @@ function getSearchTerm() {
 function getSelectedValue(id) {
   const select = getElement(id);
   return select ? String(select.value).trim() : "";
+}
+
+function getProjectSearchTerm() {
+  const search = getElement(SELECTORS.projetosSearch);
+  return search ? String(search.value).trim().toLowerCase() : "";
 }
 
 function filterItems() {
@@ -198,6 +337,34 @@ function filterItems() {
   renderList(filtered);
 }
 
+function filterProjects() {
+  const query = getProjectSearchTerm();
+  const area = getSelectedValue(SELECTORS.projetosArea);
+  const publico = getSelectedValue(SELECTORS.projetosPublico);
+
+  const filtered = state.projects.filter((item) => {
+    const title = String(item.titulo || "").toLowerCase();
+    const summary = String(item.resumo || "").toLowerCase();
+    const areaText = String(item.area || "").toLowerCase();
+    const publicoText = String(item.publico || "").toLowerCase();
+
+    const matchesQuery =
+      !query ||
+      title.includes(query) ||
+      summary.includes(query) ||
+      areaText.includes(query) ||
+      publicoText.includes(query);
+
+    const matchesArea = !area || areaText === area.toLowerCase();
+    const matchesPublico = !publico || publicoText === publico.toLowerCase();
+
+    return matchesQuery && matchesArea && matchesPublico;
+  });
+
+  state.filteredProjects = filtered;
+  renderProjects(filtered);
+}
+
 function attachFilters() {
   const search = getElement(SELECTORS.search);
   const category = getElement(SELECTORS.category);
@@ -211,6 +378,22 @@ function attachFilters() {
   }
   if (format) {
     format.addEventListener("change", filterItems);
+  }
+}
+
+function attachProjectFilters() {
+  const search = getElement(SELECTORS.projetosSearch);
+  const area = getElement(SELECTORS.projetosArea);
+  const publico = getElement(SELECTORS.projetosPublico);
+
+  if (search) {
+    search.addEventListener("input", filterProjects);
+  }
+  if (area) {
+    area.addEventListener("change", filterProjects);
+  }
+  if (publico) {
+    publico.addEventListener("change", filterProjects);
   }
 }
 
@@ -228,6 +411,18 @@ function setLoadingState() {
     homeList.innerHTML = "";
     updateHomeStatus("Carregando Biblioteca Viva...");
   }
+}
+
+function initializeProjectPage() {
+  const list = getElement(SELECTORS.projetosList);
+  if (!list) return;
+
+  state.projects = [...PROJETOS];
+  state.filteredProjects = [...state.projects];
+
+  populateProjectFilters(state.projects);
+  renderProjects(state.projects);
+  attachProjectFilters();
 }
 
 async function carregarBiblioteca() {
@@ -287,5 +482,8 @@ document.addEventListener("DOMContentLoaded", () => {
   attachFilters();
   if (getElement(SELECTORS.list) || getElement(SELECTORS.homeList)) {
     carregarBiblioteca();
+  }
+  if (getElement(SELECTORS.projetosList)) {
+    initializeProjectPage();
   }
 });

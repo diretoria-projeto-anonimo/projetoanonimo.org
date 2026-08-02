@@ -266,9 +266,73 @@ a {
   min-height: 100%;
 }
 
-.project-card .tag {
-  display: inline-flex;
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-bottom: 1rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--green-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.badge.secondary {
+  background: #e7f7f0;
+}
+
+.methodology-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.method-step {
+  padding: 1.75rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  min-height: 100%;
+}
+
+.method-step h3 {
+  margin: 1rem 0 0.85rem;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: var(--green);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.project-card .summary,
+.method-step p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.project-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .actions {
@@ -276,6 +340,14 @@ a {
   flex-wrap: wrap;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+.methodology-grid {
+  gap: 1.5rem;
+}
+
+.project-meta {
+  align-items: flex-start;
 }
 
 .actions .btn {
