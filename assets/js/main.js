@@ -1,62 +1,13 @@
 const API_BIBLIOTECA =
   "https://script.google.com/macros/s/AKfycbzhh37NeK7hAaglGCilFvCME6pxgC7V_EdR5ct3wkmJEpywh50mq3i-xgnP1lQlqQ9PTA/exec";
 
-const PROJETOS = [
-  {
-    titulo: "Robótica para Todos",
-    area: "Educação tecnológica",
-    publico: "Escolas e comunidades",
-    resumo: "Aprenda a programar um robô brincando, com atividades acessíveis, práticas e progressivas.",
-    cta: "Conhecer projeto",
-    url: "contato.html",
-  },
-  {
-    titulo: "IA para Todos",
-    area: "Inteligência artificial",
-    publico: "Educadores, OSCs e comunidades",
-    resumo: "Formação prática, acessível e responsável para compreender e utilizar ferramentas de inteligência artificial.",
-    cta: "Conhecer projeto",
-    url: "contato.html",
-  },
-  {
-    titulo: "Cultura Maker",
-    area: "Cultura digital",
-    publico: "Escolas, coletivos e comunidades",
-    resumo: "Oficinas mão na massa para criar, experimentar, prototipar e resolver problemas de forma colaborativa.",
-    cta: "Conhecer projeto",
-    url: "contato.html",
-  },
-  {
-    titulo: "Transformação Digital para OSCs",
-    area: "Transformação digital",
-    publico: "Organizações sociais",
-    resumo: "Organização de processos, Google Workspace, formulários, CRM e automações para fortalecer a gestão.",
-    cta: "Solicitar diagnóstico",
-    url: "contato.html",
-  },
-  {
-    titulo: "Mídia Solidária",
-    area: "Comunicação",
-    publico: "Cooperativas, redes e projetos sociais",
-    resumo: "Comunicação e campanhas alinhadas à economia solidária, à cultura e ao impacto social.",
-    cta: "Propor campanha",
-    url: "contato.html",
-  },
-  {
-    titulo: "Biblioteca Viva",
-    area: "Conhecimento aberto",
-    publico: "Educadores, organizações e comunidades",
-    resumo: "Guias, modelos, checklists e recursos gratuitos para aprender, aplicar e compartilhar.",
-    cta: "Explorar biblioteca",
-    url: "biblioteca.html",
-  },
-];
-
 const state = {
   items: [],
   filtered: [],
   projects: [],
   filteredProjects: [],
+  solutions: [],
+  filteredSolutions: [],
 };
 
 const SELECTORS = {
@@ -76,7 +27,182 @@ const SELECTORS = {
   projetosSearch: "projetos-search",
   projetosArea: "projetos-area",
   projetosPublico: "projetos-publico",
+  solucoesList: "solucoes-lista",
+  solucoesEmpty: "solucoes-vazio",
+  solucoesContador: "solucoes-contador",
+  solucoesStatus: "solucoes-status",
+  solucoesSearch: "solucoes-search",
+  solucoesCategoria: "solucoes-categoria",
 };
+
+const moduleCache = {};
+const modulePromises = {};
+
+function getField(item, ...keys) {
+  if (!item || typeof item !== "object") return undefined;
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(item, key) && item[key] != null) {
+      return item[key];
+    }
+  }
+  return undefined;
+}
+
+function isEmail(value) {
+  if (!value || typeof value !== "string") return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function getUrlAttributes(value, fieldName) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return null;
+
+  if (fieldName === "email") {
+    return isEmail(trimmed) ? `mailto:${trimmed}` : null;
+  }
+
+  const safeUrl = getSafeUrl(trimmed);
+  return safeUrl !== "#" ? safeUrl : null;
+}
+
+function applyConfigToLink(element, value, fieldName) {
+  const href = getUrlAttributes(value, fieldName);
+
+  if (!href) {
+    element.removeAttribute("href");
+    element.removeAttribute("target");
+    element.removeAttribute("rel");
+    element.hidden = true;
+    return;
+  }
+
+  element.hidden = false;
+  element.setAttribute("href", href);
+
+  if (/^https?:\/\//i.test(href)) {
+    element.setAttribute("target", "_blank");
+    element.setAttribute("rel", "noopener");
+  } else {
+    element.removeAttribute("target");
+    element.removeAttribute("rel");
+  }
+}
+
+function applyConfigText(element, value) {
+  const text = String(value || "").trim();
+  if (text) {
+    element.textContent = text;
+  }
+}
+
+async function fetchModulo(moduleName, options = {}) {
+  const moduleKey = String(moduleName || "").trim();
+  if (!moduleKey) {
+    throw new Error("Nome do módulo inválido");
+  }
+
+  if (moduleCache[moduleKey]) {
+    return moduleCache[moduleKey];
+  }
+
+  if (modulePromises[moduleKey]) {
+    return modulePromises[moduleKey];
+  }
+
+  const params = new URLSearchParams({ module: moduleKey });
+  const url = `${API_BIBLIOTECA}?${params.toString()}`;
+
+  const promise = (async () => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Falha na resposta da API para o módulo ${moduleKey}`);
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("Resposta da API inválida ou não é JSON");
+    }
+
+    if (!data || !data.ok) {
+      throw new Error("Dados da API inválidos");
+    }
+
+    if (options.raw) {
+      const result = { ...data, items: data.items };
+      moduleCache[moduleKey] = result;
+      return result;
+    }
+
+    if (!Array.isArray(data.items)) {
+      throw new Error("Dados da API inválidos");
+    }
+
+    const items = data.items.map(normalizeModuleItem);
+    const result = { ...data, items };
+    moduleCache[moduleKey] = result;
+    return result;
+  })();
+
+  modulePromises[moduleKey] = promise;
+  try {
+    return await promise;
+  } finally {
+    delete modulePromises[moduleKey];
+  }
+}
+
+async function fetchConfig() {
+  const data = await fetchModulo("config", { raw: true });
+  return data && typeof data.config === "object" ? data.config : {};
+}
+
+function isValidUrl(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return false;
+
+  try {
+    const url = new URL(trimmed);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function applyConfigValues(config) {
+  if (!config || typeof config !== "object") return;
+
+  document.querySelectorAll("[data-config-text]").forEach((element) => {
+    const key = element.getAttribute("data-config-text");
+    if (!key) return;
+    applyConfigText(element, config[key]);
+  });
+
+  document.querySelectorAll("[data-config-href]").forEach((element) => {
+    const key = element.getAttribute("data-config-href");
+    if (!key) return;
+    applyConfigToLink(element, config[key], key);
+  });
+
+  document.querySelectorAll("[data-config-year], [data-year]").forEach((element) => {
+    element.textContent = new Date().getFullYear();
+  });
+}
+
+async function initializeConfig() {
+  try {
+    const config = await fetchConfig();
+    applyConfigValues(config);
+  } catch (error) {
+    console.error("Falha ao carregar configurações do site:", error);
+  }
+}
+
+function getSafeUrl(value) {
+  const trimmed = String(value || "").trim();
+  return isValidUrl(trimmed) ? escapeHTML(trimmed) : "#";
+}
 
 function escapeHTML(value) {
   return String(value ?? "")
@@ -133,14 +259,45 @@ function buildProjectCard(project) {
   const publico = escapeHTML(project.publico || "Público não informado");
   const resumo = escapeHTML(project.resumo || "Resumo não disponível.");
   const cta = escapeHTML(project.cta || "Conhecer projeto");
-  const url = escapeHTML(project.url || "#");
-  const targetAttrs = url !== "#" ? "target=\"_blank\" rel=\"noopener\"" : "";
+  const url = getSafeUrl(project.url || "#");
+  const hasUrl = url !== "#";
+  const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
 
   return `
     <article class="project-card">
       <div class="card-body">
         <div class="project-meta">
           <span class="badge">${area}</span>
+          <span class="badge secondary">${publico}</span>
+        </div>
+        <h3>${title}</h3>
+        <p class="summary">${resumo}</p>
+        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
+      </div>
+    </article>
+  `;
+}
+
+function buildSolutionCard(solution) {
+  const title = escapeHTML(solution.titulo || "Sem título");
+  const categoria = escapeHTML(solution.categoria || "Categoria não informada");
+  const publico = escapeHTML(solution.publico || "Público não informado");
+  const resumo = escapeHTML(solution.resumo || "Resumo não disponível.");
+  const cta = escapeHTML(solution.cta || "Conhecer solução");
+  const url = getSafeUrl(solution.url || "#");
+  const imagem = escapeHTML(solution.imagem || "");
+  const hasUrl = url !== "#";
+  const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
+  const coverStyle = imagem ? `style="background-image:url('${imagem}')"` : "";
+
+  return `
+    <article class="project-card">
+      <div class="cover" ${coverStyle}>
+        ${imagem ? "" : '<div class="cover-fallback">Solução</div>'}
+      </div>
+      <div class="card-body">
+        <div class="project-meta">
+          <span class="badge">${categoria}</span>
           <span class="badge secondary">${publico}</span>
         </div>
         <h3>${title}</h3>
@@ -413,16 +570,145 @@ function setLoadingState() {
   }
 }
 
-function initializeProjectPage() {
-  const list = getElement(SELECTORS.projetosList);
+function updateSolutionStatus(message, isError = false) {
+  const status = getElement(SELECTORS.solucoesStatus);
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle("error", isError);
+}
+
+function updateSolutionCounter(count, total) {
+  const counter = getElement(SELECTORS.solucoesContador);
+  if (!counter) return;
+  const label = count === 1 ? "solução disponível" : "soluções disponíveis";
+  counter.textContent = `${count} ${label}` + (total ? ` • ${total} no total` : "");
+}
+
+function toggleSolutionEmpty(show) {
+  const emptyMessage = getElement(SELECTORS.solucoesEmpty);
+  if (!emptyMessage) return;
+  emptyMessage.classList.toggle("hidden", !show);
+}
+
+function renderSolutions(items) {
+  const list = getElement(SELECTORS.solucoesList);
   if (!list) return;
 
-  state.projects = [...PROJETOS];
-  state.filteredProjects = [...state.projects];
+  if (!Array.isArray(items) || items.length === 0) {
+    list.innerHTML = "";
+    toggleSolutionEmpty(true);
+    updateSolutionStatus("Nenhuma solução encontrada para os filtros aplicados.");
+    updateSolutionCounter(0, state.solutions.length);
+    return;
+  }
 
-  populateProjectFilters(state.projects);
-  renderProjects(state.projects);
-  attachProjectFilters();
+  toggleSolutionEmpty(false);
+  updateSolutionStatus("");
+  updateSolutionCounter(items.length, state.solutions.length);
+  list.innerHTML = items.map(buildSolutionCard).join("");
+}
+
+function populateSolutionFilters(items) {
+  const categories = Array.from(
+    new Set(items.map((item) => String(item.categoria || "").trim()).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+  populateFilter(SELECTORS.solucoesCategoria, categories, "Todas as categorias");
+}
+
+function getSolutionSearchTerm() {
+  const search = getElement(SELECTORS.solucoesSearch);
+  return search ? String(search.value).trim().toLowerCase() : "";
+}
+
+function filterSolutions() {
+  const query = getSolutionSearchTerm();
+  const category = getSelectedValue(SELECTORS.solucoesCategoria);
+
+  const filtered = state.solutions.filter((item) => {
+    const title = String(item.titulo || "").toLowerCase();
+    const summary = String(item.resumo || "").toLowerCase();
+    const categoryText = String(item.categoria || "").toLowerCase();
+    const publicoText = String(item.publico || "").toLowerCase();
+
+    const matchesQuery =
+      !query ||
+      title.includes(query) ||
+      summary.includes(query) ||
+      categoryText.includes(query) ||
+      publicoText.includes(query);
+
+    const matchesCategory = !category || categoryText === category.toLowerCase();
+    return matchesQuery && matchesCategory;
+  });
+
+  state.filteredSolutions = filtered;
+  renderSolutions(filtered);
+}
+
+function attachSolutionFilters() {
+  const search = getElement(SELECTORS.solucoesSearch);
+  const category = getElement(SELECTORS.solucoesCategoria);
+
+  if (search) {
+    search.addEventListener("input", filterSolutions);
+  }
+  if (category) {
+    category.addEventListener("change", filterSolutions);
+  }
+}
+
+function initializeProjectPage() {
+  const list = getElement(SELECTORS.projetosList);
+  const status = getElement(SELECTORS.projetosStatus);
+  if (!list) return;
+
+  list.innerHTML = "";
+  updateProjectStatus("Carregando projetos...");
+  toggleProjectEmpty(false);
+
+  fetchModulo("projetos")
+    .then((data) => {
+      state.projects = data.items;
+      state.filteredProjects = [...state.projects];
+
+      populateProjectFilters(state.projects);
+      renderProjects(state.projects);
+      attachProjectFilters();
+    })
+    .catch((error) => {
+      console.error(error);
+      list.innerHTML = "";
+      updateProjectStatus("Não foi possível carregar os projetos agora. Tente novamente mais tarde.", true);
+      updateProjectCounter(0, 0);
+      toggleProjectEmpty(true);
+    });
+}
+
+function initializeSolutionPage() {
+  const list = getElement(SELECTORS.solucoesList);
+  if (!list) return;
+
+  list.innerHTML = "";
+  updateSolutionStatus("Carregando soluções...");
+  toggleSolutionEmpty(false);
+
+  fetchModulo("solucoes")
+    .then((data) => {
+      state.solutions = data.items;
+      state.filteredSolutions = [...state.solutions];
+
+      populateSolutionFilters(state.solutions);
+      renderSolutions(state.solutions);
+      attachSolutionFilters();
+    })
+    .catch((error) => {
+      console.error(error);
+      list.innerHTML = "";
+      updateSolutionStatus("Não foi possível carregar as soluções agora. Tente novamente mais tarde.", true);
+      updateSolutionCounter(0, 0);
+      toggleSolutionEmpty(true);
+    });
 }
 
 async function carregarBiblioteca() {
@@ -479,11 +765,14 @@ async function carregarBiblioteca() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  attachFilters();
+  initializeConfig();
   if (getElement(SELECTORS.list) || getElement(SELECTORS.homeList)) {
     carregarBiblioteca();
   }
   if (getElement(SELECTORS.projetosList)) {
     initializeProjectPage();
+  }
+  if (getElement(SELECTORS.solucoesList)) {
+    initializeSolutionPage();
   }
 });
