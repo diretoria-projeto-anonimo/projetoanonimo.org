@@ -14,6 +14,8 @@ const SELECTORS = {
   search: "search-input",
   category: "categoria-select",
   format: "formato-select",
+  homeList: "home-biblioteca",
+  homeStatus: "home-biblioteca-status",
 };
 
 function escapeHTML(value) {
@@ -76,6 +78,13 @@ function updateStatus(message, isError = false) {
   status.classList.toggle("error", isError);
 }
 
+function updateHomeStatus(message, isError = false) {
+  const status = getElement(SELECTORS.homeStatus);
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle("error", isError);
+}
+
 function updateCounter(count, total) {
   const counter = getElement(SELECTORS.contador);
   if (!counter) return;
@@ -105,6 +114,21 @@ function renderList(items) {
   updateStatus("");
   updateCounter(items.length, state.items.length);
   list.innerHTML = items.map(buildCard).join("");
+}
+
+function renderHomeLibrary(items) {
+  const homeList = getElement(SELECTORS.homeList);
+  if (!homeList) return;
+
+  const highlights = Array.isArray(items) ? items.slice(0, 3) : [];
+  if (highlights.length === 0) {
+    homeList.innerHTML = "";
+    updateHomeStatus("Nenhum material disponível na Biblioteca Viva.");
+    return;
+  }
+
+  homeList.innerHTML = highlights.map(buildCard).join("");
+  updateHomeStatus(`${highlights.length} ${highlights.length === 1 ? "material selecionado" : "materiais selecionados"}`);
 }
 
 function populateFilter(selectId, values, label) {
@@ -190,21 +214,28 @@ function attachFilters() {
   }
 }
 
-function clearResults() {
+function setLoadingState() {
   const list = getElement(SELECTORS.list);
+  const homeList = getElement(SELECTORS.homeList);
+
   if (list) {
     list.innerHTML = "";
+    toggleEmptyMessage(true);
+    updateStatus("Carregando Biblioteca Viva...");
   }
-  updateCounter(0, 0);
-  updateStatus("Carregando Biblioteca Viva...");
-  toggleEmptyMessage(true);
+
+  if (homeList) {
+    homeList.innerHTML = "";
+    updateHomeStatus("Carregando Biblioteca Viva...");
+  }
 }
 
 async function carregarBiblioteca() {
   const list = getElement(SELECTORS.list);
-  if (!list) return;
+  const homeList = getElement(SELECTORS.homeList);
+  if (!list && !homeList) return;
 
-  clearResults();
+  setLoadingState();
 
   try {
     const response = await fetch(API_BIBLIOTECA);
@@ -221,21 +252,40 @@ async function carregarBiblioteca() {
     state.filtered = [...state.items];
 
     if (state.items.length === 0) {
-      updateStatus("A Biblioteca Viva ainda não possui materiais publicados.");
-      updateCounter(0, 0);
+      if (list) {
+        updateStatus("A Biblioteca Viva ainda não possui materiais publicados.");
+        updateCounter(0, 0);
+      }
+      if (homeList) {
+        updateHomeStatus("A Biblioteca Viva ainda não possui materiais publicados.");
+      }
       return;
     }
 
-    populateFilters(state.items);
-    filterItems();
+    if (list) {
+      populateFilters(state.items);
+      filterItems();
+    }
+
+    if (homeList) {
+      renderHomeLibrary(state.items);
+    }
   } catch (error) {
     console.error(error);
-    clearResults();
-    updateStatus("Não foi possível carregar a Biblioteca Viva agora. Tente novamente mais tarde.", true);
+    if (list) {
+      setLoadingState();
+      updateStatus("Não foi possível carregar a Biblioteca Viva agora. Tente novamente mais tarde.", true);
+    }
+    if (homeList) {
+      homeList.innerHTML = "";
+      updateHomeStatus("Não foi possível carregar a Biblioteca Viva agora. Tente novamente mais tarde.", true);
+    }
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   attachFilters();
-  carregarBiblioteca();
+  if (getElement(SELECTORS.list) || getElement(SELECTORS.homeList)) {
+    carregarBiblioteca();
+  }
 });
