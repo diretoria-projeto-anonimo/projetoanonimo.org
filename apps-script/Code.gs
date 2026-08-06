@@ -1,5 +1,5 @@
 const DEFAULT_SHEET_NAME = "Biblioteca";
-const DEFAULT_METRICS_SHEET_NAME = "Metricas";
+const DEFAULT_METRICS_SHEET_NAME = "MetricasV2";
 const METRIC_TYPES = [
   "visualizacao", "clique", "download", "formulario", "compartilhamento"
 ];
@@ -110,7 +110,7 @@ function recordMetric_(payload) {
   return withScriptLock_(function () {
     const sheet = metricsSheet_();
     sheet.appendRow([
-      new Date().toISOString(),
+      new Date(),
       metricId || material.item.id || "",
       type,
       origin,
