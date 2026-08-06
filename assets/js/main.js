@@ -8,6 +8,8 @@ const state = {
   filteredProjects: [],
   solutions: [],
   filteredSolutions: [],
+  parceiros: [],
+  eventos: [],
 };
 
 const SELECTORS = {
@@ -33,6 +35,8 @@ const SELECTORS = {
   solucoesStatus: "solucoes-status",
   solucoesSearch: "solucoes-search",
   solucoesCategoria: "solucoes-categoria",
+  parceirosList: "parceiros-lista",
+  eventosList: "eventos-lista",
 };
 
 const moduleCache = {};
@@ -46,6 +50,10 @@ function getField(item, ...keys) {
     }
   }
   return undefined;
+}
+
+function normalizeModuleItem(item) {
+  return item && typeof item === "object" ? item : {};
 }
 
 function isEmail(value) {
@@ -63,6 +71,25 @@ function getUrlAttributes(value, fieldName) {
 
   const safeUrl = getSafeUrl(trimmed);
   return safeUrl !== "#" ? safeUrl : null;
+}
+
+function isPublishedItem(item) {
+  const status = String(
+    getField(item, "status", "Status", "situacao", "situacaoPublicacao") || ""
+  )
+    .trim()
+    .toLowerCase();
+  return !status || status === "publicado";
+}
+
+function formatDatePtBr(value) {
+  const date = new Date(String(value || "").trim());
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 function applyConfigToLink(element, value, fieldName) {
@@ -204,6 +231,38 @@ function getSafeUrl(value) {
   return isValidUrl(trimmed) ? escapeHTML(trimmed) : "#";
 }
 
+function renderParceiros(items) {
+  const section = document.getElementById("secao-parceiros");
+  const list = getElement(SELECTORS.parceirosList);
+  if (!section || !list) return;
+
+  const validItems = Array.isArray(items) ? items.filter(isPublishedItem) : [];
+  if (validItems.length === 0) {
+    section.hidden = true;
+    list.innerHTML = "";
+    return;
+  }
+
+  section.hidden = false;
+  list.innerHTML = validItems.map(buildParceiroCard).join("");
+}
+
+function renderEventos(items) {
+  const section = document.getElementById("secao-eventos");
+  const list = getElement(SELECTORS.eventosList);
+  if (!section || !list) return;
+
+  const validItems = Array.isArray(items) ? items.filter(isPublishedItem) : [];
+  if (validItems.length === 0) {
+    section.hidden = true;
+    list.innerHTML = "";
+    return;
+  }
+
+  section.hidden = false;
+  list.innerHTML = validItems.map(buildEventoCard).join("");
+}
+
 function escapeHTML(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -213,24 +272,138 @@ function escapeHTML(value) {
     .replace(/'/g, "&#39;");
 }
 
-function getFetchUrl(item) {
-  return escapeHTML(item.paginaUrl || item.arquivoUrl || item.formularioUrl || "#");
+function normalizarMaterial(item) {
+  if (!item || typeof item !== "object") {
+    return {};
+  }
+
+  const origem = item.material && typeof item.material === "object"
+    ? item.material
+    : item;
+
+  const campos = {
+    titulo: ["titulo"],
+    slug: ["slug"],
+    categoria: ["categoria"],
+    formato: ["formato"],
+    resumo: ["resumo", "descricao"],
+    publico: ["publico"],
+    nivel: ["nivel"],
+    tempoLeitura: ["tempodeleitura"],
+    versao: ["versao"],
+    status: ["status"],
+    cta: ["cta"],
+    urlCapa: ["urldacapa", "urlcapa", "capaurl"],
+    paginaUrl: ["urldapagina", "paginaurl"],
+    arquivoUrl: ["urldoarquivo", "urlarquivo", "arquivourl"],
+    formularioUrl: ["urldoformulario", "urlformulario", "formulariourl"],
+  };
+
+  const entradas = Object.entries(origem);
+  const material = { ...origem };
+
+  Object.entries(campos).forEach(([destino, aliases]) => {
+    if (material[destino] != null && material[destino] !== "") {
+      return;
+    }
+
+    const correspondencia = entradas.find(([chave]) =>
+      aliases.includes(normalizarChaveCampo(chave))
+    );
+
+    if (correspondencia) {
+      material[destino] = correspondencia[1];
+    }
+  });
+
+  return material;
 }
 
+function normalizarChaveCampo(chave) {
+  return String(chave || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function getFetchUrl(item) {
+  const material = normalizarMaterial(item);
+
+  if (material.slug) {
+    return `biblioteca/material.html?slug=${encodeURIComponent(
+      material.slug
+    )}`;
+  }
+
+  return getSafeUrl(
+    material.paginaUrl ||
+    material.arquivoUrl ||
+    material.formularioUrl
+  );
+} 
+
 function buildCard(item) {
-  const title = escapeHTML(item.titulo || "Sem título");
-  const summary = escapeHTML(item.resumo || "Resumo não disponível.");
-  const category = escapeHTML(item.categoria || "Material");
-  const format = escapeHTML(item.formato || "Formato não informado");
-  const level = escapeHTML(item.nivel || "Nível não informado");
-  const time = escapeHTML(item.tempoLeitura || "");
-  const version = escapeHTML(item.versao || "");
-  const cta = escapeHTML(item.cta || "Acessar material");
-  const url = getFetchUrl(item);
+  const material = normalizarMaterial(item);
+
+  const title = escapeHTML(
+    material.titulo || material["título"] || "Sem título"
+  );
+
+  const summary = escapeHTML(
+    material.resumo ||
+    material.descricao ||
+    material["descrição"] ||
+    "Resumo não disponível."
+  );
+
+  const category = escapeHTML(
+    material.categoria || "Material"
+  );
+
+  const format = escapeHTML(
+    material.formato || "Formato não informado"
+  );
+
+  const level = escapeHTML(
+    material.nivel ||
+    material["nível"] ||
+    "Nível não informado"
+  );
+
+  const time = escapeHTML(
+    material.tempoLeitura ||
+    material.tempoDeLeitura ||
+    material["tempo de leitura"] ||
+    ""
+  );
+
+  const version = escapeHTML(
+    material.versao ||
+    material["versão"] ||
+    ""
+  );
+
+  const cta = escapeHTML(
+    material.cta || "Acessar material"
+  );
+
+  const url = getFetchUrl(material);
   const hasUrl = url !== "#";
-  const coverUrl = item.capaUrl ? escapeHTML(item.capaUrl) : "";
-  const coverStyle = coverUrl ? `style="background-image:url('${coverUrl}')"` : "";
-  const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
+
+  const coverUrl = material.urlCapa
+    ? escapeHTML(material.urlCapa)
+    : material.capaUrl
+      ? escapeHTML(material.capaUrl)
+      : "";
+
+  const coverStyle = coverUrl
+    ? `style="background-image:url('${coverUrl}')"`
+    : "";
+
+  const targetAttrs = hasUrl
+    ? `target="_blank" rel="noopener"`
+    : "";
 
   return `
     <article class="card">
@@ -253,13 +426,71 @@ function buildCard(item) {
   `;
 }
 
+function buildParceiroCard(item) {
+  const name = escapeHTML(item.nome || item.titulo || item.name || "Parceiro");
+  const type = escapeHTML(item.tipo || item.categoria || item.area || "Institucional");
+  const description = escapeHTML(item.descricao || item.resumo || item.description || "");
+  const site = getSafeUrl(item.site || item.url || item.link || item.siteUrl);
+  const logo = getSafeUrl(item.logo || item.logoUrl || item.imagem || "");
+  const logoAlt = escapeHTML(`Logo de ${name}`);
+  const hasSite = site !== "#";
+
+  return `
+    <article class="project-card">
+      ${logo ? `<div class="card-media"><img src="${logo}" alt="${logoAlt}"></div>` : '<div class="cover"><div class="cover-fallback">Parceiro</div></div>'}
+      <div class="card-body">
+        <span class="tag">${type}</span>
+        <h3>${name}</h3>
+        ${description ? `<p class="summary">${description}</p>` : ""}
+        ${hasSite ? `<a class="btn secondary card-cta" href="${site}" target="_blank" rel="noopener">Visitar site</a>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function buildEventoCard(evento) {
+  const title = escapeHTML(evento.titulo || evento.nome || evento.title || "Evento");
+  const category = escapeHTML(evento.categoria || evento.tipo || evento.area || "Evento");
+  const summary = escapeHTML(evento.resumo || evento.descricao || evento.description || "");
+  const eventDate = formatDatePtBr(evento.data || evento.dataInicio || evento.dataEvento);
+  const hour = escapeHTML(evento.hora || evento.tempo || evento.schedule || "");
+  const local = escapeHTML(evento.local || evento.lugar || evento.venue || "");
+  const format = escapeHTML(evento.formato || evento.formatoEvento || evento.type || "");
+  const url = getSafeUrl(evento.url || evento.link || evento.site || evento.paginaUrl || evento.eventoUrl);
+  const image = getSafeUrl(evento.imagem || evento.imagemUrl || evento.capaUrl || evento.logo || "");
+  const imageAlt = escapeHTML(`Imagem do evento ${title}`);
+  const cta = escapeHTML(evento.cta || "Saiba mais");
+  const hasUrl = url !== "#";
+  const metaItems = [
+    eventDate ? `<span><strong>Data:</strong> ${eventDate}</span>` : "",
+    hour ? `<span><strong>Hora:</strong> ${hour}</span>` : "",
+    local ? `<span><strong>Local:</strong> ${local}</span>` : "",
+    format ? `<span><strong>Formato:</strong> ${format}</span>` : "",
+  ]
+    .filter(Boolean)
+    .join("");
+
+  return `
+    <article class="project-card">
+      ${image ? `<div class="card-media"><img src="${image}" alt="${imageAlt}"></div>` : '<div class="cover"><div class="cover-fallback">Agenda</div></div>'}
+      <div class="card-body">
+        <span class="tag">${category}</span>
+        <h3>${title}</h3>
+        ${summary ? `<p class="summary">${summary}</p>` : ""}
+        ${metaItems ? `<div class="meta">${metaItems}</div>` : ""}
+        ${hasUrl ? `<a class="btn secondary card-cta" href="${url}" target="_blank" rel="noopener">${cta}</a>` : ""}
+      </div>
+    </article>
+  `;
+}
+
 function buildProjectCard(project) {
   const title = escapeHTML(project.titulo || "Sem título");
   const area = escapeHTML(project.area || "Área não informada");
   const publico = escapeHTML(project.publico || "Público não informado");
   const resumo = escapeHTML(project.resumo || "Resumo não disponível.");
   const cta = escapeHTML(project.cta || "Conhecer projeto");
-  const url = getSafeUrl(project.url || "#");
+  const url = getSafeUrl(project.url || "");
   const hasUrl = url !== "#";
   const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
 
@@ -272,7 +503,7 @@ function buildProjectCard(project) {
         </div>
         <h3>${title}</h3>
         <p class="summary">${resumo}</p>
-        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
+        ${hasUrl ? `<a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>` : ""}
       </div>
     </article>
   `;
@@ -284,7 +515,7 @@ function buildSolutionCard(solution) {
   const publico = escapeHTML(solution.publico || "Público não informado");
   const resumo = escapeHTML(solution.resumo || "Resumo não disponível.");
   const cta = escapeHTML(solution.cta || "Conhecer solução");
-  const url = getSafeUrl(solution.url || "#");
+  const url = getSafeUrl(solution.url || "");
   const imagem = escapeHTML(solution.imagem || "");
   const hasUrl = url !== "#";
   const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
@@ -302,7 +533,7 @@ function buildSolutionCard(solution) {
         </div>
         <h3>${title}</h3>
         <p class="summary">${resumo}</p>
-        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
+        ${hasUrl ? `<a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>` : ""}
       </div>
     </article>
   `;
@@ -711,6 +942,50 @@ function initializeSolutionPage() {
     });
 }
 
+function initializeParceirosSection() {
+  const list = getElement(SELECTORS.parceirosList);
+  if (!list) return;
+
+  list.innerHTML = "";
+  fetchModulo("parceiros")
+    .then((data) => {
+      state.parceiros = Array.isArray(data.items) ? data.items : [];
+      renderParceiros(state.parceiros);
+    })
+    .catch((error) => {
+      console.error(error);
+      const section = document.getElementById("secao-parceiros");
+      if (section) {
+        section.hidden = true;
+      }
+      if (list) {
+        list.innerHTML = "";
+      }
+    });
+}
+
+function initializeEventosSection() {
+  const list = getElement(SELECTORS.eventosList);
+  if (!list) return;
+
+  list.innerHTML = "";
+  fetchModulo("eventos")
+    .then((data) => {
+      state.eventos = Array.isArray(data.items) ? data.items : [];
+      renderEventos(state.eventos);
+    })
+    .catch((error) => {
+      console.error(error);
+      const section = document.getElementById("secao-eventos");
+      if (section) {
+        section.hidden = true;
+      }
+      if (list) {
+        list.innerHTML = "";
+      }
+    });
+}
+
 async function carregarBiblioteca() {
   const list = getElement(SELECTORS.list);
   const homeList = getElement(SELECTORS.homeList);
@@ -774,5 +1049,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (getElement(SELECTORS.solucoesList)) {
     initializeSolutionPage();
+  }
+  if (getElement(SELECTORS.parceirosList)) {
+    initializeParceirosSection();
+  }
+  if (getElement(SELECTORS.eventosList)) {
+    initializeEventosSection();
   }
 });

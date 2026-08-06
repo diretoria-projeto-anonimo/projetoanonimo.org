@@ -1,0 +1,5 @@
+.vscode/
+backup-*.patch
+*.zip
+.DS_Store
+Thumbs.db
