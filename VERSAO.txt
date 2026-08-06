@@ -1,0 +1,15 @@
+Projeto Anônimo
+Versão: 1.1.0 — lançamento editorial estável
+
+Correções:
+- API editorial centralizada em config.js.
+- Autenticação Google com lista explícita de editores.
+- Listagem editorial inclui conteúdos não publicados.
+- Rascunhos e materiais existentes podem ser reabertos e atualizados.
+- O token editorial deixa de ser digitado ou armazenado pelo formulário.
+- Requisições do editor usam text/plain;charset=utf-8.
+- Script editorial possui versionamento contra cache.
+- Site público, Biblioteca Viva e página individual homologados.
+- Criação, edição, upload e publicação usam o mesmo backend autenticado.
+- Homologação integrada concluída com a conta editorial e dados reais.
+- Links públicos, filtros e reabertura de rascunhos validados antes do lançamento.
