@@ -568,7 +568,7 @@ function updateCounter(count, total) {
   const counter = getElement(SELECTORS.contador);
   if (!counter) return;
   const label = count === 1 ? "material encontrado" : "materiais encontrados";
-  counter.textContent = `${count} ${label}` + (total ? ` • ${total} disponível${total === 1 ? "" : "s"}` : "");
+  counter.textContent = `${count} ${label}` + (total ? ` • ${total} ${total === 1 ? "disponível" : "disponíveis"}` : "");
 }
 
 function updateProjectCounter(count, total) {
