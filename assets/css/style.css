@@ -1130,3 +1130,74 @@ select:focus-visible {
     width: 100%;
   }
 }
+
+/* =========================================================
+   SOBRE — COMPLEMENTOS DE LAYOUT E RESPONSIVIDADE
+   ========================================================= */
+
+.about-page .actions .btn,
+.about-page .cta-panel .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.about-page .actions .btn:hover,
+.about-page .actions .btn:focus-visible,
+.about-page .cta-panel .btn:hover,
+.about-page .cta-panel .btn:focus-visible {
+  transform: translateY(-2px);
+}
+
+.about-page .btn.primary {
+  background: var(--green);
+  color: #ffffff;
+}
+
+.about-page .btn.secondary {
+  border-color: var(--green);
+  background: transparent;
+  color: var(--green-dark);
+}
+
+.about-page .hero-panel h3 {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.about-page .pillar-grid {
+  margin-top: 2rem;
+}
+
+@media (max-width: 960px) {
+  .about-page .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-page .methodology-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .about-page .actions {
+    flex-direction: column;
+  }
+
+  .about-page .actions .btn {
+    width: 100%;
+  }
+
+  .about-page .methodology-grid {
+    grid-template-columns: 1fr;
+  }
+}
