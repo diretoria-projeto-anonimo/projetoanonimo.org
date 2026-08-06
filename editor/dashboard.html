@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard | PA Editorial CMS</title>
+  <link rel="stylesheet" href="assets/css/editor.css">
+</head>
+<body>
+  <div class="editor-shell">
+    <aside class="editor-sidebar">
+      <a class="editor-logo" href="dashboard.html"><span>PA</span><strong>Editorial CMS</strong></a>
+      <nav class="editor-navigation" aria-label="Painel editorial">
+        <a class="is-active" href="dashboard.html">Visão geral</a>
+        <a href="novo-material.html">Novo material</a>
+        <a href="../biblioteca.html">Ver Biblioteca Viva</a>
+        <button id="editor-signout" class="editor-nav-button" type="button">Sair</button>
+      </nav>
+    </aside>
+    <main class="editor-main">
+      <header class="editor-page-header">
+        <div><p class="editor-eyebrow">Biblioteca Viva</p><h1>Painel Editorial</h1></div>
+        <a class="editor-button" href="novo-material.html">Novo material</a>
+      </header>
+      <section class="editor-stats">
+        <article class="editor-stat-card"><span>Publicados</span><strong id="total-publicados">0</strong></article>
+        <article class="editor-stat-card"><span>Em revisão</span><strong id="total-revisao">0</strong></article>
+        <article class="editor-stat-card"><span>Não publicados</span><strong id="total-rascunhos">0</strong></article>
+        <article class="editor-stat-card"><span>Total</span><strong id="total-materiais">0</strong></article>
+      </section>
+      <section class="editor-panel">
+        <div class="editor-panel-heading">
+          <h2>Conteúdos editoriais</h2>
+          <label class="editor-filter">Status
+            <select id="filtro-status">
+              <option value="">Todos</option>
+              <option>Rascunho</option>
+              <option>Em revisão</option>
+              <option>Em preparação</option>
+              <option>Publicado</option>
+              <option>Arquivado</option>
+            </select>
+          </label>
+        </div>
+        <div id="materiais-recentes" class="editor-empty-state">A integração com a API será adicionada na Entrega 2.0.2.</div>
+      </section>
+    </main>
+  </div>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/editor.js"></script>
+  <script src="assets/js/dashboard.js?v=1.2"></script>
+</body>
+</html>

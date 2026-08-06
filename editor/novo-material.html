@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Novo material | PA Editorial CMS</title>
+  <link rel="stylesheet" href="assets/css/editor.css">
+</head>
+<body>
+  <div class="editor-shell">
+    <aside class="editor-sidebar">
+      <a class="editor-logo" href="dashboard.html"><span>PA</span><strong>Editorial CMS</strong></a>
+      <nav class="editor-navigation">
+        <a href="dashboard.html">Visão geral</a>
+        <a class="is-active" href="novo-material.html">Novo material</a>
+        <button id="editor-signout" class="editor-nav-button" type="button">Sair</button>
+      </nav>
+    </aside>
+    <main class="editor-main">
+      <header class="editor-page-header"><div><p class="editor-eyebrow">Biblioteca Viva</p><h1>Novo material</h1></div></header>
+      <form id="material-form" class="editor-form">
+        <section class="editor-panel">
+          <h2>Informações principais</h2>
+          <div class="editor-form-grid">
+            <label class="editor-field editor-field-wide"><span>Título *</span><input name="titulo" required></label>
+<label class="editor-field"><span>Slug</span><input name="slug" placeholder="gerado automaticamente"></label>
+<label class="editor-field"><span>Autor *</span><input name="autor" value="Projeto Anônimo" required></label>
+<label class="editor-field"><span>Licença *</span><input name="licenca" value="A definir" required></label>
+<label class="editor-field"><span>Público</span><input name="publico"></label>
+<label class="editor-field"><span>Nível</span><input name="nivel"></label>
+<label class="editor-field"><span>Tempo de leitura</span><input name="tempoLeitura" placeholder="15 min"></label>
+<label class="editor-field editor-field-wide"><span>Palavras-chave</span><input name="palavrasChave"></label>
+<label class="editor-field editor-field-wide"><span>URL do arquivo</span><input name="urlArquivo" type="url"></label>
+<label class="editor-field editor-field-wide"><span>URL da capa</span><input name="urlCapa" type="url"></label>
+<label class="editor-field editor-field-wide"><span>URL do vídeo</span><input name="urlVideo" type="url"></label>
+<label class="editor-field editor-field-wide"><span>URL do formulário</span><input name="urlFormulario" type="url"></label>
+<label class="editor-field"><span>CTA</span><input name="cta" value="Acessar material"></label>
+<label class="editor-field"><span>Destaque</span><select name="destaque"><option>NÃO</option><option>SIM</option></select></label>
+            <label class="editor-field"><span>Categoria</span><input name="categoria"></label>
+            <label class="editor-field"><span>Formato</span><select name="formato"><option value="">Selecione</option><option>Guia</option><option>Checklist</option><option>Template</option><option>Artigo</option><option>Vídeo</option></select></label>
+            <label class="editor-field editor-field-wide"><span>Resumo</span><textarea name="resumo" rows="4"></textarea></label>
+            <label class="editor-field editor-field-wide"><span>Conteúdo Markdown</span><textarea name="conteudoMarkdown" rows="14"></textarea></label>
+          </div>
+        <section class="editor-panel">
+  <h2>Arquivos do material</h2>
+
+  <div class="editor-form-grid">
+    <label class="editor-field editor-field-wide">
+      <span>Imagem de capa</span>
+
+      <input
+        id="arquivo-capa"
+        name="arquivoCapa"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+      >
+
+      <small>
+        Formatos aceitos: JPG, PNG ou WebP.
+      </small>
+    </label>
+
+    <label class="editor-field editor-field-wide">
+      <span>PDF principal</span>
+
+      <input
+        id="arquivo-pdf"
+        name="arquivoPdf"
+        type="file"
+        accept="application/pdf"
+      >
+
+      <small>
+        Arquivo principal que será disponibilizado para leitura ou download.
+      </small>
+    </label>
+
+    <label class="editor-field editor-field-wide">
+      <span>Anexos</span>
+
+      <input
+        id="arquivos-anexos"
+        name="arquivosAnexos"
+        type="file"
+        multiple
+      >
+
+      <small>
+        É possível selecionar vários arquivos.
+      </small>
+    </label>
+  </div>
+
+  <div id="upload-status" class="editor-upload-status" aria-live="polite">
+  </div>
+</section>
+        </section>
+        <section class="editor-panel">
+          <h2>Publicação</h2>
+          <div class="editor-form-grid">
+            <label class="editor-field"><span>Status</span><select name="status"><option>Rascunho</option><option>Em revisão</option><option>Em preparação</option><option>Publicado</option><option>Arquivado</option></select></label>
+            <label class="editor-field"><span>Versão</span><input name="versao" value="1.0"></label>
+          </div>
+        </section>
+        <div class="editor-form-actions">
+          <a class="editor-button editor-button-secondary" href="dashboard.html">Cancelar</a>
+          <button class="editor-button editor-button-secondary" type="submit" value="rascunho">Salvar rascunho</button><button class="editor-button" type="submit" value="publicar">Publicar</button>
+        </div>
+        <p id="form-status" class="editor-form-status" role="status" aria-live="polite"></p>
+      </form>
+    </main>
+  </div>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/editor.js"></script>
+  <script src="assets/js/material-form.js?v=1.2"></script>
+</body>
+</html>
