@@ -59,11 +59,11 @@ const metricsSheet = createSheet(metricsRows);
 const spreadsheet = {
   getSheetByName(name) {
     if (name === "Biblioteca") return sheet;
-    if (name === "Metricas") return metricsSheet;
+    if (name === "MetricasV2") return metricsSheet;
     return null;
   },
   insertSheet(name) {
-    assert.equal(name, "Metricas");
+    assert.equal(name, "MetricasV2");
     return metricsSheet;
   },
 };
