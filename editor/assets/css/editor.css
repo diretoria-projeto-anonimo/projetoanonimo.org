@@ -110,3 +110,13 @@
   min-width: 12rem;
   padding: .65rem;
 }
+
+.editor-stats {
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.editor-metric-summary {
+  margin-top: .45rem;
+  color: var(--muted);
+  font-size: .88rem;
+}

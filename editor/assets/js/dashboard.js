@@ -5,11 +5,19 @@ const dashboardElements = {
   revisao: document.getElementById("total-revisao"),
   rascunhos: document.getElementById("total-rascunhos"),
   total: document.getElementById("total-materiais"),
+  visualizacoes: document.getElementById("total-visualizacoes"),
+  downloads: document.getElementById("total-downloads"),
+  ultimaAtividade: document.getElementById("ultima-atividade"),
   lista: document.getElementById("materiais-recentes"),
   filtroStatus: document.getElementById("filtro-status"),
 };
 
 let materiaisEditoriais = [];
+let metricasEditoriais = {
+  totals: {},
+  byReference: {},
+  latestAt: "",
+};
 
 document.addEventListener("DOMContentLoaded", carregarDashboard);
 dashboardElements.filtroStatus?.addEventListener("change", renderizarDashboard);
@@ -17,8 +25,12 @@ dashboardElements.filtroStatus?.addEventListener("change", renderizarDashboard);
 async function carregarDashboard() {
   mensagemDashboard("Carregando conteúdos editoriais...");
   try {
-    const resultado = await window.paAuth.api({ action: "listEditorial" });
+    const [resultado, metricas] = await Promise.all([
+      window.paAuth.api({ action: "listEditorial" }),
+      window.paAuth.api({ action: "getMetricsSummary" }),
+    ]);
     materiaisEditoriais = Array.isArray(resultado.items) ? resultado.items : [];
+    metricasEditoriais = metricas || metricasEditoriais;
     atualizarIndicadores(materiaisEditoriais);
     renderizarDashboard();
   } catch (error) {
@@ -44,6 +56,7 @@ function renderizarDashboard() {
     const formato = escaparDashboard(item.formato || "");
     const status = item.status || "Rascunho";
     const slug = String(item.slug || "").trim();
+    const metricas = metricasEditoriais.byReference?.[slug] || {};
     const editUrl = `novo-material.html?slug=${encodeURIComponent(slug)}`;
     const viewUrl = `../biblioteca/material.html?slug=${encodeURIComponent(slug)}`;
 
@@ -52,6 +65,10 @@ function renderizarDashboard() {
         <div>
           <h3>${titulo}</h3>
           <p>${categoria}${formato ? ` • ${formato}` : ""}</p>
+          <p class="editor-metric-summary">
+            ${numeroDashboard(metricas.visualizacao)} visualizações •
+            ${numeroDashboard(metricas.download)} downloads
+          </p>
         </div>
         <div class="editor-material-actions">
           <span class="editor-status ${classeStatusDashboard(status)}">
@@ -80,6 +97,12 @@ function atualizarIndicadores(materiais) {
   dashboardElements.revisao.textContent = revisao;
   dashboardElements.rascunhos.textContent = rascunhos;
   dashboardElements.total.textContent = materiais.length;
+  dashboardElements.visualizacoes.textContent =
+    numeroDashboard(metricasEditoriais.totals?.visualizacao);
+  dashboardElements.downloads.textContent =
+    numeroDashboard(metricasEditoriais.totals?.download);
+  dashboardElements.ultimaAtividade.textContent =
+    formatarDataDashboard(metricasEditoriais.latestAt);
 }
 
 function mensagemDashboard(texto, erro = false) {
@@ -106,4 +129,18 @@ function escaparDashboard(valor) {
     .replaceAll("&", "&amp;").replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;").replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function numeroDashboard(valor) {
+  return new Intl.NumberFormat("pt-BR").format(Number(valor) || 0);
+}
+
+function formatarDataDashboard(valor) {
+  if (!valor) return "Sem atividade";
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) return "Sem atividade";
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(data);
 }
