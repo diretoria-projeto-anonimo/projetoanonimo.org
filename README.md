@@ -37,6 +37,9 @@ O diretório `/editor/` não deve ser indexado. A segurança das operações de 
 - Reabertura e atualização de materiais existentes.
 - Upload de capa, PDF e anexos.
 - Autenticação Google com lista explícita de editores.
+- Métricas anônimas de visualização, clique, download, formulário e
+  compartilhamento.
+- Indicadores agregados e desempenho por material no Dashboard.
 
 O backend está em `/apps-script/`. A implantação editorial 1.1 foi configurada
 e homologada; `/apps-script/CONFIGURAR.md` permanece como referência de
