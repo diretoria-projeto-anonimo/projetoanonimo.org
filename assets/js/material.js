@@ -796,7 +796,7 @@ async function registrarMetrica({ material, tipo }) {
       window.matchMedia("(max-width: 767px)").matches
         ? "mobile"
         : "desktop",
-    version: "1.1.0",
+    version: "1.2.0",
   };
 
   try {
