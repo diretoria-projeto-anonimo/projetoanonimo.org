@@ -2,6 +2,8 @@
 
 const MATERIAL_API_URL =
   "https://script.google.com/macros/s/AKfycbzhh37NeK7hAaglGCilFvCME6pxgC7V_EdR5ct3wkmJEpywh50mq3i-xgnP1lQlqQ9PTA/exec";
+const MATERIAL_METRICS_API_URL =
+  "https://script.google.com/macros/s/AKfycby_YNT0D5RXUyR0snSUvOzmVji6CjVhKjzK0IZdaXxOyo_KQAkO1z5T2cXzXEDoZEI/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   iniciarPaginaMaterial().catch((error) => {
@@ -798,7 +800,7 @@ async function registrarMetrica({ material, tipo }) {
   };
 
   try {
-    await fetch(MATERIAL_API_URL, {
+    await fetch(MATERIAL_METRICS_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
