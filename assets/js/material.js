@@ -782,6 +782,7 @@ async function registrarMetrica({ material, tipo }) {
   }
 
   const payload = {
+    action: "recordMetric",
     metricId:
       obterCampo(material, ["metricaId", "id"]) || "",
     type: tipo,
