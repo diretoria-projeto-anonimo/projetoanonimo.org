@@ -25,6 +25,8 @@ ultimaRevisao: 2026-08-14
 
 # Política de Backup Institucional
 
+> **Aviso:** Este documento é um modelo de referência e não substitui orientação jurídica ou técnica especializada. A organização que o utiliza é inteiramente responsável pela gestão, segurança e conformidade de seus próprios dados.
+
 ## 1. Objetivo
 
 Esta política estabelece as diretrizes para a criação, armazenamento e gerenciamento de cópias de segurança (backups) dos dados institucionais. O objetivo é garantir a capacidade de recuperar informações críticas em caso de falha de sistema, erro humano, corrupção de dados ou incidentes de segurança, assegurando a continuidade das operações e a soberania sobre nossos ativos digitais.

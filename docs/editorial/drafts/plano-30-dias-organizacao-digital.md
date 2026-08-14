@@ -27,6 +27,8 @@ ultimaRevisao: 2026-08-14
 
 A desorganização digital gera retrabalho, dificulta a colaboração e coloca em risco informações importantes. Este plano de ação de quatro semanas oferece um caminho estruturado para colocar a casa em ordem, focado em ambientes de trabalho colaborativos como Google Workspace ou Microsoft 365.
 
+> **Nota:** Equipes pequenas ou com disponibilidade limitada podem estender este plano para 60 ou 90 dias, dedicando mais tempo a cada etapa para garantir uma implementação sólida e sem sobrecarga.
+
 ## Semana 1: Auditoria e Mapeamento
 
 O objetivo desta semana é ganhar clareza sobre o estado atual. Não mude nada ainda, apenas observe e registre.
