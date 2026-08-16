@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Símbolo monocromático claro do Projeto Anônimo</title>
+  <desc id="description">Quatro camadas isométricas vazadas em verde muito claro.</desc>
+  <g fill="#F2FAF4" fill-rule="evenodd" clip-rule="evenodd">
+    <path d="M256 312 412 370 256 428 100 370Zm0 33-68 25 68 25 68-25Z"/>
+    <path d="M256 237 412 295 256 353 100 295Zm0 33-68 25 68 25 68-25Z"/>
+    <path d="M256 162 412 220 256 278 100 220Zm0 33-68 25 68 25 68-25Z"/>
+    <path d="M256 87 412 145 256 203 100 145Zm0 33-68 25 68 25 68-25Z"/>
+  </g>
+</svg>

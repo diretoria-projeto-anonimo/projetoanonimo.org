@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title description">
+  <title id="title">Logo horizontal do Projeto Anônimo para fundos escuros</title>
+  <desc id="description">Símbolo de quatro camadas ao lado do nome Projeto Anônimo em cor clara.</desc>
+  <svg x="20" y="20" width="320" height="320" viewBox="0 0 512 512">
+    <g fill-rule="evenodd" clip-rule="evenodd">
+      <path fill="#0D4D44" d="M256 312 412 370 256 428 100 370Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 237 412 295 256 353 100 295Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 162 412 220 256 278 100 220Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#0D4D44" d="M256 87 412 145 256 203 100 145Zm0 33-68 25 68 25 68-25Z"/>
+    </g>
+  </svg>
+  <text x="380" y="205" fill="#F2FAF4" font-family="IBM Plex Sans, Arial, sans-serif" font-size="92" font-weight="600" letter-spacing="-2">Projeto Anônimo</text>
+</svg>
