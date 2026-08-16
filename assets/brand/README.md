@@ -23,7 +23,7 @@ Ativos de identidade visual em SVG. Todos os arquivos foram produzidos com geome
 
 ## Tipografia
 
-As assinaturas utilizam `IBM Plex Sans` com peso 600 e fallback para Arial/sans-serif. Antes do uso em materiais gráficos finais, confirme que a fonte IBM Plex Sans está instalada ou converta o texto em contornos na ferramenta de design.
+As assinaturas utilizam `IBM Plex Sans SemiBold` convertida em curvas vetoriais. Os arquivos finais não dependem da instalação da fonte e preservam o desenho do wordmark em diferentes sistemas e ferramentas.
 
 ## Regras essenciais
 
