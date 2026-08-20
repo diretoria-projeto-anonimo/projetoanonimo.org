@@ -116,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function showModal() {
     activeElementBeforeModal = document.activeElement;
     modal.hidden = false;
-    
     const storedPrefs = loadPreferences() || { analytics: false, marketing: false };
     analyticsToggle.checked = storedPrefs.analytics;
     marketingToggle.checked = storedPrefs.marketing;
@@ -124,8 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     focusableElements = Array.from(modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
     firstFocusableEl = focusableElements[0];
     lastFocusableEl = focusableElements[focusableElements.length - 1];
-    
-    firstFocusableEl.focus();
+        firstFocusableEl.focus();
     modal.addEventListener('keydown', trapFocus);
   }
 
