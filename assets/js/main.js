@@ -96,6 +96,12 @@ function applyConfigToLink(element, value, fieldName) {
   const href = getUrlAttributes(value, fieldName);
 
   if (!href) {
+    const fallbackHref = String(element.getAttribute("href") || "").trim();
+    if (fallbackHref && fallbackHref !== "#") {
+      element.hidden = false;
+      return;
+    }
+
     element.removeAttribute("href");
     element.removeAttribute("target");
     element.removeAttribute("rel");
