@@ -343,12 +343,28 @@ function getFetchUrl(item) {
   );
 } 
 
+const LIBRARY_COVER_IMAGES = Object.freeze({
+  "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v1.webp",
+  "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v1.webp",
+  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v1.webp"
+});
+
+function getLibraryCoverImage(material) {
+  const configuredCover = material.urlCapa || material.capaUrl || "";
+  if (configuredCover) {
+    const safeCover = getSafeUrl(configuredCover);
+    if (safeCover !== "#") return safeCover;
+  }
+
+  const slug = String(material.slug || "").trim();
+  return LIBRARY_COVER_IMAGES[slug] || "";
+}
+
 function buildCard(item) {
   const material = normalizarMaterial(item);
 
-  const title = escapeHTML(
-    material.titulo || material["título"] || "Sem título"
-  );
+  const rawTitle = material.titulo || material["título"] || "Sem título";
+  const title = escapeHTML(rawTitle);
 
   const summary = escapeHTML(
     material.resumo ||
@@ -391,15 +407,8 @@ function buildCard(item) {
   const url = getFetchUrl(material);
   const hasUrl = url !== "#";
 
-  const coverUrl = material.urlCapa
-    ? escapeHTML(material.urlCapa)
-    : material.capaUrl
-      ? escapeHTML(material.capaUrl)
-      : "";
-
-  const coverStyle = coverUrl
-    ? `style="background-image:url('${coverUrl}')"`
-    : "";
+  const coverUrl = getLibraryCoverImage(material);
+  const coverAlt = escapeHTML(`Ilustração do material ${rawTitle}`);
 
   const targetAttrs = hasUrl
     ? `target="_blank" rel="noopener"`
@@ -407,8 +416,8 @@ function buildCard(item) {
 
   return `
     <article class="card">
-      <div class="cover" ${coverStyle}>
-        ${coverUrl ? "" : '<div class="cover-fallback">Biblioteca Viva</div>'}
+      <div class="cover library-cover">
+        ${coverUrl ? `<img src="${coverUrl}" alt="${coverAlt}" width="1200" height="800" loading="lazy" decoding="async">` : '<div class="cover-fallback">Biblioteca Viva</div>'}
       </div>
       <div class="card-body">
         <span class="tag">${category}</span>
