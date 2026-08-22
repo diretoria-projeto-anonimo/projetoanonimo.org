@@ -118,6 +118,31 @@
   letter-spacing: -.04em;
 }
 
+.article-card + .article-card {
+  margin-top: 2rem;
+}
+
+.article-card__visual--radar {
+  background:
+    linear-gradient(90deg, rgba(7, 20, 17, .18), rgba(7, 20, 17, .02)),
+    url("../img/blog/radar-oportunidades-01-master-v1.png") center / cover no-repeat;
+}
+
+.article-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+}
+
+.article-hero__image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 34px;
+  box-shadow: 0 24px 70px rgba(17, 27, 24, .12);
+}
+
 .article-card__body {
   padding: clamp(2rem, 5vw, 4.5rem);
   display: flex;
@@ -247,6 +272,7 @@
 @media (max-width: 880px) {
   .blog-hero__layout,
   .article-card,
+  .article-hero__grid,
   .article-shell {
     grid-template-columns: 1fr;
   }
