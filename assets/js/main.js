@@ -485,12 +485,12 @@ function buildEventoCard(evento) {
 }
 
 function buildProjectCard(project) {
-  const title = escapeHTML(project.titulo || "Sem título");
-  const area = escapeHTML(project.area || "Área não informada");
-  const publico = escapeHTML(project.publico || "Público não informado");
-  const resumo = escapeHTML(project.resumo || "Resumo não disponível.");
-  const cta = escapeHTML(project.cta || "Conhecer projeto");
-  const url = getSafeUrl(project.url || "");
+  const title = escapeHTML(getField(project, "titulo", "Título") || "Sem título");
+  const area = escapeHTML(getField(project, "area", "Área") || "Área não informada");
+  const publico = escapeHTML(getField(project, "publico", "Público") || "Público não informado");
+  const resumo = escapeHTML(getField(project, "resumo", "Resumo") || "Resumo não disponível.");
+  const cta = escapeHTML(getField(project, "cta", "CTA") || "Conhecer projeto");
+  const url = getSafeUrl(getField(project, "url", "URL") || "");
   const hasUrl = url !== "#";
   const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
 
@@ -510,13 +510,13 @@ function buildProjectCard(project) {
 }
 
 function buildSolutionCard(solution) {
-  const title = escapeHTML(solution.titulo || "Sem título");
-  const categoria = escapeHTML(solution.categoria || "Categoria não informada");
-  const publico = escapeHTML(solution.publico || "Público não informado");
-  const resumo = escapeHTML(solution.resumo || "Resumo não disponível.");
-  const cta = escapeHTML(solution.cta || "Conhecer solução");
-  const url = getSafeUrl(solution.url || "");
-  const imagem = escapeHTML(solution.imagem || "");
+  const title = escapeHTML(getField(solution, "titulo", "Título") || "Sem título");
+  const categoria = escapeHTML(getField(solution, "categoria", "Categoria") || "Categoria não informada");
+  const publico = escapeHTML(getField(solution, "publico", "Público") || "Público não informado");
+  const resumo = escapeHTML(getField(solution, "resumo", "Resumo") || "Resumo não disponível.");
+  const cta = escapeHTML(getField(solution, "cta", "CTA") || "Conhecer solução");
+  const url = getSafeUrl(getField(solution, "url", "URL") || "");
+  const imagem = escapeHTML(getField(solution, "imagem", "Imagem") || "");
   const hasUrl = url !== "#";
   const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
   const coverStyle = imagem ? `style="background-image:url('${imagem}')"` : "";
@@ -668,10 +668,10 @@ function populateFilters(items) {
 
 function populateProjectFilters(items) {
   const areas = Array.from(
-    new Set(items.map((item) => String(item.area || "").trim()).filter(Boolean))
+    new Set(items.map((item) => String(getField(item, "area", "Área") || "").trim()).filter(Boolean))
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
   const publicos = Array.from(
-    new Set(items.map((item) => String(item.publico || "").trim()).filter(Boolean))
+    new Set(items.map((item) => String(getField(item, "publico", "Público") || "").trim()).filter(Boolean))
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   populateFilter(SELECTORS.projetosArea, areas, "Todas as áreas");
@@ -731,10 +731,10 @@ function filterProjects() {
   const publico = getSelectedValue(SELECTORS.projetosPublico);
 
   const filtered = state.projects.filter((item) => {
-    const title = String(item.titulo || "").toLowerCase();
-    const summary = String(item.resumo || "").toLowerCase();
-    const areaText = String(item.area || "").toLowerCase();
-    const publicoText = String(item.publico || "").toLowerCase();
+    const title = String(getField(item, "titulo", "Título") || "").toLowerCase();
+    const summary = String(getField(item, "resumo", "Resumo") || "").toLowerCase();
+    const areaText = String(getField(item, "area", "Área") || "").toLowerCase();
+    const publicoText = String(getField(item, "publico", "Público") || "").toLowerCase();
 
     const matchesQuery =
       !query ||
@@ -841,7 +841,7 @@ function renderSolutions(items) {
 
 function populateSolutionFilters(items) {
   const categories = Array.from(
-    new Set(items.map((item) => String(item.categoria || "").trim()).filter(Boolean))
+    new Set(items.map((item) => String(getField(item, "categoria", "Categoria") || "").trim()).filter(Boolean))
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   populateFilter(SELECTORS.solucoesCategoria, categories, "Todas as categorias");
@@ -857,10 +857,10 @@ function filterSolutions() {
   const category = getSelectedValue(SELECTORS.solucoesCategoria);
 
   const filtered = state.solutions.filter((item) => {
-    const title = String(item.titulo || "").toLowerCase();
-    const summary = String(item.resumo || "").toLowerCase();
-    const categoryText = String(item.categoria || "").toLowerCase();
-    const publicoText = String(item.publico || "").toLowerCase();
+    const title = String(getField(item, "titulo", "Título") || "").toLowerCase();
+    const summary = String(getField(item, "resumo", "Resumo") || "").toLowerCase();
+    const categoryText = String(getField(item, "categoria", "Categoria") || "").toLowerCase();
+    const publicoText = String(getField(item, "publico", "Público") || "").toLowerCase();
 
     const matchesQuery =
       !query ||
@@ -1039,7 +1039,30 @@ async function carregarBiblioteca() {
   }
 }
 
+function initializeMobileNavigation() {
+  const toggle = document.querySelector(".toggle");
+  const links = document.querySelector(".links");
+  if (!toggle || !links) return;
+
+  toggle.setAttribute("aria-controls", "site-navigation");
+  links.id = links.id || "site-navigation";
+
+  toggle.addEventListener("click", () => {
+    const isOpen = links.classList.toggle("is-open");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.textContent = isOpen ? "Fechar" : "Menu";
+  });
+
+  links.addEventListener("click", (event) => {
+    if (!event.target.closest("a")) return;
+    links.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.textContent = "Menu";
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  initializeMobileNavigation();
   initializeConfig();
   if (getElement(SELECTORS.list) || getElement(SELECTORS.homeList)) {
     carregarBiblioteca();

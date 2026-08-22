@@ -50,6 +50,12 @@ body {
   font-size: 1.25rem;
 }
 
+.logo img {
+  display: block;
+  width: min(15rem, 62vw);
+  height: auto;
+}
+
 /* Hero Section */
 .hero {
   padding: 80px 0;
