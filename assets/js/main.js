@@ -522,10 +522,8 @@ function buildSolutionCard(solution) {
   const coverStyle = imagem ? `style="background-image:url('${imagem}')"` : "";
 
   return `
-    <article class="project-card">
-      <div class="cover" ${coverStyle}>
-        ${imagem ? "" : '<div class="cover-fallback">Solução</div>'}
-      </div>
+    <article class="project-card solution-card">
+      ${imagem ? `<div class="cover" ${coverStyle}></div>` : ""}
       <div class="card-body">
         <div class="project-meta">
           <span class="badge">${categoria}</span>
