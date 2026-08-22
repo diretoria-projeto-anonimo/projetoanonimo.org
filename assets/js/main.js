@@ -1083,6 +1083,7 @@ function initializeMobileNavigation() {
   toggle.addEventListener("click", () => {
     const isOpen = links.classList.toggle("is-open");
     toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.setAttribute("aria-label", isOpen ? "Fechar menu" : "Abrir menu");
     toggle.textContent = isOpen ? "Fechar" : "Menu";
   });
 
@@ -1090,6 +1091,7 @@ function initializeMobileNavigation() {
     if (!event.target.closest("a")) return;
     links.classList.remove("is-open");
     toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Abrir menu");
     toggle.textContent = "Menu";
   });
 }
