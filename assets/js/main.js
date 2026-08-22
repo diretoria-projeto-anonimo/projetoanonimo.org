@@ -509,21 +509,41 @@ function buildProjectCard(project) {
   `;
 }
 
+const SOLUTION_COVER_IMAGES = Object.freeze({
+  "Google Workspace para OSCs": "assets/img/solutions/google-workspace-oscs-v1.webp",
+  "CRM e Automação": "assets/img/solutions/crm-automacao-v1.webp",
+  "Comunicação para Projetos Culturais": "assets/img/solutions/comunicacao-projetos-culturais-v1.webp",
+  "IA para Organizações": "assets/img/solutions/ia-organizacoes-v1.webp",
+  "Cultura Maker e Robótica": "assets/img/solutions/cultura-maker-robotica-v1.webp",
+  "Biblioteca Viva": "assets/img/solutions/biblioteca-viva-v1.webp"
+});
+
+function getSolutionCoverImage(solution, title) {
+  const configuredImage = getField(solution, "imagem", "Imagem");
+  if (configuredImage) {
+    const safeImage = getSafeUrl(configuredImage);
+    if (safeImage !== "#") return safeImage;
+  }
+
+  return SOLUTION_COVER_IMAGES[title] || "";
+}
+
 function buildSolutionCard(solution) {
-  const title = escapeHTML(getField(solution, "titulo", "Título") || "Sem título");
+  const rawTitle = String(getField(solution, "titulo", "Título") || "Sem título").trim();
+  const title = escapeHTML(rawTitle);
   const categoria = escapeHTML(getField(solution, "categoria", "Categoria") || "Categoria não informada");
   const publico = escapeHTML(getField(solution, "publico", "Público") || "Público não informado");
   const resumo = escapeHTML(getField(solution, "resumo", "Resumo") || "Resumo não disponível.");
   const cta = escapeHTML(getField(solution, "cta", "CTA") || "Conhecer solução");
   const url = getSafeUrl(getField(solution, "url", "URL") || "");
-  const imagem = escapeHTML(getField(solution, "imagem", "Imagem") || "");
+  const imagem = getSolutionCoverImage(solution, rawTitle);
+  const imageAlt = escapeHTML(`Ilustração da solução ${rawTitle}`);
   const hasUrl = url !== "#";
   const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
-  const coverStyle = imagem ? `style="background-image:url('${imagem}')"` : "";
 
   return `
     <article class="project-card solution-card">
-      ${imagem ? `<div class="cover" ${coverStyle}></div>` : ""}
+      ${imagem ? `<div class="cover solution-cover"><img src="${imagem}" alt="${imageAlt}" width="1200" height="800" loading="lazy" decoding="async"></div>` : ""}
       <div class="card-body">
         <div class="project-meta">
           <span class="badge">${categoria}</span>
