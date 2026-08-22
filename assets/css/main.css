@@ -108,10 +108,11 @@ a {
   justify-content: center;
   width: 2.6rem;
   height: 2.6rem;
-  border-radius: 1rem;
-  background: var(--green);
-  color: #ffffff;
-  font-size: 0.95rem;
+  flex: 0 0 2.6rem;
+  overflow: hidden;
+  color: transparent;
+  font-size: 0;
+  background: center / contain no-repeat url("../brand/projeto-anonimo-symbol.svg");
 }
 
 .links {

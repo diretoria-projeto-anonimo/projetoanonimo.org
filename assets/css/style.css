@@ -108,10 +108,11 @@ a {
   justify-content: center;
   width: 2.6rem;
   height: 2.6rem;
-  border-radius: 1rem;
-  background: var(--green);
-  color: #ffffff;
-  font-size: 0.95rem;
+  flex: 0 0 2.6rem;
+  overflow: hidden;
+  color: transparent;
+  font-size: 0;
+  background: center / contain no-repeat url("../brand/projeto-anonimo-symbol.svg");
 }
 
 .links {
@@ -209,6 +210,42 @@ a {
   font-size: clamp(2.75rem, 5vw, 4rem);
   line-height: 1.02;
   max-width: 12ch;
+}
+
+.pagehero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.pagehero-copy {
+  min-width: 0;
+}
+
+.pagehero-media {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(13, 77, 68, 0.18);
+  border-radius: 1.5rem;
+  background: #111b18;
+  box-shadow: 0 1.5rem 4rem rgba(17, 27, 24, 0.16);
+}
+
+.pagehero-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(211, 235, 217, 0.08);
+}
+
+.pagehero-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
 }
 
 .lead {
@@ -691,9 +728,53 @@ select:focus-visible {
   .cta-panel {
     grid-template-columns: 1fr;
   }
+
+  .pagehero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pagehero-media {
+    max-width: 46rem;
+  }
 }
 
 @media (max-width: 720px) {
+  .nav {
+    align-items: center;
+  }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(13, 77, 68, 0.22);
+    border-radius: 0.8rem;
+    background: #ffffff;
+  }
+
+  .links {
+    display: none;
+    width: 100%;
+    align-items: stretch;
+    padding: 0.65rem;
+    border: 1px solid rgba(13, 77, 68, 0.14);
+    border-radius: 1rem;
+    background: #ffffff;
+    box-shadow: 0 1rem 2.5rem rgba(17, 27, 24, 0.08);
+  }
+
+  .links.is-open {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .links a {
+    justify-content: center;
+    text-align: center;
+  }
+
   .pagehero {
     padding-top: 3.5rem;
   }
