@@ -781,6 +781,10 @@ select:focus-visible {
 }
 
 @media (max-width: 960px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
   .nav {
     flex-wrap: wrap;
     gap: 1rem;
