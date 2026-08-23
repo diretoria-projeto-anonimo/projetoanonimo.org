@@ -283,6 +283,11 @@
     grid-template-columns: 1fr;
   }
 
+  .blog-hero h1,
+  .article-card h2 {
+    max-width: none;
+  }
+
   .blog-visual {
     min-height: 300px;
   }
