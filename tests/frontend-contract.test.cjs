@@ -46,4 +46,19 @@ for (const html of [dashboardHtml, formHtml]) {
   assert.ok(configIndex >= 0 && configIndex < authIndex && authIndex < editorIndex);
 }
 
+const blogHtml = read("blog.html");
+const manifestoHtml = read("blog/manifesto-observatorio.html");
+const blogCss = read("assets/css/blog.css");
+const sitemapXml = read("sitemap.xml");
+
+assert.match(blogHtml, /href="blog\/manifesto-observatorio\.html"/);
+assert.match(blogHtml, /article-card__visual--manifesto/);
+assert.match(manifestoHtml, /rel="canonical" href="https:\/\/projetoanonimo\.org\/blog\/manifesto-observatorio\.html"/);
+assert.match(manifestoHtml, /property="og:image" content="https:\/\/projetoanonimo\.org\/assets\/img\/blog\/manifesto-observatorio-master-v1\.jpg"/);
+assert.match(manifestoHtml, /"datePublished":"2026-08-23"/);
+assert.match(manifestoHtml, /href="\.\.\/diagnostico-organizacional\.html"/);
+assert.match(blogCss, /\.article-card__visual--manifesto/);
+assert.match(sitemapXml, /https:\/\/projetoanonimo\.org\/blog\/manifesto-observatorio\.html/);
+assert.ok(fs.existsSync(path.join(root, "assets/img/blog/manifesto-observatorio-master-v1.jpg")));
+
 console.log("frontend-contract.test.cjs: todos os cenários passaram");
