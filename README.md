@@ -32,6 +32,8 @@ O diretório `/editor/` não deve ser indexado. A segurança das operações de 
 
 ## Escopo editorial desta versão
 
+A versão canônica declarada está em `/VERSAO.txt`: 1.2.0 — candidata de métricas editoriais.
+
 - Consulta de publicados, rascunhos, revisão, preparação e arquivados.
 - Criação de material como rascunho ou publicado.
 - Reabertura e atualização de materiais existentes.
@@ -42,8 +44,8 @@ O diretório `/editor/` não deve ser indexado. A segurança das operações de 
 - Indicadores agregados e desempenho por material no Dashboard.
 
 O backend está em `/apps-script/`. A implantação editorial 1.1 foi configurada
-e homologada; `/apps-script/CONFIGURAR.md` permanece como referência de
-manutenção. O Client ID e a URL `/exec` ativos ficam centralizados em
+e homologada como referência histórica; `/apps-script/CONFIGURAR.md` permanece
+como referência de manutenção. O Client ID e a URL `/exec` ativos ficam centralizados em
 `/editor/assets/js/config.js`.
 
 ## Revisões externas pendentes
