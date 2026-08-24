@@ -1409,3 +1409,40 @@ select:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* Official Projeto Anônimo brand signatures */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.brand-logo-image {
+  display: block;
+  width: auto;
+  height: 2.75rem;
+  max-width: min(15rem, 55vw);
+}
+
+.footer .brand-logo,
+.site-footer .brand-logo {
+  display: inline-flex;
+}
+
+.footer .brand-logo-image,
+.site-footer .brand-logo-image {
+  height: 3rem;
+}
+
+@media (max-width: 640px) {
+  .brand-logo-image {
+    height: 2.25rem;
+    max-width: min(12.5rem, 58vw);
+  }
+
+  .footer .brand-logo-image,
+  .site-footer .brand-logo-image {
+    height: 2.5rem;
+  }
+}

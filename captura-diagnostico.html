@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Diagnóstico Digital Preliminar para organizações sociais.">
 <title>Diagnóstico Digital Preliminar — Projeto Anônimo</title>
+<link rel="icon" href="assets/brand/projeto-anonimo-favicon.svg" type="image/svg+xml">
 <style>
 :root {
   --forest: #0b5d55;
@@ -27,12 +28,8 @@ header {
   border-bottom: 1px solid var(--line);
   padding: 22px 6%;
 }
-.logo {
-  color: var(--forest);
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 1.2rem;
-}
+.logo { display: inline-flex; align-items: center; }
+.logo img { display: block; width: auto; height: 44px; max-width: min(240px, 70vw); }
 main {
   max-width: 1100px;
   margin: auto;
@@ -99,6 +96,8 @@ footer {
   padding: 32px;
   font-size: .85rem;
 }
+.footer-logo { display: block; width: auto; height: 42px; max-width: min(230px, 70vw); margin: 0 auto 12px; }
+footer p { margin: 0; }
 @media (max-width: 700px) {
   .grid { grid-template-columns: 1fr; }
   main { padding: 32px 16px; }
@@ -107,7 +106,7 @@ footer {
 </head>
 <body>
 <header>
-  <a class="logo" href="index.html">Projeto Anônimo</a>
+  <a class="logo" href="index.html" aria-label="Projeto Anônimo — página inicial"><img src="assets/brand/projeto-anonimo-logo-horizontal-on-light.svg" alt="Projeto Anônimo"></a>
 </header>
 
 <main>
@@ -143,7 +142,8 @@ footer {
 </main>
 
 <footer>
-  Projeto Anônimo Framework · v1.3.2
+  <img class="footer-logo" src="assets/brand/projeto-anonimo-logo-horizontal-on-light.svg" alt="Projeto Anônimo">
+  <p>Projeto Anônimo Framework · v1.3.2</p>
 </footer>
 </body>
 </html>
