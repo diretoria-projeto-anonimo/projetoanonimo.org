@@ -4,6 +4,7 @@ const API_BIBLIOTECA =
 const state = {
   items: [],
   filtered: [],
+  visibleCount: 6,
   projects: [],
   filteredProjects: [],
   solutions: [],
@@ -20,6 +21,10 @@ const SELECTORS = {
   search: "search-input",
   category: "categoria-select",
   format: "formato-select",
+  sort: "ordenacao-select",
+  clearFilters: "limpar-filtros",
+  loadMore: "carregar-mais",
+  retry: "tentar-novamente",
   homeList: "home-biblioteca",
   homeStatus: "home-biblioteca-status",
   projetosList: "projetos-lista",
@@ -41,6 +46,12 @@ const SELECTORS = {
 
 const moduleCache = {};
 const modulePromises = {};
+const BIBLIOTECA_PAGE_SIZE = 6;
+const BIBLIOTECA_SORT_OPTIONS = new Set([
+  "recentes",
+  "titulo-asc",
+  "titulo-desc",
+]);
 
 function getField(item, ...keys) {
   if (!item || typeof item !== "object") return undefined;
@@ -617,6 +628,31 @@ function toggleEmptyMessage(show) {
   emptyMessage.classList.toggle("hidden", !show);
 }
 
+function updateEmptyMessage(message) {
+  const emptyMessage = getElement(SELECTORS.empty);
+  if (!emptyMessage) return;
+  emptyMessage.textContent = message;
+}
+
+function toggleLibraryControl(id, show) {
+  const control = getElement(id);
+  if (!control) return;
+  control.classList.toggle("hidden", !show);
+}
+
+function updateProgressiveControls(totalFiltered) {
+  const loadMore = getElement(SELECTORS.loadMore);
+  if (!loadMore) return;
+
+  const remaining = Math.max(totalFiltered - state.visibleCount, 0);
+  loadMore.classList.toggle("hidden", remaining === 0);
+  loadMore.disabled = remaining === 0;
+  loadMore.textContent =
+    remaining > 0
+      ? `Carregar mais (${Math.min(BIBLIOTECA_PAGE_SIZE, remaining)})`
+      : "Todos os materiais foram exibidos";
+}
+
 function toggleProjectEmpty(show) {
   const emptyMessage = getElement(SELECTORS.projetosEmpty);
   if (!emptyMessage) return;
@@ -626,19 +662,29 @@ function toggleProjectEmpty(show) {
 function renderList(items) {
   const list = getElement(SELECTORS.list);
   if (!list) return;
+  list.setAttribute("aria-busy", "false");
+  toggleLibraryControl(SELECTORS.retry, false);
 
   if (!Array.isArray(items) || items.length === 0) {
     list.innerHTML = "";
+    updateEmptyMessage("Nenhum resultado encontrado para sua pesquisa.");
     toggleEmptyMessage(true);
     updateStatus("Nenhum resultado encontrado para sua pesquisa.");
     updateCounter(0, state.items.length);
+    updateProgressiveControls(0);
     return;
   }
 
+  const visibleItems = items.slice(0, state.visibleCount);
   toggleEmptyMessage(false);
-  updateStatus("");
+  updateStatus(
+    visibleItems.length < items.length
+      ? `Exibindo ${visibleItems.length} de ${items.length} materiais.`
+      : ""
+  );
   updateCounter(items.length, state.items.length);
-  list.innerHTML = items.map(buildCard).join("");
+  list.innerHTML = visibleItems.map(buildCard).join("");
+  updateProgressiveControls(items.length);
 }
 
 function renderHomeLibrary(items) {
@@ -726,36 +772,154 @@ function getProjectSearchTerm() {
   return search ? String(search.value).trim().toLowerCase() : "";
 }
 
-function filterItems() {
-  const query = getSearchTerm();
-  const category = getSelectedValue(SELECTORS.category);
-  const format = getSelectedValue(SELECTORS.format);
+function getMaterialTimestamp(item) {
+  const material = normalizarMaterial(item);
+  const candidates = [
+    material.ultimaRevisao,
+    material.dataPublicacao,
+    material.data,
+    material.criadoEm,
+  ];
+
+  for (const value of candidates) {
+    if (!value) continue;
+    const timestamp = Date.parse(value);
+    if (Number.isFinite(timestamp)) return timestamp;
+  }
+
+  return 0;
+}
+
+function sortItems(items, order) {
+  const indexed = items.map((item, index) => ({ item, index }));
+
+  indexed.sort((left, right) => {
+    const materialLeft = normalizarMaterial(left.item);
+    const materialRight = normalizarMaterial(right.item);
+    const titleLeft = String(materialLeft.titulo || "");
+    const titleRight = String(materialRight.titulo || "");
+    let comparison = 0;
+
+    if (order === "titulo-asc") {
+      comparison = titleLeft.localeCompare(titleRight, "pt-BR", {
+        sensitivity: "base",
+      });
+    } else if (order === "titulo-desc") {
+      comparison = titleRight.localeCompare(titleLeft, "pt-BR", {
+        sensitivity: "base",
+      });
+    } else {
+      comparison =
+        getMaterialTimestamp(right.item) - getMaterialTimestamp(left.item);
+    }
+
+    return comparison || left.index - right.index;
+  });
+
+  return indexed.map(({ item }) => item);
+}
+
+function getLibraryFilterState() {
+  const order = getSelectedValue(SELECTORS.sort);
+  return {
+    query: getSearchTerm(),
+    category: getSelectedValue(SELECTORS.category),
+    format: getSelectedValue(SELECTORS.format),
+    order: BIBLIOTECA_SORT_OPTIONS.has(order) ? order : "recentes",
+  };
+}
+
+function syncLibraryFiltersToUrl(filters) {
+  if (!window.history || typeof window.history.replaceState !== "function") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  const values = {
+    busca: filters.query,
+    categoria: filters.category,
+    formato: filters.format,
+    ordem: filters.order === "recentes" ? "" : filters.order,
+  };
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, value);
+    else url.searchParams.delete(key);
+  });
+
+  window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function setSelectValueIfAvailable(id, value) {
+  const select = getElement(id);
+  if (!select || !value) return;
+  const optionExists = Array.from(select.options).some(
+    (option) => option.value === value
+  );
+  if (optionExists) select.value = value;
+}
+
+function restoreLibraryFiltersFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const search = getElement(SELECTORS.search);
+  if (search) search.value = params.get("busca") || "";
+
+  setSelectValueIfAvailable(SELECTORS.category, params.get("categoria"));
+  setSelectValueIfAvailable(SELECTORS.format, params.get("formato"));
+
+  const requestedOrder = params.get("ordem") || "recentes";
+  setSelectValueIfAvailable(
+    SELECTORS.sort,
+    BIBLIOTECA_SORT_OPTIONS.has(requestedOrder)
+      ? requestedOrder
+      : "recentes"
+  );
+}
+
+function updateClearFiltersControl(filters) {
+  const hasActiveFilters = Boolean(
+    filters.query ||
+      filters.category ||
+      filters.format ||
+      filters.order !== "recentes"
+  );
+  toggleLibraryControl(SELECTORS.clearFilters, hasActiveFilters);
+}
+
+function filterItems({ syncUrl = true, resetVisible = true } = {}) {
+  const filters = getLibraryFilterState();
 
   const filtered = state.items.filter((item) => {
-    const title = String(item.titulo || "").toLowerCase();
-    const summary = String(item.resumo || "").toLowerCase();
-    const categoryText = String(item.categoria || "").toLowerCase();
-    const formatText = String(item.formato || "").toLowerCase();
-    const keywords = Array.isArray(item.palavrasChave)
-      ? item.palavrasChave.join(" ").toLowerCase()
+    const material = normalizarMaterial(item);
+    const title = String(material.titulo || "").toLowerCase();
+    const summary = String(material.resumo || "").toLowerCase();
+    const categoryText = String(material.categoria || "").toLowerCase();
+    const formatText = String(material.formato || "").toLowerCase();
+    const keywords = Array.isArray(material.palavrasChave)
+      ? material.palavrasChave.join(" ").toLowerCase()
       : "";
 
     const matchesQuery =
-      !query ||
-      title.includes(query) ||
-      summary.includes(query) ||
-      categoryText.includes(query) ||
-      formatText.includes(query) ||
-      keywords.includes(query);
+      !filters.query ||
+      title.includes(filters.query) ||
+      summary.includes(filters.query) ||
+      categoryText.includes(filters.query) ||
+      formatText.includes(filters.query) ||
+      keywords.includes(filters.query);
 
-    const matchesCategory = !category || categoryText === category.toLowerCase();
-    const matchesFormat = !format || formatText === format.toLowerCase();
+    const matchesCategory =
+      !filters.category || categoryText === filters.category.toLowerCase();
+    const matchesFormat =
+      !filters.format || formatText === filters.format.toLowerCase();
 
     return matchesQuery && matchesCategory && matchesFormat;
   });
 
-  state.filtered = filtered;
-  renderList(filtered);
+  state.filtered = sortItems(filtered, filters.order);
+  if (resetVisible) state.visibleCount = BIBLIOTECA_PAGE_SIZE;
+  if (syncUrl) syncLibraryFiltersToUrl(filters);
+  updateClearFiltersControl(filters);
+  renderList(state.filtered);
 }
 
 function filterProjects() {
@@ -790,6 +954,10 @@ function attachFilters() {
   const search = getElement(SELECTORS.search);
   const category = getElement(SELECTORS.category);
   const format = getElement(SELECTORS.format);
+  const sort = getElement(SELECTORS.sort);
+  const clearFilters = getElement(SELECTORS.clearFilters);
+  const loadMore = getElement(SELECTORS.loadMore);
+  const retry = getElement(SELECTORS.retry);
 
   if (search) {
     search.addEventListener("input", filterItems);
@@ -800,6 +968,33 @@ function attachFilters() {
   if (format) {
     format.addEventListener("change", filterItems);
   }
+  if (sort) {
+    sort.addEventListener("change", filterItems);
+  }
+  if (clearFilters) {
+    clearFilters.addEventListener("click", () => {
+      if (search) search.value = "";
+      if (category) category.value = "";
+      if (format) format.value = "";
+      if (sort) sort.value = "recentes";
+      filterItems();
+      if (search) search.focus();
+    });
+  }
+  if (loadMore) {
+    loadMore.addEventListener("click", () => {
+      state.visibleCount += BIBLIOTECA_PAGE_SIZE;
+      renderList(state.filtered);
+    });
+  }
+  if (retry) {
+    retry.addEventListener("click", carregarBiblioteca);
+  }
+
+  window.addEventListener("popstate", () => {
+    restoreLibraryFiltersFromUrl();
+    filterItems({ syncUrl: false });
+  });
 }
 
 function attachProjectFilters() {
@@ -823,15 +1018,49 @@ function setLoadingState() {
   const homeList = getElement(SELECTORS.homeList);
 
   if (list) {
-    list.innerHTML = "";
-    toggleEmptyMessage(true);
+    list.setAttribute("aria-busy", "true");
+    list.innerHTML = Array.from(
+      { length: 3 },
+      () => `
+        <article class="card skeleton-card" aria-hidden="true">
+          <div class="skeleton-block skeleton-cover"></div>
+          <div class="card-body">
+            <div class="skeleton-block skeleton-tag"></div>
+            <div class="skeleton-block skeleton-title"></div>
+            <div class="skeleton-block skeleton-text"></div>
+            <div class="skeleton-block skeleton-text short"></div>
+          </div>
+        </article>
+      `
+    ).join("");
+    toggleEmptyMessage(false);
+    const counter = getElement(SELECTORS.contador);
+    if (counter) counter.textContent = "Carregando biblioteca...";
     updateStatus("Carregando Biblioteca Viva...");
+    toggleLibraryControl(SELECTORS.retry, false);
+    updateProgressiveControls(0);
   }
 
   if (homeList) {
     homeList.innerHTML = "";
     updateHomeStatus("Carregando Biblioteca Viva...");
   }
+}
+
+function setLibraryErrorState() {
+  const list = getElement(SELECTORS.list);
+  if (!list) return;
+  list.innerHTML = "";
+  list.setAttribute("aria-busy", "false");
+  toggleEmptyMessage(false);
+  const counter = getElement(SELECTORS.contador);
+  if (counter) counter.textContent = "Biblioteca temporariamente indisponível";
+  updateStatus(
+    "Não foi possível carregar a Biblioteca Viva agora. Verifique sua conexão e tente novamente.",
+    true
+  );
+  toggleLibraryControl(SELECTORS.retry, true);
+  updateProgressiveControls(0);
 }
 
 function updateSolutionStatus(message, isError = false) {
@@ -1042,8 +1271,13 @@ async function carregarBiblioteca() {
 
     if (state.items.length === 0) {
       if (list) {
+        list.innerHTML = "";
+        list.setAttribute("aria-busy", "false");
+        updateEmptyMessage("Novos materiais serão publicados em breve.");
+        toggleEmptyMessage(true);
         updateStatus("A Biblioteca Viva ainda não possui materiais publicados.");
         updateCounter(0, 0);
+        updateProgressiveControls(0);
       }
       if (homeList) {
         updateHomeStatus("A Biblioteca Viva ainda não possui materiais publicados.");
@@ -1053,7 +1287,8 @@ async function carregarBiblioteca() {
 
     if (list) {
       populateFilters(state.items);
-      filterItems();
+      restoreLibraryFiltersFromUrl();
+      filterItems({ syncUrl: false });
     }
 
     if (homeList) {
@@ -1062,8 +1297,7 @@ async function carregarBiblioteca() {
   } catch (error) {
     console.error(error);
     if (list) {
-      setLoadingState();
-      updateStatus("Não foi possível carregar a Biblioteca Viva agora. Tente novamente mais tarde.", true);
+      setLibraryErrorState();
     }
     if (homeList) {
       homeList.innerHTML = "";
@@ -1100,6 +1334,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeMobileNavigation();
   initializeConfig();
   if (getElement(SELECTORS.list) || getElement(SELECTORS.homeList)) {
+    if (getElement(SELECTORS.list)) attachFilters();
     carregarBiblioteca();
   }
   if (getElement(SELECTORS.projetosList)) {

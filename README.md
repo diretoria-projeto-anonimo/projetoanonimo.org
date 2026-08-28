@@ -1,4 +1,4 @@
-# Projeto Anônimo — Site v1
+# Projeto Anônimo — Framework 1.3.0 RC
 
 Site estático preparado para GitHub Pages, integrado ao CMS e à Biblioteca Viva por Google Apps Script.
 
@@ -32,7 +32,7 @@ O diretório `/editor/` não deve ser indexado. A segurança das operações de 
 
 ## Escopo editorial desta versão
 
-A versão canônica declarada está em `/VERSAO.txt`: 1.2.0 — candidata de métricas editoriais.
+A versão candidata declarada está em `/VERSAO.txt`: 1.3.0 RC — Sprint C0.1 / Cliente 0.
 
 - Consulta de publicados, rascunhos, revisão, preparação e arquivados.
 - Criação de material como rascunho ou publicado.
@@ -42,11 +42,18 @@ A versão canônica declarada está em `/VERSAO.txt`: 1.2.0 — candidata de mé
 - Métricas anônimas de visualização, clique, download, formulário e
   compartilhamento.
 - Indicadores agregados e desempenho por material no Dashboard.
+- Ordenação, filtros persistentes e carregamento progressivo da Biblioteca Viva.
+- Estados acessíveis de carregamento, erro, nova tentativa e ausência de resultados.
+- Manifesto do Apps Script versionado para reproduzir a configuração do backend.
 
 O backend está em `/apps-script/`. A implantação editorial 1.1 foi configurada
 e homologada como referência histórica; `/apps-script/CONFIGURAR.md` permanece
 como referência de manutenção. O Client ID e a URL `/exec` ativos ficam centralizados em
 `/editor/assets/js/config.js`.
+
+O ensaio controlado do Cliente 0 deve seguir
+`/docs/cliente0/ROTEIRO-HOMOLOGACAO.md`. O roteiro usa dados sintéticos e não
+autoriza implantação, publicação nem tratamento de dados reais.
 
 ## Revisões externas pendentes
 

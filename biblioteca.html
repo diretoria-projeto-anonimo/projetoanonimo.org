@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=1.4">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.5">
   <link rel="icon" href="assets/brand/projeto-anonimo-favicon.svg" type="image/svg+xml">
 </head>
 
@@ -64,19 +64,47 @@
                 <option value="">Todos os formatos</option>
               </select>
             </div>
+            <div class="field">
+              <label for="ordenacao-select">Ordenar por</label>
+              <select id="ordenacao-select">
+                <option value="recentes">Mais recentes</option>
+                <option value="titulo-asc">Título: A–Z</option>
+                <option value="titulo-desc">Título: Z–A</option>
+              </select>
+            </div>
+          </div>
+          <div class="filter-actions">
+            <button id="limpar-filtros" class="library-action-button subtle hidden" type="button">
+              Limpar filtros
+            </button>
           </div>
         </div>
         <div class="status-row">
           <p id="resultado-contador">Carregando biblioteca...</p>
-          <p id="biblioteca-status" class="status-message" aria-live="polite"></p>
+          <div class="status-actions">
+            <p id="biblioteca-status" class="status-message" aria-live="polite"></p>
+            <button id="tentar-novamente" class="library-action-button hidden" type="button">
+              Tentar novamente
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
-        <div id="biblioteca-lista" class="biblioteca-grid" aria-live="polite"></div>
+        <div id="biblioteca-lista" class="biblioteca-grid" aria-live="polite" aria-busy="true"></div>
         <div id="biblioteca-vazio" class="empty-message hidden">Nenhum resultado encontrado para sua pesquisa.</div>
+        <div class="load-more-row">
+          <button
+            id="carregar-mais"
+            class="library-action-button hidden"
+            type="button"
+            aria-controls="biblioteca-lista"
+          >
+            Carregar mais
+          </button>
+        </div>
       </div>
     </section>
 
@@ -114,7 +142,7 @@
     </div>
   </footer>
 
-<script src="assets/js/main.js?v=1.4"></script>
+<script src="assets/js/main.js?v=1.5"></script>
 </body>
 
 </html>
