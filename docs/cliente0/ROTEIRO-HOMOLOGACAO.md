@@ -49,6 +49,11 @@ Use identificadores claramente fictícios:
 
 ## Registro de evidências
 
+O ensaio automatizado local está registrado em
+`EVIDENCIAS-HOMOLOGACAO-LOCAL.md`. Ele valida os contratos com serviços Google
+simulados, mas não substitui a execução deste quadro em uma implantação externa
+de teste.
+
 | Caso | Data/hora | Executor | Resultado | Evidência | Observação |
 |---|---|---|---|---|---|
 | C0-01 |  |  | Pendente |  |  |
