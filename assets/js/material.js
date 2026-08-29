@@ -435,7 +435,30 @@ const metadadosHtml = metadados
 
   detalhe.setAttribute("aria-busy", "false");
 
+  configurarFallbackDeCapa(detalhe, textoAlternativo);
   configurarCompartilhamento(material);
+}
+
+function configurarFallbackDeCapa(detalhe, textoAlternativo) {
+  const capa = detalhe.querySelector(".material-cover");
+  const imagem = capa?.querySelector("img");
+  if (!capa || !imagem) return;
+
+  const mostrarFallback = () => {
+    if (!capa.querySelector("img")) return;
+    capa.innerHTML = `
+      <div class="cover material-cover-fallback" role="img" aria-label="${escaparAtributo(
+        textoAlternativo
+      )}">
+        <span class="cover-fallback">Biblioteca Viva</span>
+      </div>
+    `;
+  };
+
+  imagem.addEventListener("error", mostrarFallback, { once: true });
+  if (imagem.complete && imagem.naturalWidth === 0) {
+    mostrarFallback();
+  }
 }
 
 function criarMetadado(rotulo, valor) {

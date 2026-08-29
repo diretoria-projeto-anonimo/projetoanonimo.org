@@ -941,6 +941,9 @@ select:focus-visible {
 @media (max-width: 720px) {
   .nav {
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.9rem 0;
   }
 
   .toggle {
@@ -957,8 +960,10 @@ select:focus-visible {
   .links {
     display: none;
     width: 100%;
+    gap: 0.4rem;
     align-items: stretch;
-    padding: 0.65rem;
+    margin-top: 0.25rem;
+    padding: 0.75rem;
     border: 1px solid rgba(13, 77, 68, 0.14);
     border-radius: 1rem;
     background: #ffffff;
@@ -967,11 +972,15 @@ select:focus-visible {
 
   .links.is-open {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .links a {
+    display: flex;
+    align-items: center;
     justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
     text-align: center;
   }
 
