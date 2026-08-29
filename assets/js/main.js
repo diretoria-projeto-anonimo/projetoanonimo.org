@@ -1,4 +1,7 @@
 const API_BIBLIOTECA =
+  (typeof window !== "undefined" &&
+    typeof window.PA_BIBLIOTECA_CONFIG?.apiUrl === "string" &&
+    window.PA_BIBLIOTECA_CONFIG.apiUrl.trim()) ||
   "https://script.google.com/macros/s/AKfycbzhh37NeK7hAaglGCilFvCME6pxgC7V_EdR5ct3wkmJEpywh50mq3i-xgnP1lQlqQ9PTA/exec";
 
 const state = {
@@ -47,6 +50,9 @@ const SELECTORS = {
 const moduleCache = {};
 const modulePromises = {};
 const BIBLIOTECA_PAGE_SIZE = 6;
+const BIBLIOTECA_CACHE_KEY = "PA_BIBLIOTECA_CACHE_V1";
+const BIBLIOTECA_CACHE_VERSION = 1;
+const BIBLIOTECA_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const BIBLIOTECA_SORT_OPTIONS = new Set([
   "recentes",
   "titulo-asc",
@@ -91,6 +97,132 @@ function isPublishedItem(item) {
     .trim()
     .toLowerCase();
   return !status || status === "publicado";
+}
+
+function getBibliotecaStorage() {
+  try {
+    return typeof window !== "undefined" && window.localStorage
+      ? window.localStorage
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function getCacheText(value, maxLength = 5000) {
+  if (value == null) return "";
+  return String(value).trim().slice(0, maxLength);
+}
+
+function getCacheUrl(value) {
+  const url = getCacheText(value, 2048);
+  return isValidUrl(url) ? url : "";
+}
+
+function sanitizePublicItemForCache(item) {
+  const material = normalizarMaterial(item);
+  if (!isPublishedItem(material)) return null;
+
+  const slug = getCacheText(material.slug, 180);
+  const titulo = getCacheText(material.titulo || material["título"], 300);
+  if (!slug || !titulo) return null;
+
+  const palavrasChave = Array.isArray(material.palavrasChave)
+    ? material.palavrasChave
+        .map((palavra) => getCacheText(palavra, 120))
+        .filter(Boolean)
+        .slice(0, 30)
+    : getCacheText(material.palavrasChave || material["palavras-chave"], 1000);
+
+  return {
+    slug,
+    titulo,
+    categoria: getCacheText(material.categoria, 180),
+    formato: getCacheText(material.formato, 180),
+    nivel: getCacheText(material.nivel || material["nível"], 180),
+    tempoLeitura: getCacheText(material.tempoLeitura || material.tempoDeLeitura, 80),
+    versao: getCacheText(material.versao || material["versão"], 80),
+    resumo: getCacheText(material.resumo || material.descricao || material["descrição"]),
+    palavrasChave,
+    destaque: Boolean(material.destaque),
+    dataCadastro: getCacheText(material.dataCadastro, 80),
+    urlCapa: getCacheUrl(material.urlCapa || material.capaUrl),
+    paginaUrl: getCacheUrl(material.paginaUrl),
+    arquivoUrl: getCacheUrl(material.arquivoUrl),
+    formularioUrl: getCacheUrl(material.formularioUrl),
+    cta: getCacheText(material.cta, 120),
+  };
+}
+
+function writeBibliotecaCache(items, now = Date.now()) {
+  const storage = getBibliotecaStorage();
+  if (!storage || !Array.isArray(items)) return false;
+
+  const publicItems = items
+    .map(sanitizePublicItemForCache)
+    .filter(Boolean);
+  if (publicItems.length === 0) return false;
+
+  try {
+    storage.setItem(
+      BIBLIOTECA_CACHE_KEY,
+      JSON.stringify({
+        version: BIBLIOTECA_CACHE_VERSION,
+        savedAt: now,
+        items: publicItems,
+      })
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function clearBibliotecaCache() {
+  const storage = getBibliotecaStorage();
+  if (!storage) return;
+  try {
+    storage.removeItem(BIBLIOTECA_CACHE_KEY);
+  } catch {
+    // O cache é apenas uma otimização local; falhas não bloqueiam a Biblioteca.
+  }
+}
+
+function readBibliotecaCache(now = Date.now()) {
+  const storage = getBibliotecaStorage();
+  if (!storage) return null;
+
+  try {
+    const raw = storage.getItem(BIBLIOTECA_CACHE_KEY);
+    if (!raw) return null;
+
+    const cache = JSON.parse(raw);
+    const isValidCache =
+      cache &&
+      cache.version === BIBLIOTECA_CACHE_VERSION &&
+      Number.isFinite(cache.savedAt) &&
+      now - cache.savedAt >= 0 &&
+      now - cache.savedAt < BIBLIOTECA_CACHE_TTL_MS &&
+      Array.isArray(cache.items);
+
+    if (!isValidCache) {
+      clearBibliotecaCache();
+      return null;
+    }
+
+    const publicItems = cache.items
+      .map(sanitizePublicItemForCache)
+      .filter(Boolean);
+    if (publicItems.length === 0) {
+      clearBibliotecaCache();
+      return null;
+    }
+
+    return publicItems;
+  } catch {
+    clearBibliotecaCache();
+    return null;
+  }
 }
 
 function formatDatePtBr(value) {
@@ -1267,6 +1399,7 @@ async function carregarBiblioteca() {
     }
 
     state.items = data.items;
+    writeBibliotecaCache(state.items);
     state.filtered = [...state.items];
 
     if (state.items.length === 0) {
@@ -1296,6 +1429,24 @@ async function carregarBiblioteca() {
     }
   } catch (error) {
     console.error(error);
+    const cachedItems = readBibliotecaCache();
+    if (cachedItems) {
+      state.items = cachedItems;
+      state.filtered = [...cachedItems];
+
+      if (list) {
+        populateFilters(state.items);
+        restoreLibraryFiltersFromUrl();
+        filterItems({ syncUrl: false });
+        updateStatus("Exibindo cópia local da Biblioteca Viva (modo offline).");
+      }
+      if (homeList) {
+        renderHomeLibrary(state.items);
+        updateHomeStatus("Exibindo cópia local da Biblioteca Viva (modo offline).");
+      }
+      return;
+    }
+
     if (list) {
       setLibraryErrorState();
     }

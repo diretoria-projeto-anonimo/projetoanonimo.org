@@ -142,6 +142,17 @@
     </div>
   </footer>
 
+<script>
+  if (
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost"
+  ) {
+    window.PA_BIBLIOTECA_CONFIG = Object.freeze({
+      apiUrl:
+        "https://script.google.com/macros/s/AKfycbye1nGVgAviu_kCayunvS6SPZ8Isjoz6gBu-KM0onkKqzIh0B_bkTFZtF6iEL5GLDh2/exec",
+    });
+  }
+</script>
 <script src="assets/js/main.js?v=1.5"></script>
 </body>
 
