@@ -81,6 +81,7 @@ const properties = {
 
 let fetchedCredential = "";
 const cacheValues = new Map();
+const uploadedFiles = [];
 const context = {
   console,
   Date,
@@ -135,12 +136,21 @@ const context = {
   DriveApp: {
     Access: { ANYONE_WITH_LINK: "ANYONE_WITH_LINK" },
     Permission: { VIEW: "VIEW" },
-    getFolderById: () => ({
-      createFile: (blob) => ({
-        getId: () => "file-id",
-        getName: () => blob.name,
-        setSharing: () => {},
-      }),
+    getFolderById: (folderId) => ({
+      createFile: (blob) => {
+        const file = {
+          id: `file-${uploadedFiles.length + 1}`,
+          folderId,
+          name: blob.name,
+          mimeType: blob.mimeType,
+        };
+        uploadedFiles.push(file);
+        return {
+          getId: () => file.id,
+          getName: () => file.name,
+          setSharing: () => {},
+        };
+      },
     }),
   },
   LockService: {
@@ -313,6 +323,19 @@ const uploaded = post({
   base64: Buffer.from("pdf").toString("base64"),
 });
 assert.equal(uploaded.ok, true);
-assert.equal(uploaded.id, "file-id");
+assert.equal(uploaded.id, "file-1");
 
 console.log("apps-script.test.cjs: todos os cenários passaram");
+
+module.exports = {
+  cacheValues,
+  context,
+  headers,
+  metricsRows,
+  post,
+  postPublic,
+  properties,
+  rowObject,
+  rows,
+  uploadedFiles,
+};

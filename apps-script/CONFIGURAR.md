@@ -24,7 +24,7 @@ Em **Configurações do projeto > Propriedades do script**, crie:
 | `ALLOWED_EDITOR_EMAILS` | E-mails autorizados, separados por vírgula |
 | `SPREADSHEET_ID` | ID da planilha da Biblioteca Viva |
 | `SHEET_NAME` | Nome da aba; padrão sugerido: `Biblioteca` |
-| `METRICS_SHEET_NAME` | Opcional; nome da aba de métricas. Padrão: `Metricas` |
+| `METRICS_SHEET_NAME` | Opcional; nome da aba de métricas. Padrão: `MetricasV2` |
 | `BIBLIOTECA_PASTA_CAPAS` | ID da pasta do Drive para capas |
 | `BIBLIOTECA_PASTA_ANEXOS` | ID da pasta do Drive para anexos |
 | `BIBLIOTECA_PASTA_PUBLICADOS` | ID da pasta do Drive para PDFs publicados |
@@ -51,7 +51,9 @@ colar os dois valores. O assistente valida o formato antes de alterar o arquivo.
 Uma nova versão da implantação deve ser criada sempre que `Code.gs` mudar.
 
 Antes de implantar, execute `diagnosticarConfiguracao` no editor do Apps Script.
-O registro da execução deve mostrar `"ok": true`.
+O registro da execução deve mostrar `"ok": true`. Se houver qualquer item em
+`faltantes`, interrompa a homologação e corrija as propriedades antes de
+prosseguir.
 
 ## 4. Homologação mínima
 
