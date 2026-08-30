@@ -13,6 +13,23 @@ const MATERIAL_METRICS_API_URL =
   "https://script.google.com/macros/s/AKfycby_YNT0D5RXUyR0snSUvOzmVji6CjVhKjzK0IZdaXxOyo_KQAkO1z5T2cXzXEDoZEI/exec";
 
 const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
+  "plano-30-dias-organizacao-digital": {
+    territorio: "Organização Digital",
+    urlCapa:
+      "../assets/img/library/plano-30-dias-organizacao-digital-v2.webp",
+    altCapa:
+      "Mesa de trabalho vista de cima, com um plano dividido em quatro etapas e um calendário abstrato de 30 marcações, sem pessoas ou texto legível.",
+    creditoCapa:
+      "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
+    etapaJornada: "priorizar → aplicar → revisar",
+    cta: "Montar o plano de 30 dias",
+    ctaDestino: "#preparar",
+    proximoSlug: "checklist-diagnostico-digital",
+    tituloProximoPasso: "Reavalie as prioridades depois de 30 dias",
+    resumoProximoPasso:
+      "Refazer o Checklist de Diagnóstico Digital ajuda a comparar o ponto de partida com o que mudou e a escolher um novo ciclo sem ampliar o escopo cedo demais.",
+    ctaProximoPasso: "Refazer o checklist",
+  },
   "ia-para-organizacoes-sociais": {
     territorio: "Inteligência Artificial Responsável",
     urlCapa: "../assets/img/library/ia-organizacoes-sociais-v2.webp",

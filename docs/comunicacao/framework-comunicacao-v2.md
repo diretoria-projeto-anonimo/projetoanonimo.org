@@ -67,13 +67,23 @@ A capa v2 sem rostos foi gerada com OpenAI e integrada em formatos PNG e WebP. A
 
 ## Material 03 — IA para Organizações Sociais
 
-O próximo material da trilha é `BV-3.1-003 — IA para Organizações Sociais`. A versão pública atual ainda está em `1.0`, usa solicitação externa como CTA principal e não aplica integralmente promessa, limites, progressão e componentes do padrão v3.1.
+O registro `BV-3.1-003 — IA para Organizações Sociais` está **IMPLEMENTADO, PUBLICADO E VALIDADO**.
 
-A especificação e a implementação local estão registradas em `docs/editorial/drafts/ia-para-organizacoes-sociais-v3.1.md` e `docs/comunicacao/bv31-material-03-implementacao-local.md`. O material passa a abrir a trilha:
+A especificação e a implementação estão registradas em `docs/editorial/drafts/ia-para-organizacoes-sociais-v3.1.md` e `docs/comunicacao/bv31-material-03-implementacao-local.md`. O material passou a abrir a trilha:
 
 > IA para Organizações Sociais → Google Workspace para OSCs → Checklist de Diagnóstico Digital → Diagnóstico Organizacional
 
+O PR `#52` foi integrado no commit `d2d8b47`; catálogo, Apps Script e cache foram ativados, e o slug público foi validado com capa v2, conteúdo integral, CTA interno e progressão para Google Workspace.
+
+## Material 04 — Plano de 30 Dias para Organização Digital
+
+O próximo material da trilha é `BV-3.1-004 — Plano de 30 Dias para Organização Digital`. Ele transforma prioridades reconhecidas em um ciclo curto de aplicação:
+
+> Diagnóstico Organizacional → Plano de 30 Dias → revisão do Checklist de Diagnóstico Digital
+
+A especificação editorial v3.1 está registrada em `docs/editorial/drafts/plano-30-dias-organizacao-digital.md`. O material trabalha uma única área-piloto, até três prioridades, quatro semanas, 16 ações, entregáveis semanais e limites contra exclusões ou mudanças irreversíveis.
+
 ## Próximo gate
 
-O pacote local de `BV-3.1-003` está pronto. O próximo gate exige autorização externa para push/PR e, separadamente, integração no catálogo/Apps Script, merge, publicação e validação pública.
+O pacote de `BV-3.1-004` deve avançar por implementação, homologação, PR e catálogo em estado de rascunho. Merge, ativação pública do catálogo/cache e validação do slug permanecem bloqueados até a verificação final anterior à publicação.
 
