@@ -5,6 +5,28 @@ const MATERIAL_API_URL =
 const MATERIAL_METRICS_API_URL =
   "https://script.google.com/macros/s/AKfycby_YNT0D5RXUyR0snSUvOzmVji6CjVhKjzK0IZdaXxOyo_KQAkO1z5T2cXzXEDoZEI/exec";
 
+const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
+  "ia-para-organizacoes-sociais": {
+    urlCapa: "../assets/img/library/ia-organizacoes-sociais-v1.webp",
+  },
+  "google-workspace-para-oscs": {
+    territorio: "Organização Digital",
+    urlCapa: "../assets/img/library/google-workspace-oscs-v2.webp",
+    altCapa:
+      "Mãos de uma equipe colaborando com computadores, cadernos e documentos organizados.",
+    creditoCapa:
+      "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
+    proximoSlug: "checklist-diagnostico-digital",
+    tituloProximoPasso: "Agora observe sua organização como um todo",
+    resumoProximoPasso:
+      "O Checklist de Diagnóstico Digital ajuda a identificar outros pontos de atenção em processos, segurança, dados e canais.",
+    ctaProximoPasso: "Fazer o checklist",
+  },
+  "checklist-diagnostico-digital": {
+    urlCapa: "../assets/img/library/checklist-diagnostico-digital-v1.webp",
+  },
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   iniciarPaginaMaterial().catch((error) => {
     console.error("Erro ao iniciar página de material:", error);
@@ -134,12 +156,19 @@ function renderizarMaterial(material) {
   }
 
   const titulo = obterCampo(material, ["titulo", "título"]) || "Material";
+  const slugMaterial = obterCampo(material, ["slug"]);
+  const configuracaoEditorial =
+    MATERIAL_EDITORIAL_DEFAULTS[slugMaterial] || {};
 
   const resumo =
     obterCampo(material, ["resumo", "descricao", "descrição"]) ||
     "Material da Biblioteca Viva.";
 
   const categoria = obterCampo(material, ["categoria"]);
+  const territorio =
+    obterCampo(material, ["territorio", "território"]) ||
+    configuracaoEditorial.territorio ||
+    categoria;
   const formato = obterCampo(material, ["formato"]);
   const publico = obterCampo(material, ["publico", "público"]);
   const nivel = obterCampo(material, ["nivel", "nível"]);
@@ -174,9 +203,10 @@ function renderizarMaterial(material) {
     obterCampo(material, ["urlDoFormulario", "urlFormulario"])
   );
 
-  const urlCapa = validarUrl(
-    obterCampo(material, ["urlDaCapa", "urlCapa"])
-  );
+  const urlCapa =
+    validarUrl(obterCampo(material, ["urlDaCapa", "urlCapa"])) ||
+    configuracaoEditorial.urlCapa ||
+    "";
 const urlPdf = validarUrl(
   obterCampo(material, ["urlDoPdf", "urlPdf", "url do pdf"])
 );
@@ -219,12 +249,22 @@ const creditoMidia = obterCampo(material, [
   "creditoMidia",
   "crédito da mídia",
 ]);
+const creditoCapa =
+  obterCampo(material, [
+    "creditoDaCapa",
+    "creditoCapa",
+    "crédito da capa",
+  ]) ||
+  configuracaoEditorial.creditoCapa ||
+  creditoMidia;
   const textoAlternativo =
     obterCampo(material, [
       "textoAlternativoDaCapa",
       "altDaCapa",
       "texto alternativo da capa",
-    ]) || `Capa do material ${titulo}`;
+    ]) ||
+    configuracaoEditorial.altCapa ||
+    `Capa do material ${titulo}`;
 
 if (urlVideo) {
   botoesMaterial.push(`
@@ -316,6 +356,13 @@ const videoHtml = videoId
           alt="${escaparAtributo(textoAlternativo)}"
           loading="lazy"
         >
+        ${
+          creditoCapa
+            ? `<figcaption class="material-cover-caption">${escaparHtml(
+                creditoCapa
+              )}</figcaption>`
+            : ""
+        }
       </figure>
     `
     : "";
@@ -341,6 +388,55 @@ const conteudoHtml = conteudoMarkdown
     </section>
   `
   : "";
+
+  const proximoSlug =
+    obterCampo(material, ["proximoSlug", "próximo slug"]) ||
+    configuracaoEditorial.proximoSlug ||
+    "";
+  const tituloProximoPasso =
+    obterCampo(material, [
+      "tituloProximoPasso",
+      "título próximo passo",
+    ]) ||
+    configuracaoEditorial.tituloProximoPasso ||
+    "";
+  const resumoProximoPasso =
+    obterCampo(material, [
+      "resumoProximoPasso",
+      "resumo próximo passo",
+    ]) ||
+    configuracaoEditorial.resumoProximoPasso ||
+    "";
+  const ctaProximoPasso =
+    obterCampo(material, ["ctaProximoPasso", "cta próximo passo"]) ||
+    configuracaoEditorial.ctaProximoPasso ||
+    "Continuar aprendendo";
+  const urlProximoPasso =
+    validarUrl(obterCampo(material, ["urlProximoPasso"])) ||
+    (proximoSlug
+      ? `material.html?slug=${encodeURIComponent(proximoSlug)}`
+      : "");
+
+  const proximoPassoHtml = tituloProximoPasso && urlProximoPasso
+    ? `
+      <section class="material-next-step" aria-labelledby="proximo-passo-titulo">
+        <p class="eyebrow">PRÓXIMO PASSO</p>
+        <h2 id="proximo-passo-titulo">${escaparHtml(tituloProximoPasso)}</h2>
+        ${
+          resumoProximoPasso
+            ? `<p>${escaparHtml(resumoProximoPasso)}</p>`
+            : ""
+        }
+        ${criarLinkBotao({
+          url: urlProximoPasso,
+          texto: ctaProximoPasso,
+          classe: "button button-primary",
+          tipoMetrica: "clique",
+          material,
+        })}
+      </section>
+    `
+    : "";
 
   const botaoPrincipal = urlArquivo
     ? criarLinkBotao({
@@ -372,8 +468,8 @@ const metadadosHtml = metadados
       <div class="material-body">
         <div class="material-tags">
           ${
-            categoria
-              ? `<span class="tag">${escaparHtml(categoria)}</span>`
+            territorio
+              ? `<span class="tag">${escaparHtml(territorio)}</span>`
               : ""
           }
 
@@ -396,6 +492,7 @@ const metadadosHtml = metadados
         ${metadadosHtml}
         ${palavrasHtml}
         ${conteudoHtml}
+        ${proximoPassoHtml}
 
         <div class="material-actions">
           ${botaoPrincipal}
@@ -552,13 +649,30 @@ function criarCardRelacionado(item) {
   const categoria = obterCampo(item, ["categoria"]);
   const formato = obterCampo(item, ["formato"]);
   const slug = obterCampo(item, ["slug"]);
+  const capa = obterCapaMaterial(item);
+  const textoAlternativo =
+    obterCampo(item, ["altCapa", "textoAlternativoDaCapa"]) ||
+    `Ilustração do material ${titulo}`;
 
   const href = slug
     ? `material.html?slug=${encodeURIComponent(slug)}`
     : "../biblioteca.html";
 
   return `
-    <article class="biblioteca-card">
+    <a
+      class="biblioteca-card biblioteca-card-link"
+      href="${escaparAtributo(href)}"
+      aria-label="Explorar material: ${escaparAtributo(titulo)}"
+    >
+      ${
+        capa
+          ? `<div class="related-material-cover"><img src="${escaparAtributo(
+              capa
+            )}" alt="${escaparAtributo(
+              textoAlternativo
+            )}" loading="lazy" decoding="async"></div>`
+          : ""
+      }
       <div class="biblioteca-card-content">
         <div class="material-tags">
           ${
@@ -582,12 +696,25 @@ function criarCardRelacionado(item) {
             : ""
         }
 
-        <a href="${escaparAtributo(href)}">
-          Conhecer material
-        </a>
+        <span class="related-material-cta" aria-hidden="true">
+          Explorar material →
+        </span>
       </div>
-    </article>
+    </a>
   `;
+}
+
+function obterCapaMaterial(material) {
+  const configurada = validarUrl(
+    obterCampo(material, ["urlDaCapa", "urlCapa"])
+  );
+
+  if (configurada) {
+    return configurada;
+  }
+
+  const slug = obterCampo(material, ["slug"]);
+  return MATERIAL_EDITORIAL_DEFAULTS[slug]?.urlCapa || "";
 }
 
 function mostrarErroMaterial(mensagem) {
@@ -973,12 +1100,20 @@ function atualizarAno() {
 function markdownSeguroParaHtml(markdown) {
   const linhas = String(markdown || "").split(/\r?\n/);
   const partes = [];
-  let listaAberta = false;
+  let listaAberta = "";
+  let citacaoAberta = false;
 
   function fecharLista() {
     if (listaAberta) {
-      partes.push("</ul>");
-      listaAberta = false;
+      partes.push(`</${listaAberta}>`);
+      listaAberta = "";
+    }
+  }
+
+  function fecharCitacao() {
+    if (citacaoAberta) {
+      partes.push("</blockquote>");
+      citacaoAberta = false;
     }
   }
 
@@ -987,8 +1122,36 @@ function markdownSeguroParaHtml(markdown) {
 
     if (!linha) {
       fecharLista();
+      fecharCitacao();
       continue;
     }
+
+    if (linha.startsWith(">")) {
+      fecharLista();
+      const conteudoCitacao = linha.replace(/^>\s?/, "");
+
+      if (!citacaoAberta) {
+        const tipo = normalizarTexto(conteudoCitacao);
+        const modificador = tipo.includes("atencao")
+          ? " editorial-callout-attention"
+          : tipo.includes("na pratica")
+            ? " editorial-callout-practice"
+            : tipo.includes("pergunte")
+              ? " editorial-callout-question"
+              : tipo.includes("modelo")
+                ? " editorial-callout-model"
+                : "";
+        partes.push(`<blockquote class="editorial-callout${modificador}">`);
+        citacaoAberta = true;
+      }
+
+      if (conteudoCitacao) {
+        partes.push(`<p>${formatarInlineSeguro(conteudoCitacao)}</p>`);
+      }
+      continue;
+    }
+
+    fecharCitacao();
 
     if (linha.startsWith("### ")) {
       fecharLista();
@@ -1014,14 +1177,21 @@ function markdownSeguroParaHtml(markdown) {
       continue;
     }
 
-    if (linha.startsWith("- ")) {
-      if (!listaAberta) {
-        partes.push("<ul>");
-        listaAberta = true;
+    const itemNaoOrdenado = linha.match(/^-\s+(.+)$/);
+    const itemOrdenado = linha.match(/^\d+\.\s+(.+)$/);
+
+    if (itemNaoOrdenado || itemOrdenado) {
+      const tipoLista = itemOrdenado ? "ol" : "ul";
+      if (listaAberta !== tipoLista) {
+        fecharLista();
+        partes.push(`<${tipoLista}>`);
+        listaAberta = tipoLista;
       }
 
       partes.push(
-        `<li>${formatarInlineSeguro(linha.slice(2))}</li>`
+        `<li>${formatarInlineSeguro(
+          (itemOrdenado || itemNaoOrdenado)[1]
+        )}</li>`
       );
       continue;
     }
@@ -1034,6 +1204,7 @@ function markdownSeguroParaHtml(markdown) {
   }
 
   fecharLista();
+  fecharCitacao();
 
   return partes.join("");
 }

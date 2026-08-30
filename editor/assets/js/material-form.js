@@ -219,6 +219,8 @@ function preencherFormulario(material) {
       "urldacapa",
       "urlCapa",
     ],
+    altCapa: ["altcapa", "altCapa"],
+    creditoCapa: ["creditocapa", "creditoCapa"],
 
     urlVideo: [
       "urlvideo",
@@ -233,6 +235,21 @@ function preencherFormulario(material) {
     ],
 
     cta: ["cta"],
+    territorio: ["territorio"],
+    etapaJornada: ["etapajornada", "etapaJornada"],
+    proximoSlug: ["proximoslug", "proximoSlug"],
+    tituloProximoPasso: [
+      "tituloproximopasso",
+      "tituloProximoPasso",
+    ],
+    resumoProximoPasso: [
+      "resumoproximopasso",
+      "resumoProximoPasso",
+    ],
+    ctaProximoPasso: [
+      "ctaproximopasso",
+      "ctaProximoPasso",
+    ],
     destaque: ["destaque"],
     status: ["status"],
 

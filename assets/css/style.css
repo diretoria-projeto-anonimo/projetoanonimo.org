@@ -584,6 +584,27 @@ select:focus-visible {
   overflow: hidden;
 }
 
+.library-card-link {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.library-card-link:not(.library-card-link-disabled):hover {
+  transform: translateY(-0.25rem);
+  border-color: rgba(11, 93, 85, 0.38);
+  box-shadow: 0 1.25rem 3rem rgba(11, 61, 58, 0.14);
+}
+
+.library-card-link:focus-visible,
+.biblioteca-card-link:focus-visible {
+  outline: 3px solid #f2b544;
+  outline-offset: 4px;
+}
+
 .cover {
   min-height: 180px;
   background: linear-gradient(180deg, rgba(11, 93, 85, 0.18), rgba(11, 93, 85, 0.04));
@@ -684,6 +705,12 @@ select:focus-visible {
 
 .card-cta:hover,
 .card-cta:focus-visible {
+  transform: translateY(-1px);
+  background: #06413a;
+}
+
+.library-card-link:hover .card-cta,
+.library-card-link:focus-visible .card-cta {
   transform: translateY(-1px);
   background: #06413a;
 }
@@ -966,6 +993,14 @@ select:focus-visible {
   object-fit: cover;
 }
 
+.material-cover-caption {
+  padding: 0.8rem 1rem 1rem;
+  background: #ffffff;
+  color: #48635f;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
 .material-body {
   min-width: 0;
   padding: clamp(1.5rem, 4vw, 3.5rem);
@@ -1128,6 +1163,41 @@ select:focus-visible {
     box-shadow 180ms ease;
 }
 
+.biblioteca-card-link {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+}
+
+.related-material-cover {
+  margin: -1.5rem -1.5rem 0;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #dcece6;
+}
+
+.related-material-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.biblioteca-card-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.related-material-cta {
+  margin-top: auto;
+  padding-top: 1rem;
+  color: var(--green-dark, #075e54);
+  font-weight: 700;
+}
+
 .related-materials .biblioteca-card:hover {
   transform: translateY(-0.25rem);
   box-shadow: 0 1rem 2.5rem rgba(11, 61, 58, 0.1);
@@ -1157,6 +1227,53 @@ select:focus-visible {
       rgba(205, 231, 223, 0.8),
       rgba(236, 251, 242, 0.95)
     );
+}
+
+.material-next-step {
+  margin-top: 3rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid rgba(11, 93, 85, 0.18);
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, #edf8f2, #f7fbf8);
+}
+
+.material-next-step h2 {
+  margin: 0.6rem 0 0.85rem;
+  font-size: clamp(1.6rem, 3vw, 2.35rem);
+}
+
+.material-next-step p:not(.eyebrow) {
+  max-width: 48rem;
+  color: #385653;
+  line-height: 1.7;
+}
+
+.editorial-callout {
+  margin: 1.75rem 0;
+  padding: 1.25rem 1.4rem;
+  border-left: 0.35rem solid var(--green, #0b5d55);
+  border-radius: 0 1rem 1rem 0;
+  background: #f0f8f4;
+  color: #173e39;
+}
+
+.editorial-callout p {
+  margin: 0.45rem 0;
+}
+
+.editorial-callout-attention {
+  border-left-color: #b86d17;
+  background: #fff7e8;
+}
+
+.editorial-callout-question {
+  border-left-color: #315f8c;
+  background: #eef5fb;
+}
+
+.editorial-callout-model {
+  border-left-color: #68498c;
+  background: #f6f1fb;
 }
 
 .cta-panel h2 {
@@ -1233,7 +1350,8 @@ select:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .related-materials .biblioteca-card {
+  .related-materials .biblioteca-card,
+  .library-card-link {
     transition: none;
   }
 }

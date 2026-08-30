@@ -24,11 +24,30 @@ assert.match(dashboardHtml, /id="total-downloads"/);
 assert.match(dashboardHtml, /id="ultima-atividade"/);
 
 const materialJs = read("assets/js/material.js");
+const mainJs = read("assets/js/main.js");
+const styleCss = read("assets/css/style.css");
 assert.match(materialJs, /action:\s*"recordMetric"/);
+assert.match(mainJs, /class="card library-card-link"/);
+assert.match(mainJs, /isInternalMaterial/);
+assert.match(
+  mainJs,
+  /<span class="card-cta" aria-hidden="true">\$\{cta\}<\/span>/
+);
+assert.match(materialJs, /material-cover-caption/);
+assert.match(materialJs, /material-next-step/);
+assert.match(materialJs, /biblioteca-card biblioteca-card-link/);
+assert.match(materialJs, /editorial-callout/);
+assert.match(styleCss, /\.library-card-link:focus-visible/);
+assert.match(styleCss, /\.material-next-step/);
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/google-workspace-oscs-v2.webp")));
 
 assert.match(formJs, /action:\s*"getMaterial"/);
 assert.match(formJs, /modoEdicao\s*\?\s*"updateMaterial"\s*:\s*"createMaterial"/);
 assert.match(formJs, /await carregarMaterial\(\)/);
+assert.match(formHtml, /name="altCapa"/);
+assert.match(formHtml, /name="creditoCapa"/);
+assert.match(formHtml, /name="proximoSlug"/);
+assert.match(formJs, /ctaProximoPasso/);
 assert.doesNotMatch(formHtml, /name="editorToken"/);
 assert.doesNotMatch(formJs, /paEditorToken|editorToken/);
 

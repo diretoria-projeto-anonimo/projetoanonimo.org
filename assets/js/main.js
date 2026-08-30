@@ -351,7 +351,7 @@ function getFetchUrl(item) {
 
 const LIBRARY_COVER_IMAGES = Object.freeze({
   "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v1.webp",
-  "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v1.webp",
+  "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v2.webp",
   "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v1.webp"
 });
 
@@ -380,7 +380,7 @@ function buildCard(item) {
   );
 
   const category = escapeHTML(
-    material.categoria || "Material"
+    material.territorio || material.categoria || "Material"
   );
 
   const format = escapeHTML(
@@ -416,28 +416,46 @@ function buildCard(item) {
   const coverUrl = getLibraryCoverImage(material);
   const coverAlt = escapeHTML(`Ilustração do material ${rawTitle}`);
 
-  const targetAttrs = hasUrl
+  const isInternalMaterial = /^biblioteca\/material\.html(?:\?|$)/.test(url);
+  const targetAttrs = hasUrl && !isInternalMaterial
     ? `target="_blank" rel="noopener"`
     : "";
 
+  const cardContent = `
+    <div class="cover library-cover">
+      ${coverUrl ? `<img src="${coverUrl}" alt="${coverAlt}" width="1200" height="800" loading="lazy" decoding="async">` : '<div class="cover-fallback">Biblioteca Viva</div>'}
+    </div>
+    <div class="card-body">
+      <span class="tag">${category}</span>
+      <h3>${title}</h3>
+      <p class="summary">${summary}</p>
+      <div class="meta">
+        <span><strong>Formato:</strong> ${format}</span>
+        <span><strong>Nível:</strong> ${level}</span>
+        ${time ? `<span><strong>Tempo:</strong> ${time}</span>` : ""}
+        ${version ? `<span><strong>Versão:</strong> ${version}</span>` : ""}
+      </div>
+      <span class="card-cta" aria-hidden="true">${cta}</span>
+    </div>
+  `;
+
+  if (!hasUrl) {
+    return `
+      <article class="card library-card-link library-card-link-disabled">
+        ${cardContent}
+      </article>
+    `;
+  }
+
   return `
-    <article class="card">
-      <div class="cover library-cover">
-        ${coverUrl ? `<img src="${coverUrl}" alt="${coverAlt}" width="1200" height="800" loading="lazy" decoding="async">` : '<div class="cover-fallback">Biblioteca Viva</div>'}
-      </div>
-      <div class="card-body">
-        <span class="tag">${category}</span>
-        <h3>${title}</h3>
-        <p class="summary">${summary}</p>
-        <div class="meta">
-          <span><strong>Formato:</strong> ${format}</span>
-          <span><strong>Nível:</strong> ${level}</span>
-          ${time ? `<span><strong>Tempo:</strong> ${time}</span>` : ""}
-          ${version ? `<span><strong>Versão:</strong> ${version}</span>` : ""}
-        </div>
-        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
-      </div>
-    </article>
+    <a
+      class="card library-card-link"
+      href="${url}"
+      ${targetAttrs}
+      aria-label="${cta}: ${title}"
+    >
+      ${cardContent}
+    </a>
   `;
 }
 

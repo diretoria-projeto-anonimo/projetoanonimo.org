@@ -356,7 +356,10 @@ function ensureHeaders_(sheet, payload) {
     "id", "titulo", "slug", "categoria", "formato", "resumo", "publico",
     "nivel", "tempoLeitura", "versao", "autor", "licenca", "urlArquivo",
     "urlCapa", "urlVideo", "urlFormulario", "cta", "destaque", "status",
-    "palavrasChave", "conteudoMarkdown", "anexos", "data", "ultimaRevisao"
+    "palavrasChave", "conteudoMarkdown", "anexos", "data", "ultimaRevisao",
+    "altCapa", "creditoCapa", "territorio", "etapaJornada",
+    "proximoSlug", "tituloProximoPasso", "resumoProximoPasso",
+    "ctaProximoPasso"
   ];
   const lastColumn = Math.max(sheet.getLastColumn(), 1);
   let headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0]
@@ -400,7 +403,15 @@ function canonicalKey_(value) {
     urldoformulario: "urlFormulario",
     palavraschave: "palavrasChave",
     conteudomarkdown: "conteudoMarkdown",
-    ultimarevisao: "ultimaRevisao"
+    ultimarevisao: "ultimaRevisao",
+    altcapa: "altCapa",
+    creditocapa: "creditoCapa",
+    territorio: "territorio",
+    etapajornada: "etapaJornada",
+    proximoslug: "proximoSlug",
+    tituloproximopasso: "tituloProximoPasso",
+    resumoproximopasso: "resumoProximoPasso",
+    ctaproximopasso: "ctaProximoPasso"
   };
   return aliases[normalized] || normalized;
 }
