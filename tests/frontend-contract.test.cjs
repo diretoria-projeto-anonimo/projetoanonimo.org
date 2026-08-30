@@ -46,6 +46,7 @@ assert.match(materialJs, /editorial-callout/);
 assert.match(materialJs, /ctaDestino/);
 assert.match(materialJs, /urlProximoPasso/);
 assert.match(materialJs, /checklist-diagnostico-digital-v2\.webp/);
+assert.match(materialJs, /ia-organizacoes-sociais-v2\.webp/);
 assert.match(materialJs, /Imagem ilustrativa gerada por IA com OpenAI/);
 assert.match(materialJs, /criarMetadado\("Etapa da jornada", etapaJornada\)/);
 assert.match(materialJs, /"altCapa",\s*"textoAlternativoDaCapa"/);
@@ -56,10 +57,10 @@ assert.match(styleCss, /\.material-next-step/);
 assert.match(styleCss, /\.diagnostic-checklist-option:focus-within/);
 assert.match(styleCss, /\.diagnostic-checklist-option:has\(input:checked\)/);
 assert.match(materialHtml, /style\.css\?v=1\.7/);
-assert.match(materialHtml, /material\.js\?v=1\.9/);
+assert.match(materialHtml, /material\.js\?v=2\.0/);
 assert.match(bibliotecaHtml, /style\.css\?v=1\.7/);
-assert.match(bibliotecaHtml, /assets\/js\/main\.js\?v=1\.6/);
-assert.match(indexHtml, /assets\/js\/main\.js\?v=1\.6/);
+assert.match(bibliotecaHtml, /assets\/js\/main\.js\?v=1\.7/);
+assert.match(indexHtml, /assets\/js\/main\.js\?v=1\.7/);
 assert.match(mainJs, /checklist-diagnostico-digital-v2\.webp/);
 assert.equal(
   (checklistDraft.match(/^- \[ \] /gm) || []).length,
@@ -69,6 +70,8 @@ assert.equal(
 assert.ok(fs.existsSync(path.join(root, "assets/img/library/google-workspace-oscs-v2.webp")));
 assert.ok(fs.existsSync(path.join(root, "assets/img/library/checklist-diagnostico-digital-v2.png")));
 assert.ok(fs.existsSync(path.join(root, "assets/img/library/checklist-diagnostico-digital-v2.webp")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/ia-organizacoes-sociais-v2.png")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/ia-organizacoes-sociais-v2.webp")));
 
 assert.match(formJs, /action:\s*"getMaterial"/);
 assert.match(formJs, /modoEdicao\s*\?\s*"updateMaterial"\s*:\s*"createMaterial"/);

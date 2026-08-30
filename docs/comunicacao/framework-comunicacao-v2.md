@@ -1,9 +1,9 @@
 # Framework de Comunicação v2 — registro de implementação e validação
 
 **Data:** 30/08/2026
-**Estado:** PILOTO 01 VALIDADO EM PRODUÇÃO · PILOTO 02 IMPLEMENTADO LOCALMENTE
-**Pilotos:** Biblioteca Viva v3.1 — Google Workspace para OSCs e Checklist de Diagnóstico Digital para OSCs
-**Registros:** BV-3.1-001 e BV-3.1-002
+**Estado:** PILOTOS 01 E 02 VALIDADOS EM PRODUÇÃO · MATERIAL 03 IMPLEMENTADO E HOMOLOGADO LOCALMENTE
+**Materiais:** Biblioteca Viva v3.1 — Google Workspace para OSCs, Checklist de Diagnóstico Digital para OSCs e IA para Organizações Sociais
+**Registros:** BV-3.1-001, BV-3.1-002 e BV-3.1-003
 
 ## Direção aprovada
 
@@ -44,9 +44,9 @@ A Biblioteca Viva funciona como experiência de aprendizagem e aplicação, não
 
 O registro `BV-3.1-001` está **IMPLEMENTADO, PUBLICADO E VALIDADO**. A manutenção editorial e a observação contínua de métricas permanecem atividades operacionais, não pendências de encerramento.
 
-## Piloto 02 — implementação local controlada
+## Encerramento do piloto 02
 
-O material `BV-3.1-002 — Checklist de Diagnóstico Digital para OSCs` foi implementado localmente na branch `feature/bv31-pilot-02-checklist`, a partir de `origin/main` no commit `af7dc1b37a186f589583fdfcb0388b68f1a8e049`.
+O material `BV-3.1-002 — Checklist de Diagnóstico Digital para OSCs` está **IMPLEMENTADO, PUBLICADO E VALIDADO**.
 
 O corte local inclui:
 
@@ -56,12 +56,24 @@ O corte local inclui:
 - interação sem formulário, pontuação, envio, armazenamento ou persistência;
 - CTA primário para o próprio checklist e progressão interna para o Diagnóstico Organizacional;
 - novos campos editoriais para SEO e CTAs;
-- cache de assets atualizado para `v=1.7`;
-- testes de contrato, renderer, privacidade e homologação local.
+- cache do renderer atualizado para `v=1.9`;
+- testes de contrato, renderer e privacidade aprovados;
+- registro `PA-LIB-003` publicado no catálogo mestre;
+- Apps Script editorial implantado na versão 7;
+- GitHub Pages `#55` concluído com sucesso;
+- slug público validado com 25 grupos, 100 opções, capa v2 e progressão para o Diagnóstico Organizacional.
 
-A capa v2 sem rostos foi gerada com OpenAI, homologada e integrada localmente em formatos PNG e WebP. A imagem representa cinco dimensões e três prioridades sem texto legível, PII, marcas ou interfaces de terceiros. Esta implementação não inclui push, PR, merge, alteração do catálogo externo, implantação do Apps Script ou publicação.
+A capa v2 sem rostos foi gerada com OpenAI e integrada em formatos PNG e WebP. A imagem representa cinco dimensões e três prioridades sem texto legível, PII, marcas ou interfaces de terceiros.
+
+## Material 03 — IA para Organizações Sociais
+
+O próximo material da trilha é `BV-3.1-003 — IA para Organizações Sociais`. A versão pública atual ainda está em `1.0`, usa solicitação externa como CTA principal e não aplica integralmente promessa, limites, progressão e componentes do padrão v3.1.
+
+A especificação e a implementação local estão registradas em `docs/editorial/drafts/ia-para-organizacoes-sociais-v3.1.md` e `docs/comunicacao/bv31-material-03-implementacao-local.md`. O material passa a abrir a trilha:
+
+> IA para Organizações Sociais → Google Workspace para OSCs → Checklist de Diagnóstico Digital → Diagnóstico Organizacional
 
 ## Próximo gate
 
-O commit local deste corte está autorizado. Integração externa, push, PR, merge e publicação continuam dependentes de autorizações próprias.
+O pacote local de `BV-3.1-003` está pronto. O próximo gate exige autorização externa para push/PR e, separadamente, integração no catálogo/Apps Script, merge, publicação e validação pública.
 
