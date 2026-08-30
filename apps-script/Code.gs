@@ -359,7 +359,8 @@ function ensureHeaders_(sheet, payload) {
     "palavrasChave", "conteudoMarkdown", "anexos", "data", "ultimaRevisao",
     "altCapa", "creditoCapa", "territorio", "etapaJornada",
     "proximoSlug", "tituloProximoPasso", "resumoProximoPasso",
-    "ctaProximoPasso"
+    "ctaProximoPasso", "urlProximoPasso", "ctaDestino",
+    "tituloSeo", "descricaoSeo"
   ];
   const lastColumn = Math.max(sheet.getLastColumn(), 1);
   let headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0]
@@ -411,7 +412,11 @@ function canonicalKey_(value) {
     proximoslug: "proximoSlug",
     tituloproximopasso: "tituloProximoPasso",
     resumoproximopasso: "resumoProximoPasso",
-    ctaproximopasso: "ctaProximoPasso"
+    ctaproximopasso: "ctaProximoPasso",
+    urlproximopasso: "urlProximoPasso",
+    ctadestino: "ctaDestino",
+    tituloseo: "tituloSeo",
+    descricaoseo: "descricaoSeo"
   };
   return aliases[normalized] || normalized;
 }

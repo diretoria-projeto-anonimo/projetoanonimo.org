@@ -1,9 +1,9 @@
 # Framework de Comunicação v2 — registro de implementação e validação
 
 **Data:** 30/08/2026
-**Estado:** PILOTO 01 VALIDADO EM PRODUÇÃO
-**Piloto:** Biblioteca Viva v3.1 — Google Workspace para OSCs
-**Registro:** BV-3.1-001
+**Estado:** PILOTO 01 VALIDADO EM PRODUÇÃO · PILOTO 02 IMPLEMENTADO LOCALMENTE
+**Pilotos:** Biblioteca Viva v3.1 — Google Workspace para OSCs e Checklist de Diagnóstico Digital para OSCs
+**Registros:** BV-3.1-001 e BV-3.1-002
 
 ## Direção aprovada
 
@@ -44,7 +44,24 @@ A Biblioteca Viva funciona como experiência de aprendizagem e aplicação, não
 
 O registro `BV-3.1-001` está **IMPLEMENTADO, PUBLICADO E VALIDADO**. A manutenção editorial e a observação contínua de métricas permanecem atividades operacionais, não pendências de encerramento.
 
+## Piloto 02 — implementação local controlada
+
+O material `BV-3.1-002 — Checklist de Diagnóstico Digital para OSCs` foi implementado localmente na branch `feature/bv31-pilot-02-checklist`, a partir de `origin/main` no commit `af7dc1b37a186f589583fdfcb0388b68f1a8e049`.
+
+O corte local inclui:
+
+- promessa, metadados SEO, jornada e conteúdo editorial v3.1;
+- cinco dimensões e 25 itens observáveis;
+- quatro respostas por item: Sim, Parcial, Não e Não se aplica;
+- interação sem formulário, pontuação, envio, armazenamento ou persistência;
+- CTA primário para o próprio checklist e progressão interna para o Diagnóstico Organizacional;
+- novos campos editoriais para SEO e CTAs;
+- cache de assets atualizado para `v=1.7`;
+- testes de contrato, renderer, privacidade e homologação local.
+
+A capa v2 sem rostos foi gerada com OpenAI, homologada e integrada localmente em formatos PNG e WebP. A imagem representa cinco dimensões e três prioridades sem texto legível, PII, marcas ou interfaces de terceiros. Esta implementação não inclui push, PR, merge, alteração do catálogo externo, implantação do Apps Script ou publicação.
+
 ## Próximo gate
 
-Selecionar o material-piloto 02 e aplicar o mesmo contrato editorial, visual, técnico e de validação, sem ampliar o contrato de métricas antes de especificação própria.
+O commit local deste corte está autorizado. Integração externa, push, PR, merge e publicação continuam dependentes de autorizações próprias.
 
