@@ -315,6 +315,14 @@ assert.equal(
   rowObject("novo-material").urlProximoPasso,
   "/diagnostico-organizacional.html"
 );
+assert.equal(context.canonicalKey_("Texto alternativo da capa"), "altCapa");
+assert.equal(context.canonicalKey_("Crédito da capa"), "creditoCapa");
+assert.equal(context.canonicalKey_("Etapa da jornada"), "etapaJornada");
+assert.equal(context.canonicalKey_("Título do próximo passo"), "tituloProximoPasso");
+assert.equal(context.canonicalKey_("Resumo do próximo passo"), "resumoProximoPasso");
+assert.equal(context.canonicalKey_("CTA do próximo passo"), "ctaProximoPasso");
+assert.equal(context.canonicalKey_("URL do próximo passo"), "urlProximoPasso");
+assert.equal(context.canonicalKey_("Destino do CTA"), "ctaDestino");
 assert.equal(rowObject("novo-material").tituloSeo, "Novo material para OSCs");
 assert.equal(
   rowObject("novo-material").descricaoSeo,
