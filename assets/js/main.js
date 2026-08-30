@@ -493,9 +493,10 @@ function getFetchUrl(item) {
 } 
 
 const LIBRARY_COVER_IMAGES = Object.freeze({
-  "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v1.webp",
+  "plano-30-dias-organizacao-digital": "assets/img/library/plano-30-dias-organizacao-digital-v2.webp",
+  "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v2.webp",
   "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v2.webp",
-  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v1.webp"
+  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v2.webp"
 });
 
 function getLibraryCoverImage(material) {

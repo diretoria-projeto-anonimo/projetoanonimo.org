@@ -359,7 +359,8 @@ function ensureHeaders_(sheet, payload) {
     "palavrasChave", "conteudoMarkdown", "anexos", "data", "ultimaRevisao",
     "altCapa", "creditoCapa", "territorio", "etapaJornada",
     "proximoSlug", "tituloProximoPasso", "resumoProximoPasso",
-    "ctaProximoPasso"
+    "ctaProximoPasso", "urlProximoPasso", "ctaDestino",
+    "tituloSeo", "descricaoSeo"
   ];
   const lastColumn = Math.max(sheet.getLastColumn(), 1);
   let headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0]
@@ -405,13 +406,25 @@ function canonicalKey_(value) {
     conteudomarkdown: "conteudoMarkdown",
     ultimarevisao: "ultimaRevisao",
     altcapa: "altCapa",
+    textoalternativodacapa: "altCapa",
     creditocapa: "creditoCapa",
+    creditodacapa: "creditoCapa",
     territorio: "territorio",
     etapajornada: "etapaJornada",
+    etapadajornada: "etapaJornada",
     proximoslug: "proximoSlug",
     tituloproximopasso: "tituloProximoPasso",
+    titulodoproximopasso: "tituloProximoPasso",
     resumoproximopasso: "resumoProximoPasso",
-    ctaproximopasso: "ctaProximoPasso"
+    resumodoproximopasso: "resumoProximoPasso",
+    ctaproximopasso: "ctaProximoPasso",
+    ctadoproximopasso: "ctaProximoPasso",
+    urlproximopasso: "urlProximoPasso",
+    urldoproximopasso: "urlProximoPasso",
+    ctadestino: "ctaDestino",
+    destinodocta: "ctaDestino",
+    tituloseo: "tituloSeo",
+    descricaoseo: "descricaoSeo"
   };
   return aliases[normalized] || normalized;
 }

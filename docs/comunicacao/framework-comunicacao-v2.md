@@ -1,41 +1,89 @@
-# Framework de Comunicação v2 — registro de implementação local
+# Framework de Comunicação v2 — registro de implementação e validação
 
-**Data:** 30/08/2026  
-**Estado:** IMPLEMENTADO LOCALMENTE; NÃO PUBLICADO  
-**Piloto:** Biblioteca Viva v3.1 — Google Workspace para OSCs
+**Data:** 30/08/2026
+**Estado:** PILOTOS 01 E 02 VALIDADOS EM PRODUÇÃO · MATERIAL 03 IMPLEMENTADO E HOMOLOGADO LOCALMENTE
+**Materiais:** Biblioteca Viva v3.1 — Google Workspace para OSCs, Checklist de Diagnóstico Digital para OSCs e IA para Organizações Sociais
+**Registros:** BV-3.1-001, BV-3.1-002 e BV-3.1-003
 
 ## Direção aprovada
 
-A comunicação passa a seguir a jornada:
+A comunicação segue a jornada:
 
 > descobrir → compreender → aplicar → avaliar → priorizar → transformar → compartilhar
 
 A Biblioteca Viva funciona como experiência de aprendizagem e aplicação, não apenas como catálogo. O piloto reposiciona “Google Workspace para OSCs” como guia de organização institucional usando ferramentas digitais.
 
-## Corte implementado
+## Corte implementado e publicado
 
 - cards inteiros clicáveis, com foco visível e destino interno na mesma aba;
-- capa v2 sem rostos para o piloto;
-- fallback de capa no card e na página individual;
+- capa sem rostos, PII ou marca de terceiros;
 - crédito e texto alternativo da capa;
-- imagens em materiais relacionados;
-- bloco contextual de próximo passo;
-- callouts editoriais seguros em Markdown;
-- campos editoriais de território, jornada, capa e progressão;
-- testes de contrato correspondentes.
+- conteúdo editorial completo e metadados v3.1;
+- território Organização Digital e etapa compreender → aplicar;
+- bloco contextual de próximo passo para o Checklist de Diagnóstico Digital;
+- callouts editoriais, subtítulos de quarto nível, blocos de código e código inline em Markdown seguro;
+- data editorial preservada como data de calendário, sem deslocamento por fuso horário;
+- campos editoriais de território, jornada, capa e progressão no catálogo mestre;
+- contrato de métricas `1.2.0` preservado;
+- testes de contrato e renderização correspondentes.
 
-## Limites
+## Evidências de validação
 
-- nenhuma planilha, Drive ou implantação do Apps Script foi alterada;
-- nenhum conteúdo foi publicado;
-- nenhuma alteração foi staged, commitada, enviada ou integrada;
-- o contrato de métricas `1.2.0` foi preservado;
-- o conteúdo definitivo do piloto permanece em revisão editorial antes da escrita externa.
+- catálogo público: `https://projetoanonimo.org/biblioteca.html`;
+- material público: `https://projetoanonimo.org/biblioteca/material.html?slug=google-workspace-para-oscs`;
+- catálogo mestre: `PA-LIB-002 — Catálogo Mestre da Biblioteca Viva`, registro `PA-LIB-002`;
+- merge de implementação do Framework v2: `996c3929b9efcb12259578cdec94e03d92d00220`;
+- capa, resumo, público, nível, tempo, versão, CTA, conteúdo e próximo passo verificados no ambiente público;
+- correção final de renderização e data coberta por teste automatizado e validação visual antes da publicação.
 
 ## Crédito da capa do piloto
 
 > Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.
 
+## Encerramento do piloto 01
+
+O registro `BV-3.1-001` está **IMPLEMENTADO, PUBLICADO E VALIDADO**. A manutenção editorial e a observação contínua de métricas permanecem atividades operacionais, não pendências de encerramento.
+
+## Encerramento do piloto 02
+
+O material `BV-3.1-002 — Checklist de Diagnóstico Digital para OSCs` está **IMPLEMENTADO, PUBLICADO E VALIDADO**.
+
+O corte local inclui:
+
+- promessa, metadados SEO, jornada e conteúdo editorial v3.1;
+- cinco dimensões e 25 itens observáveis;
+- quatro respostas por item: Sim, Parcial, Não e Não se aplica;
+- interação sem formulário, pontuação, envio, armazenamento ou persistência;
+- CTA primário para o próprio checklist e progressão interna para o Diagnóstico Organizacional;
+- novos campos editoriais para SEO e CTAs;
+- cache do renderer atualizado para `v=1.9`;
+- testes de contrato, renderer e privacidade aprovados;
+- registro `PA-LIB-003` publicado no catálogo mestre;
+- Apps Script editorial implantado na versão 7;
+- GitHub Pages `#55` concluído com sucesso;
+- slug público validado com 25 grupos, 100 opções, capa v2 e progressão para o Diagnóstico Organizacional.
+
+A capa v2 sem rostos foi gerada com OpenAI e integrada em formatos PNG e WebP. A imagem representa cinco dimensões e três prioridades sem texto legível, PII, marcas ou interfaces de terceiros.
+
+## Material 03 — IA para Organizações Sociais
+
+O registro `BV-3.1-003 — IA para Organizações Sociais` está **IMPLEMENTADO, PUBLICADO E VALIDADO**.
+
+A especificação e a implementação estão registradas em `docs/editorial/drafts/ia-para-organizacoes-sociais-v3.1.md` e `docs/comunicacao/bv31-material-03-implementacao-local.md`. O material passou a abrir a trilha:
+
+> IA para Organizações Sociais → Google Workspace para OSCs → Checklist de Diagnóstico Digital → Diagnóstico Organizacional
+
+O PR `#52` foi integrado no commit `d2d8b47`; catálogo, Apps Script e cache foram ativados, e o slug público foi validado com capa v2, conteúdo integral, CTA interno e progressão para Google Workspace.
+
+## Material 04 — Plano de 30 Dias para Organização Digital
+
+O próximo material da trilha é `BV-3.1-004 — Plano de 30 Dias para Organização Digital`. Ele transforma prioridades reconhecidas em um ciclo curto de aplicação:
+
+> Diagnóstico Organizacional → Plano de 30 Dias → revisão do Checklist de Diagnóstico Digital
+
+A especificação editorial v3.1 está registrada em `docs/editorial/drafts/plano-30-dias-organizacao-digital.md`. O material trabalha uma única área-piloto, até três prioridades, quatro semanas, 16 ações, entregáveis semanais e limites contra exclusões ou mudanças irreversíveis.
+
 ## Próximo gate
 
-Homologação local do card e da página individual; depois, em autorização separada, atualização controlada do conteúdo externo.
+O pacote de `BV-3.1-004` deve avançar por implementação, homologação, PR e catálogo em estado de rascunho. Merge, ativação pública do catálogo/cache e validação do slug permanecem bloqueados até a verificação final anterior à publicação.
+
