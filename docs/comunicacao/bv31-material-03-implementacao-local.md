@@ -1,9 +1,9 @@
 # BV-3.1-003 — registro de implementação local controlada
 
-**Data:** 30/08/2026  
-**Estado:** IMPLEMENTADO E HOMOLOGADO LOCALMENTE — NÃO PUBLICADO  
-**Branch:** `feature/bv31-pilot-03-ia-oscs`  
-**Material:** IA para Organizações Sociais  
+**Data:** 30/08/2026
+**Estado:** IMPLEMENTADO E HOMOLOGADO LOCALMENTE — NÃO PUBLICADO
+**Branch:** `feature/bv31-pilot-03-ia-oscs`
+**Material:** IA para Organizações Sociais
 
 ## Escopo implementado
 

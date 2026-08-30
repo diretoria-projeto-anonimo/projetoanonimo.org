@@ -1,12 +1,12 @@
 # Biblioteca Viva v3.1 — Especificação editorial do material 03
 
-**Data:** 30/08/2026  
-**Registro:** BV-3.1-003  
-**Material:** IA para Organizações Sociais  
-**Estado:** IMPLEMENTADO E HOMOLOGADO LOCALMENTE — NÃO PUBLICADO  
-**Território:** Inteligência Artificial Responsável  
-**Formato:** Guia prático  
-**Jornada:** descobrir → compreender → experimentar  
+**Data:** 30/08/2026
+**Registro:** BV-3.1-003
+**Material:** IA para Organizações Sociais
+**Estado:** IMPLEMENTADO E HOMOLOGADO LOCALMENTE — NÃO PUBLICADO
+**Território:** Inteligência Artificial Responsável
+**Formato:** Guia prático
+**Jornada:** descobrir → compreender → experimentar
 
 ## Papel no Framework de Comunicação v2
 
@@ -149,20 +149,20 @@ Para uma futura capa v2:
 
 ## Campos do registro
 
-**Título SEO:** IA para Organizações Sociais: guia de uso responsável  
-**Descrição SEO:** Aprenda a testar inteligência artificial em tarefas reais de uma OSC com limites de privacidade, revisão humana e responsabilidade.  
-**Resumo:** Use inteligência artificial para apoiar tarefas reais sem entregar decisões, dados sensíveis ou responsabilidade à ferramenta.  
-**CTA:** Começar pelo uso responsável  
-**Destino do CTA:** `#como-usar`  
-**URL do formulário:** vazio  
-**Etapa da jornada:** descobrir → compreender → experimentar  
-**Próximo slug:** `google-workspace-para-oscs`  
-**Título do próximo passo:** Agora organize a colaboração da equipe  
-**Resumo do próximo passo:** O guia Google Workspace para OSCs ajuda a transformar ferramentas dispersas em uma estrutura de trabalho mais organizada e sustentável.  
-**CTA do próximo passo:** Organizar a colaboração da equipe  
-**Versão:** 3.1-piloto  
-**URL da capa:** `/assets/img/library/ia-organizacoes-sociais-v2.webp`  
-**Texto alternativo:** Mesa de trabalho vista de cima, com mãos organizando uma rede abstrata de informações, cadernos e computadores sem conteúdo legível.  
+**Título SEO:** IA para Organizações Sociais: guia de uso responsável
+**Descrição SEO:** Aprenda a testar inteligência artificial em tarefas reais de uma OSC com limites de privacidade, revisão humana e responsabilidade.
+**Resumo:** Use inteligência artificial para apoiar tarefas reais sem entregar decisões, dados sensíveis ou responsabilidade à ferramenta.
+**CTA:** Começar pelo uso responsável
+**Destino do CTA:** `#como-usar`
+**URL do formulário:** vazio
+**Etapa da jornada:** descobrir → compreender → experimentar
+**Próximo slug:** `google-workspace-para-oscs`
+**Título do próximo passo:** Agora organize a colaboração da equipe
+**Resumo do próximo passo:** O guia Google Workspace para OSCs ajuda a transformar ferramentas dispersas em uma estrutura de trabalho mais organizada e sustentável.
+**CTA do próximo passo:** Organizar a colaboração da equipe
+**Versão:** 3.1-piloto
+**URL da capa:** `/assets/img/library/ia-organizacoes-sociais-v2.webp`
+**Texto alternativo:** Mesa de trabalho vista de cima, com mãos organizando uma rede abstrata de informações, cadernos e computadores sem conteúdo legível.
 **Crédito:** Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.
 
 ## Conteúdo para `conteudoMarkdown`
