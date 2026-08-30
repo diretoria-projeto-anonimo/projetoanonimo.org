@@ -12,9 +12,12 @@ Conjunto visual alinhado ao kit oficial do Projeto Anônimo e destinado à divul
 | `whatsapp-diagnostico-v3.png` | 1080×1080 | WhatsApp e compartilhamento |
 | `carrossel-diagnostico-01.png` a `05.png` | 1080×1080 | Carrossel Instagram/Facebook |
 
-## Destino
+## Destinos rastreáveis
 
-https://projetoanonimo.org/diagnostico-organizacional.html
+- Instagram/Facebook feed: `https://projetoanonimo.org/diagnostico-organizacional.html?utm_source=meta&utm_medium=paid_social&utm_campaign=diagnostico_organizacional_01&utm_content=feed_v3`
+- Instagram/Facebook story: `https://projetoanonimo.org/diagnostico-organizacional.html?utm_source=meta&utm_medium=paid_social&utm_campaign=diagnostico_organizacional_01&utm_content=story_v3`
+- LinkedIn: `https://projetoanonimo.org/diagnostico-organizacional.html?utm_source=linkedin&utm_medium=paid_social&utm_campaign=diagnostico_organizacional_01&utm_content=linkedin_v3`
+- WhatsApp: `https://projetoanonimo.org/diagnostico-organizacional.html?utm_source=whatsapp&utm_medium=messaging&utm_campaign=diagnostico_organizacional_01&utm_content=share_v3`
 
 ## Direção visual
 

@@ -20,11 +20,9 @@ const Attribution = (() => {
     const hasExplicitParams = PARAMS_TO_CAPTURE.some(param => urlParams.has(param));
 
     const existingData = getStoredData();
-    const hasStoredExplicitParams = PARAMS_TO_CAPTURE.some(p => existingData[p]);
-
-    // Salva a atribuição se for a primeira visita (sem dados existentes) OU
-    // se a visita atual tiver parâmetros explícitos e a armazenada não tiver.
-    if (!existingData.first_seen_at || (hasExplicitParams && !hasStoredExplicitParams)) {
+    // Salva na primeira visita e atualiza o canal quando uma visita posterior
+    // trouxer parâmetros explícitos. O instante do primeiro acesso é preservado.
+    if (!existingData.first_seen_at || hasExplicitParams) {
       const attributionData = {
         // Mantém o 'first_seen_at' original se já existir
         first_seen_at: existingData.first_seen_at || new Date().toISOString(),

@@ -7,6 +7,7 @@ node tests\apps-script.test.cjs
 node tests\frontend-contract.test.cjs
 node tests\biblioteca-sprint-2.1.test.cjs
 node tests\cliente0-homologacao.test.cjs
+node tests\diagnostico-campanha-01.test.cjs
 ```
 
 O primeiro teste executa `Code.gs` com serviços Google simulados e cobre:
@@ -30,6 +31,11 @@ do Apps Script.
 O quarto executa os 12 casos do roteiro do Cliente 0 com serviços Google
 simulados e massa exclusivamente sintética. O resultado é uma homologação local;
 ele não substitui a validação em uma implantação externa de teste.
+
+O quinto protege os contratos da Campanha 01: sete etapas, IDs únicos,
+ordem dos scripts, atribuição, separação de respostas e consentimentos,
+arrays via `FormData.getAll`, idempotência, retry com o mesmo `event_id`,
+bloqueio de política pendente, filtro de PII e presença do vídeo oficial.
 
 Além dos testes automatizados, a interface foi homologada no navegador com uma
 API local simulada: listou publicado e rascunho, reabriu o rascunho, preencheu
