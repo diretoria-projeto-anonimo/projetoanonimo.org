@@ -55,6 +55,7 @@ test("cacheia somente metadados públicos de materiais publicados", () => {
     session: "nao-deve-ser-gravada",
     token: "nao-deve-ser-gravado",
     auth: "nao-deve-ser-gravado",
+    respostasChecklist: { 1: "nao" },
   });
 
   assert.deepEqual(JSON.parse(JSON.stringify(sanitized)), {
@@ -83,6 +84,7 @@ test("cacheia somente metadados públicos de materiais publicados", () => {
     }),
     null
   );
+  assert.doesNotMatch(JSON.stringify(sanitized), /respostasChecklist|"nao"/);
 });
 
 test("lê cache versionado dentro do TTL e invalida cache expirado", () => {

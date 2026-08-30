@@ -6,6 +6,8 @@ Execute na raiz do pacote:
 node tests\apps-script.test.cjs
 node tests\frontend-contract.test.cjs
 node tests\biblioteca-sprint-2.1.test.cjs
+node tests\material-renderer.test.cjs
+node tests\checklist-pilot.test.cjs
 node tests\cliente0-homologacao.test.cjs
 ```
 
@@ -27,7 +29,14 @@ O terceiro confirma os contratos da Sprint C0.1: ordenação, filtros persistent
 carregamento progressivo, estados de carregamento/erro e manifesto reproduzível
 do Apps Script.
 
-O quarto executa os 12 casos do roteiro do Cliente 0 com serviços Google
+O quarto confirma o contrato do renderer da página de material, incluindo
+Markdown seguro, metadados e versões de cache.
+
+O quinto valida o piloto 02 com o conteúdo editorial real: cinco dimensões,
+25 itens, 100 opções acessíveis, grupos independentes, ausência de coleta ou
+persistência e ativação restrita ao slug do Checklist de Diagnóstico Digital.
+
+O sexto executa os 12 casos do roteiro do Cliente 0 com serviços Google
 simulados e massa exclusivamente sintética. O resultado é uma homologação local;
 ele não substitui a validação em uma implantação externa de teste.
 

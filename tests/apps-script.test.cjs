@@ -302,10 +302,35 @@ const created = post({
   titulo: "Novo material",
   slug: "novo-material",
   resumo: "Novo",
+  ctaDestino: "#como-usar",
+  urlProximoPasso: "/diagnostico-organizacional.html",
+  tituloSeo: "Novo material para OSCs",
+  descricaoSeo: "Descrição editorial para busca e compartilhamento.",
   status: "Rascunho",
 });
 assert.equal(created.operation, "created");
 assert.equal(rowObject("novo-material").status, "Rascunho");
+assert.equal(rowObject("novo-material").ctaDestino, "#como-usar");
+assert.equal(
+  rowObject("novo-material").urlProximoPasso,
+  "/diagnostico-organizacional.html"
+);
+assert.equal(rowObject("novo-material").tituloSeo, "Novo material para OSCs");
+assert.equal(
+  rowObject("novo-material").descricaoSeo,
+  "Descrição editorial para busca e compartilhamento."
+);
+for (const expectedHeader of [
+  "ctaDestino",
+  "urlProximoPasso",
+  "tituloSeo",
+  "descricaoSeo",
+]) {
+  assert.ok(
+    rows[0].includes(expectedHeader),
+    `o contrato deve garantir o cabeçalho ${expectedHeader}`
+  );
+}
 
 const duplicate = post({
   action: "createMaterial",

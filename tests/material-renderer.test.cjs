@@ -14,8 +14,8 @@ const materialHtml = fs.readFileSync(
   "utf8"
 );
 
-assert.match(materialHtml, /assets\/css\/style\.css\?v=1\.6/);
-assert.match(materialHtml, /assets\/js\/material\.js\?v=1\.6/);
+assert.match(materialHtml, /assets\/css\/style\.css\?v=1\.7/);
+assert.match(materialHtml, /assets\/js\/material\.js\?v=1\.7/);
 
 const sandbox = {
   console,

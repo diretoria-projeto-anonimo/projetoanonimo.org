@@ -30,7 +30,11 @@ const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
     ctaProximoPasso: "Fazer o checklist",
   },
   "checklist-diagnostico-digital": {
-    urlCapa: "../assets/img/library/checklist-diagnostico-digital-v1.webp",
+    urlCapa: "../assets/img/library/checklist-diagnostico-digital-v2.webp",
+    altCapa:
+      "Checklist impresso com cinco dimensões abstratas e três prioridades marcadas, ao lado de materiais de trabalho, visto de cima.",
+    creditoCapa:
+      "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
   },
 });
 
@@ -179,6 +183,10 @@ function renderizarMaterial(material) {
   const formato = obterCampo(material, ["formato"]);
   const publico = obterCampo(material, ["publico", "público"]);
   const nivel = obterCampo(material, ["nivel", "nível"]);
+  const etapaJornada = obterCampo(material, [
+    "etapaJornada",
+    "etapa da jornada",
+  ]);
 
   const tempoLeitura = obterCampo(material, [
     "tempoDeLeitura",
@@ -228,6 +236,9 @@ const urlVideo = validarUrl(
 const textoCta =
   obterCampo(material, ["cta"]) ||
   "Acessar material";
+const ctaDestino = validarUrl(
+  obterCampo(material, ["ctaDestino", "destino do cta"])
+);
 
 const botoesMaterial = [];
 
@@ -266,6 +277,7 @@ const creditoCapa =
   creditoMidia;
   const textoAlternativo =
     obterCampo(material, [
+      "altCapa",
       "textoAlternativoDaCapa",
       "altDaCapa",
       "texto alternativo da capa",
@@ -346,6 +358,7 @@ const videoHtml = videoId
     criarMetadado("Público", publico),
     criarMetadado("Nível", nivel),
     criarMetadado("Tempo de leitura", tempoLeitura),
+    criarMetadado("Etapa da jornada", etapaJornada),
     criarMetadado("Autor", autor),
     criarMetadado("Versão", versao),
     criarMetadado("Data", formatarData(data)),
@@ -382,18 +395,41 @@ const videoHtml = videoId
       </div>
     `
     : "";
-    const conteudoMarkdown = obterCampo(material, [
+const conteudoMarkdown = obterCampo(material, [
   "conteudoMarkdown",
   "conteúdo markdown",
   "conteudo markdown",
 ]);
+const checklistOrientado = slugMaterial === "checklist-diagnostico-digital";
+const ancoraConteudo = ctaDestino.startsWith("#")
+  ? ctaDestino.slice(1)
+  : "";
 
 const conteudoHtml = conteudoMarkdown
   ? `
-    <section class="material-article">
-      ${markdownSeguroParaHtml(conteudoMarkdown)}
+    <section
+      class="material-article${checklistOrientado ? " material-article-checklist" : ""}"
+      ${ancoraConteudo ? `id="${escaparAtributo(ancoraConteudo)}"` : ""}
+    >
+      ${markdownSeguroParaHtml(conteudoMarkdown, {
+        modoChecklist: checklistOrientado,
+      })}
     </section>
   `
+  : "";
+
+const ctaHeroHtml = ctaDestino
+  ? `
+      <div class="material-actions material-actions-hero">
+        ${criarLinkBotao({
+          url: ctaDestino,
+          texto: textoCta,
+          classe: "button button-primary",
+          tipoMetrica: "clique",
+          material,
+        })}
+      </div>
+    `
   : "";
 
   const proximoSlug =
@@ -494,6 +530,7 @@ const metadadosHtml = metadados
         <p class="material-summary">
           ${escaparHtml(resumo)}
         </p>
+        ${ctaHeroHtml}
         ${botoesHtml}
         ${videoHtml}
         ${metadadosHtml}
@@ -1040,6 +1077,10 @@ function validarUrl(valor) {
     return "";
   }
 
+  if (/^#[A-Za-z][A-Za-z0-9_-]*$/.test(texto)) {
+    return texto;
+  }
+
   if (
     texto.startsWith("/") ||
     texto.startsWith("./") ||
@@ -1107,12 +1148,47 @@ function atualizarAno() {
   }
 }
 
-function markdownSeguroParaHtml(markdown) {
+function criarGrupoRespostaChecklist(texto, indice) {
+  const nome = `checklist-resposta-${indice}`;
+  const opcoes = [
+    ["sim", "Sim"],
+    ["parcial", "Parcial"],
+    ["nao", "Não"],
+    ["nao-se-aplica", "Não se aplica"],
+  ];
+  const respostas = opcoes
+    .map(
+      ([valor, rotulo]) => `
+        <label class="diagnostic-checklist-option">
+          <input
+            type="radio"
+            name="${nome}"
+            value="${valor}"
+            autocomplete="off"
+          >
+          <span>${rotulo}</span>
+        </label>
+      `
+    )
+    .join("");
+
+  return `
+    <fieldset class="diagnostic-checklist-item">
+      <legend>${formatarInlineSeguro(texto)}</legend>
+      <div class="diagnostic-checklist-options">
+        ${respostas}
+      </div>
+    </fieldset>
+  `;
+}
+
+function markdownSeguroParaHtml(markdown, opcoes = {}) {
   const linhas = String(markdown || "").split(/\r?\n/);
   const partes = [];
   let listaAberta = "";
   let citacaoAberta = false;
   let codigoAberto = false;
+  let indiceChecklist = 0;
 
   function fecharLista() {
     if (listaAberta) {
@@ -1211,6 +1287,17 @@ function markdownSeguroParaHtml(markdown) {
       fecharLista();
       partes.push(
         `<h2>${formatarInlineSeguro(linha.slice(2))}</h2>`
+      );
+      continue;
+    }
+
+    const itemChecklist = linha.match(/^-\s+\[\s\]\s+(.+)$/);
+
+    if (opcoes.modoChecklist && itemChecklist) {
+      fecharLista();
+      indiceChecklist += 1;
+      partes.push(
+        criarGrupoRespostaChecklist(itemChecklist[1], indiceChecklist)
       );
       continue;
     }

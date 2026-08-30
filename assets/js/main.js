@@ -495,7 +495,7 @@ function getFetchUrl(item) {
 const LIBRARY_COVER_IMAGES = Object.freeze({
   "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v1.webp",
   "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v2.webp",
-  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v1.webp"
+  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v2.webp"
 });
 
 function getLibraryCoverImage(material) {
