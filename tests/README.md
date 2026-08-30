@@ -5,6 +5,8 @@ Execute na raiz do pacote:
 ```powershell
 node tests\apps-script.test.cjs
 node tests\frontend-contract.test.cjs
+node tests\biblioteca-sprint-2.1.test.cjs
+node tests\cliente0-homologacao.test.cjs
 ```
 
 O primeiro teste executa `Code.gs` com serviços Google simulados e cobre:
@@ -20,6 +22,14 @@ O primeiro teste executa `Code.gs` com serviços Google simulados e cobre:
 
 O segundo confirma o contrato da interface: scripts de autenticação, proteção
 das páginas, ações do dashboard e modo de edição do formulário.
+
+O terceiro confirma os contratos da Sprint C0.1: ordenação, filtros persistentes,
+carregamento progressivo, estados de carregamento/erro e manifesto reproduzível
+do Apps Script.
+
+O quarto executa os 12 casos do roteiro do Cliente 0 com serviços Google
+simulados e massa exclusivamente sintética. O resultado é uma homologação local;
+ele não substitui a validação em uma implantação externa de teste.
 
 Além dos testes automatizados, a interface foi homologada no navegador com uma
 API local simulada: listou publicado e rascunho, reabriu o rascunho, preencheu

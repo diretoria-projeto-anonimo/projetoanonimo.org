@@ -1,8 +1,15 @@
 "use strict";
 
+const localMaterialConfig =
+  typeof window !== "undefined" ? window.PA_BIBLIOTECA_CONFIG : null;
+
 const MATERIAL_API_URL =
+  (typeof localMaterialConfig?.apiUrl === "string" &&
+    localMaterialConfig.apiUrl.trim()) ||
   "https://script.google.com/macros/s/AKfycbzhh37NeK7hAaglGCilFvCME6pxgC7V_EdR5ct3wkmJEpywh50mq3i-xgnP1lQlqQ9PTA/exec";
 const MATERIAL_METRICS_API_URL =
+  (typeof localMaterialConfig?.metricsApiUrl === "string" &&
+    localMaterialConfig.metricsApiUrl.trim()) ||
   "https://script.google.com/macros/s/AKfycby_YNT0D5RXUyR0snSUvOzmVji6CjVhKjzK0IZdaXxOyo_KQAkO1z5T2cXzXEDoZEI/exec";
 
 const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
@@ -525,7 +532,30 @@ const metadadosHtml = metadados
 
   detalhe.setAttribute("aria-busy", "false");
 
+  configurarFallbackDeCapa(detalhe, textoAlternativo);
   configurarCompartilhamento(material);
+}
+
+function configurarFallbackDeCapa(detalhe, textoAlternativo) {
+  const capa = detalhe.querySelector(".material-cover");
+  const imagem = capa?.querySelector("img");
+  if (!capa || !imagem) return;
+
+  const mostrarFallback = () => {
+    if (!capa.querySelector("img")) return;
+    capa.innerHTML = `
+      <div class="cover material-cover-fallback" role="img" aria-label="${escaparAtributo(
+        textoAlternativo
+      )}">
+        <span class="cover-fallback">Biblioteca Viva</span>
+      </div>
+    `;
+  };
+
+  imagem.addEventListener("error", mostrarFallback, { once: true });
+  if (imagem.complete && imagem.naturalWidth === 0) {
+    mostrarFallback();
+  }
 }
 
 function criarMetadado(rotulo, valor) {
@@ -756,28 +786,7 @@ function atualizarSeo(material, slug) {
   const urlCapa = validarUrl(
     obterCampo(material, ["urlDaCapa", "urlCapa"])
   );
-const capaHtml = urlCapa
-  ? `
-<div class="material-cover">
-    <img
-        src="${escaparAtributo(urlCapa)}"
-        alt="${escaparAtributo(textoAlternativo)}">
-</div>
-`
-  : "";
 
-
-const legendaMidia = obterCampo(material, [
-  "legendaDaMidia",
-  "legendaMidia",
-  "legenda da mídia",
-]);
-
-const creditoMidia = obterCampo(material, [
-  "creditoDaMidia",
-  "creditoMidia",
-  "crédito da mídia",
-]);
   document.title = normalizarTexto(titulo).includes("projeto anonimo")
     ? titulo
     : `${titulo} | Biblioteca Viva — Projeto Anônimo`;
