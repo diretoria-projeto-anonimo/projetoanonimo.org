@@ -8,7 +8,9 @@ const Tracking = (() => {
 
   const sessionFlags = {
     qualifiedVisit: 'pa_diag01_qualified_visit_sent',
-    diagnosticStart: 'pa_diag01_diagnostic_start_sent'
+    diagnosticStart: 'pa_diag01_diagnostic_start_sent',
+    introVideoPlay: 'pa_diag01_intro_video_play_sent',
+    introVideoComplete: 'pa_diag01_intro_video_complete_sent'
   };
 
   /**
@@ -44,6 +46,27 @@ const Tracking = (() => {
     if (heroCta) {
       heroCta.addEventListener('click', () => {
         trackEvent('diagnostic_cta_click', { cta_id: 'diagnostic-hero-cta' });
+      });
+    }
+
+    const videoCta = document.getElementById('diagnostic-video-cta');
+    if (videoCta) {
+      videoCta.addEventListener('click', () => {
+        trackEvent('diagnostic_cta_click', { cta_id: 'diagnostic-video-cta' });
+      });
+    }
+
+    const introVideo = document.getElementById('diagnostic-intro-video');
+    if (introVideo) {
+      introVideo.addEventListener('play', () => {
+        if (sessionStorage.getItem(sessionFlags.introVideoPlay)) return;
+        sessionStorage.setItem(sessionFlags.introVideoPlay, 'true');
+        trackEvent('diagnostic_video_play', { video_id: 'PA-CAM-001-v0.1.2' });
+      });
+      introVideo.addEventListener('ended', () => {
+        if (sessionStorage.getItem(sessionFlags.introVideoComplete)) return;
+        sessionStorage.setItem(sessionFlags.introVideoComplete, 'true');
+        trackEvent('diagnostic_video_complete', { video_id: 'PA-CAM-001-v0.1.2' });
       });
     }
   }

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "pa-editorial-governanca-grupos-v1",
+    "titulo": "Governança de Grupos: Como Gerenciar Membros e Acessos em Grandes Comunidades",
+    "slug": "governanca-de-grupos-membros-acessos",
+    "categoria": "Governança Digital",
+    "formato": "Artigo",
+    "resumo": "Guia para organizar membros, permissões e acessos em organizações sociais, reduzindo retrabalho, exposição de dados e perda de controle sobre arquivos institucionais.",
+    "publico": "Gestores de OSCs, coordenadores de projetos, equipes administrativas e responsáveis por Google Workspace",
+    "nivel": "Intermediário",
+    "tempoLeitura": "10-12 min",
+    "cta": "Revise os grupos, permissões e ciclos de entrada e saída da sua organização.",
+    "palavrasChave": ["governança de grupos", "permissões", "Google Workspace", "menor privilégio", "segurança digital", "OSCs"],
+    "status": "Rascunho",
+    "licenca": "CC BY-NC-SA 4.0",
+    "urlArquivo": "",
+    "urlCapa": "",
+    "urlFormulario": ""
+  },
+  {
+    "id": "pa-editorial-maturidade-automacao-v2",
+    "titulo": "Como Saber se Sua Organização Está Pronta para Automatizar: O Semáforo da Maturidade Digital",
+    "slug": "maturidade-digital-pronta-para-automatizar",
+    "categoria": "Transformação Digital",
+    "formato": "Artigo",
+    "resumo": "Método visual para identificar se uma organização deve primeiro organizar processos, padronizar entradas ou avançar para automações leves e seguras.",
+    "publico": "Gestores de OSCs, equipes administrativas, comunicação e coordenação de projetos",
+    "nivel": "Intermediário",
+    "tempoLeitura": "10-12 min",
+    "cta": "Acesse o site e faça o autodiagnóstico para estruturar uma transformação digital mais segura.",
+    "palavrasChave": ["maturidade digital", "automação", "processos", "Google Forms", "Google Workspace", "soberania tecnológica"],
+    "status": "Rascunho",
+    "licenca": "CC BY-NC-SA 4.0",
+    "urlArquivo": "",
+    "urlCapa": "",
+    "urlFormulario": ""
+  }
+]
