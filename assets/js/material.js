@@ -1074,6 +1074,7 @@ function formatarData(valor) {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+    timeZone: "UTC",
   }).format(data);
 }
 
@@ -1111,6 +1112,7 @@ function markdownSeguroParaHtml(markdown) {
   const partes = [];
   let listaAberta = "";
   let citacaoAberta = false;
+  let codigoAberto = false;
 
   function fecharLista() {
     if (listaAberta) {
@@ -1128,6 +1130,25 @@ function markdownSeguroParaHtml(markdown) {
 
   for (const linhaOriginal of linhas) {
     const linha = linhaOriginal.trim();
+
+    if (linha.startsWith("```")) {
+      fecharLista();
+      fecharCitacao();
+
+      if (codigoAberto) {
+        partes.push("</code></pre>");
+        codigoAberto = false;
+      } else {
+        partes.push("<pre><code>");
+        codigoAberto = true;
+      }
+      continue;
+    }
+
+    if (codigoAberto) {
+      partes.push(`${escaparHtml(linhaOriginal)}\n`);
+      continue;
+    }
 
     if (!linha) {
       fecharLista();
@@ -1161,6 +1182,14 @@ function markdownSeguroParaHtml(markdown) {
     }
 
     fecharCitacao();
+
+    if (linha.startsWith("#### ")) {
+      fecharLista();
+      partes.push(
+        `<h4>${formatarInlineSeguro(linha.slice(5))}</h4>`
+      );
+      continue;
+    }
 
     if (linha.startsWith("### ")) {
       fecharLista();
@@ -1215,11 +1244,16 @@ function markdownSeguroParaHtml(markdown) {
   fecharLista();
   fecharCitacao();
 
+  if (codigoAberto) {
+    partes.push("</code></pre>");
+  }
+
   return partes.join("");
 }
 
 function formatarInlineSeguro(texto) {
   return escaparHtml(texto)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>");
 }
@@ -1250,3 +1284,4 @@ function extrairYoutubeId(valor) {
 
   return "";
 }
+
