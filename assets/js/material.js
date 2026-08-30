@@ -30,11 +30,18 @@ const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
     ctaProximoPasso: "Fazer o checklist",
   },
   "checklist-diagnostico-digital": {
+    territorio: "Transformação Digital",
     urlCapa: "../assets/img/library/checklist-diagnostico-digital-v2.webp",
     altCapa:
       "Checklist impresso com cinco dimensões abstratas e três prioridades marcadas, ao lado de materiais de trabalho, visto de cima.",
     creditoCapa:
       "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
+    etapaJornada: "aplicar → avaliar",
+    urlProximoPasso: "/diagnostico-organizacional.html",
+    tituloProximoPasso: "Precisa compreender e priorizar esses sinais?",
+    resumoProximoPasso:
+      "O Diagnóstico Organizacional ajuda a conectar os pontos observados e reconhecer prioridades com mais contexto.",
+    ctaProximoPasso: "Conhecer o Diagnóstico Organizacional",
   },
 });
 

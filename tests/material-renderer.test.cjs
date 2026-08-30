@@ -15,7 +15,7 @@ const materialHtml = fs.readFileSync(
 );
 
 assert.match(materialHtml, /assets\/css\/style\.css\?v=1\.7/);
-assert.match(materialHtml, /assets\/js\/material\.js\?v=1\.7/);
+assert.match(materialHtml, /assets\/js\/material\.js\?v=1\.8/);
 
 const sandbox = {
   console,
