@@ -463,6 +463,7 @@ const ctaHeroHtml = ctaDestino
     "Continuar aprendendo";
   const urlProximoPasso =
     validarUrl(obterCampo(material, ["urlProximoPasso"])) ||
+    validarUrl(configuracaoEditorial.urlProximoPasso) ||
     (proximoSlug
       ? `material.html?slug=${encodeURIComponent(proximoSlug)}`
       : "");
