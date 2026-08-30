@@ -14,7 +14,20 @@ const MATERIAL_METRICS_API_URL =
 
 const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
   "ia-para-organizacoes-sociais": {
-    urlCapa: "../assets/img/library/ia-organizacoes-sociais-v1.webp",
+    territorio: "Inteligência Artificial Responsável",
+    urlCapa: "../assets/img/library/ia-organizacoes-sociais-v2.webp",
+    altCapa:
+      "Mesa de trabalho vista de cima, com mãos organizando uma rede abstrata de informações, cadernos e computadores sem conteúdo legível.",
+    creditoCapa:
+      "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
+    etapaJornada: "descobrir → compreender → experimentar",
+    cta: "Começar pelo uso responsável",
+    ctaDestino: "#como-usar",
+    proximoSlug: "google-workspace-para-oscs",
+    tituloProximoPasso: "Agora organize a colaboração da equipe",
+    resumoProximoPasso:
+      "O guia Google Workspace para OSCs ajuda a transformar ferramentas dispersas em uma estrutura de trabalho mais organizada e sustentável.",
+    ctaProximoPasso: "Organizar a colaboração da equipe",
   },
   "google-workspace-para-oscs": {
     territorio: "Organização Digital",
@@ -190,10 +203,10 @@ function renderizarMaterial(material) {
   const formato = obterCampo(material, ["formato"]);
   const publico = obterCampo(material, ["publico", "público"]);
   const nivel = obterCampo(material, ["nivel", "nível"]);
-  const etapaJornada = obterCampo(material, [
-    "etapaJornada",
-    "etapa da jornada",
-  ]);
+  const etapaJornada =
+    obterCampo(material, ["etapaJornada", "etapa da jornada"]) ||
+    configuracaoEditorial.etapaJornada ||
+    "";
 
   const tempoLeitura = obterCampo(material, [
     "tempoDeLeitura",
@@ -242,10 +255,11 @@ const urlVideo = validarUrl(
 );
 const textoCta =
   obterCampo(material, ["cta"]) ||
+  configuracaoEditorial.cta ||
   "Acessar material";
-const ctaDestino = validarUrl(
-  obterCampo(material, ["ctaDestino", "destino do cta"])
-);
+const ctaDestino =
+  validarUrl(obterCampo(material, ["ctaDestino", "destino do cta"])) ||
+  validarUrl(configuracaoEditorial.ctaDestino);
 
 const botoesMaterial = [];
 

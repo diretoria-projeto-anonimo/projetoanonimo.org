@@ -1,7 +1,7 @@
 # BV-3.1-002 — registro de implementação local controlada
 
 **Data:** 30/08/2026
-**Estado:** IMPLEMENTADO LOCALMENTE — NÃO PUBLICADO
+**Estado:** IMPLEMENTADO, PUBLICADO E VALIDADO
 **Branch:** `feature/bv31-pilot-02-checklist`
 **Base verificada:** `origin/main` em `af7dc1b37a186f589583fdfcb0388b68f1a8e049`
 
@@ -44,13 +44,15 @@ A capa v2 foi gerada com OpenAI e corrigida antes da integração para eliminar 
 - título, descrição, Open Graph e canonical coerentes com o slug;
 - nenhum erro ou aviso no console do navegador durante a homologação.
 
-## Limites do gate
+## Encerramento externo
 
-O commit local deste corte foi autorizado separadamente. Este registro não autoriza nem comprova push, PR, merge, escrita no catálogo mestre, implantação do Apps Script, publicação ou validação pública. A prévia usou uma API exclusivamente local e sintética.
+- implementação principal integrada pelo PR `#49`;
+- correções finais integradas pelos PRs `#50` e `#51`;
+- registro `PA-LIB-003` publicado no catálogo mestre;
+- Apps Script editorial implantado na versão 7;
+- GitHub Pages `#55` concluído com sucesso;
+- slug público validado com título, capa v2, 25 grupos, 100 opções, CTA inicial e próximo passo.
 
-## Próximos gates separados
+## Estado final
 
-1. autorizar push e PR;
-2. autorizar integração no catálogo/Apps Script;
-3. autorizar merge e publicação;
-4. validar o slug público após a publicação.
+O piloto 02 está encerrado. Observação de métricas e manutenção futura são atividades operacionais, não pendências deste gate.
