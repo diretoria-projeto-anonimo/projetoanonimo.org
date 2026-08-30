@@ -9,6 +9,13 @@ const materialJs = fs.readFileSync(
   path.join(__dirname, "..", "assets", "js", "material.js"),
   "utf8"
 );
+const materialHtml = fs.readFileSync(
+  path.join(__dirname, "..", "biblioteca", "material.html"),
+  "utf8"
+);
+
+assert.match(materialHtml, /assets\/css\/style\.css\?v=1\.6/);
+assert.match(materialHtml, /assets\/js\/material\.js\?v=1\.6/);
 
 const sandbox = {
   console,
