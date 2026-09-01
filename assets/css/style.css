@@ -1390,6 +1390,76 @@ select:focus-visible {
   line-height: 1.7;
 }
 
+.material-actions-hero {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.material-article-checklist {
+  scroll-margin-top: 6rem;
+}
+
+.diagnostic-checklist-item {
+  min-inline-size: 0;
+  margin: 1.25rem 0;
+  padding: 1.15rem;
+  border: 1px solid rgba(11, 93, 85, 0.2);
+  border-radius: 1rem;
+  background: #f8fcfa;
+}
+
+.diagnostic-checklist-item legend {
+  width: 100%;
+  padding: 0;
+  color: #173e39;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.diagnostic-checklist-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.diagnostic-checklist-option {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid rgba(11, 93, 85, 0.22);
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #173e39;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.diagnostic-checklist-option:hover {
+  border-color: #0b5d55;
+  background: #eef8f3;
+}
+
+.diagnostic-checklist-option:focus-within {
+  outline: 3px solid rgba(11, 93, 85, 0.28);
+  outline-offset: 2px;
+}
+
+.diagnostic-checklist-option:has(input:checked) {
+  border-color: #0b5d55;
+  background: #dff2e9;
+}
+
+.diagnostic-checklist-option input {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  margin: 0;
+  accent-color: #0b5d55;
+}
+
 .editorial-callout {
   margin: 1.75rem 0;
   padding: 1.25rem 1.4rem;
@@ -1416,6 +1486,37 @@ select:focus-visible {
 .editorial-callout-model {
   border-left-color: #68498c;
   background: #f6f1fb;
+}
+
+.material-article h4 {
+  margin: 1.75rem 0 0.65rem;
+  color: var(--ink, #082d2a);
+  font-size: 1.05rem;
+}
+
+.material-article pre {
+  max-width: 100%;
+  margin: 1.25rem 0 1.75rem;
+  overflow-x: auto;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid rgba(11, 61, 58, 0.14);
+  border-radius: 1rem;
+  background: #f3f7f5;
+  color: #173e39;
+  line-height: 1.65;
+  white-space: pre;
+}
+
+.material-article code {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.92em;
+}
+
+.material-article p code,
+.material-article li code {
+  padding: 0.12rem 0.35rem;
+  border-radius: 0.35rem;
+  background: #e9f2ed;
 }
 
 .cta-panel h2 {
@@ -1489,12 +1590,34 @@ select:focus-visible {
   .cta-actions .button {
     width: 100%;
   }
+
+  .diagnostic-checklist-options {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .related-materials .biblioteca-card,
   .library-card-link {
     transition: none;
+  }
+}
+
+@media print {
+  .diagnostic-checklist-item {
+    break-inside: avoid;
+    border-color: #8aa29e;
+    background: #ffffff;
+  }
+
+  .diagnostic-checklist-options {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .diagnostic-checklist-option {
+    min-height: 0;
+    padding: 0.35rem;
+    border-color: #8aa29e;
   }
 }
 .material-article {
@@ -1706,3 +1829,4 @@ select:focus-visible {
     height: 2.5rem;
   }
 }
+

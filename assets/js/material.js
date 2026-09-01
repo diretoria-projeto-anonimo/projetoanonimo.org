@@ -13,8 +13,38 @@ const MATERIAL_METRICS_API_URL =
   "https://script.google.com/macros/s/AKfycby_YNT0D5RXUyR0snSUvOzmVji6CjVhKjzK0IZdaXxOyo_KQAkO1z5T2cXzXEDoZEI/exec";
 
 const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
+  "plano-30-dias-organizacao-digital": {
+    territorio: "Organização Digital",
+    urlCapa:
+      "../assets/img/library/plano-30-dias-organizacao-digital-v2.webp",
+    altCapa:
+      "Mesa de trabalho vista de cima, com um plano dividido em quatro etapas e um calendário abstrato de 30 marcações, sem pessoas ou texto legível.",
+    creditoCapa:
+      "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
+    etapaJornada: "priorizar → aplicar → revisar",
+    cta: "Montar o plano de 30 dias",
+    ctaDestino: "#preparar",
+    proximoSlug: "checklist-diagnostico-digital",
+    tituloProximoPasso: "Reavalie as prioridades depois de 30 dias",
+    resumoProximoPasso:
+      "Refazer o Checklist de Diagnóstico Digital ajuda a comparar o ponto de partida com o que mudou e a escolher um novo ciclo sem ampliar o escopo cedo demais.",
+    ctaProximoPasso: "Refazer o checklist",
+  },
   "ia-para-organizacoes-sociais": {
-    urlCapa: "../assets/img/library/ia-organizacoes-sociais-v1.webp",
+    territorio: "Inteligência Artificial Responsável",
+    urlCapa: "../assets/img/library/ia-organizacoes-sociais-v2.webp",
+    altCapa:
+      "Mesa de trabalho vista de cima, com mãos organizando uma rede abstrata de informações, cadernos e computadores sem conteúdo legível.",
+    creditoCapa:
+      "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
+    etapaJornada: "descobrir → compreender → experimentar",
+    cta: "Começar pelo uso responsável",
+    ctaDestino: "#como-usar",
+    proximoSlug: "google-workspace-para-oscs",
+    tituloProximoPasso: "Agora organize a colaboração da equipe",
+    resumoProximoPasso:
+      "O guia Google Workspace para OSCs ajuda a transformar ferramentas dispersas em uma estrutura de trabalho mais organizada e sustentável.",
+    ctaProximoPasso: "Organizar a colaboração da equipe",
   },
   "google-workspace-para-oscs": {
     territorio: "Organização Digital",
@@ -30,7 +60,18 @@ const MATERIAL_EDITORIAL_DEFAULTS = Object.freeze({
     ctaProximoPasso: "Fazer o checklist",
   },
   "checklist-diagnostico-digital": {
-    urlCapa: "../assets/img/library/checklist-diagnostico-digital-v1.webp",
+    territorio: "Transformação Digital",
+    urlCapa: "../assets/img/library/checklist-diagnostico-digital-v2.webp",
+    altCapa:
+      "Checklist impresso com cinco dimensões abstratas e três prioridades marcadas, ao lado de materiais de trabalho, visto de cima.",
+    creditoCapa:
+      "Imagem ilustrativa gerada por IA com OpenAI, sob direção editorial do Projeto Anônimo.",
+    etapaJornada: "aplicar → avaliar",
+    urlProximoPasso: "/diagnostico-organizacional.html",
+    tituloProximoPasso: "Precisa compreender e priorizar esses sinais?",
+    resumoProximoPasso:
+      "O Diagnóstico Organizacional ajuda a conectar os pontos observados e reconhecer prioridades com mais contexto.",
+    ctaProximoPasso: "Conhecer o Diagnóstico Organizacional",
   },
 });
 
@@ -179,6 +220,10 @@ function renderizarMaterial(material) {
   const formato = obterCampo(material, ["formato"]);
   const publico = obterCampo(material, ["publico", "público"]);
   const nivel = obterCampo(material, ["nivel", "nível"]);
+  const etapaJornada =
+    obterCampo(material, ["etapaJornada", "etapa da jornada"]) ||
+    configuracaoEditorial.etapaJornada ||
+    "";
 
   const tempoLeitura = obterCampo(material, [
     "tempoDeLeitura",
@@ -227,7 +272,11 @@ const urlVideo = validarUrl(
 );
 const textoCta =
   obterCampo(material, ["cta"]) ||
+  configuracaoEditorial.cta ||
   "Acessar material";
+const ctaDestino =
+  validarUrl(obterCampo(material, ["ctaDestino", "destino do cta"])) ||
+  validarUrl(configuracaoEditorial.ctaDestino);
 
 const botoesMaterial = [];
 
@@ -266,6 +315,7 @@ const creditoCapa =
   creditoMidia;
   const textoAlternativo =
     obterCampo(material, [
+      "altCapa",
       "textoAlternativoDaCapa",
       "altDaCapa",
       "texto alternativo da capa",
@@ -346,6 +396,7 @@ const videoHtml = videoId
     criarMetadado("Público", publico),
     criarMetadado("Nível", nivel),
     criarMetadado("Tempo de leitura", tempoLeitura),
+    criarMetadado("Etapa da jornada", etapaJornada),
     criarMetadado("Autor", autor),
     criarMetadado("Versão", versao),
     criarMetadado("Data", formatarData(data)),
@@ -382,18 +433,41 @@ const videoHtml = videoId
       </div>
     `
     : "";
-    const conteudoMarkdown = obterCampo(material, [
+const conteudoMarkdown = obterCampo(material, [
   "conteudoMarkdown",
   "conteúdo markdown",
   "conteudo markdown",
 ]);
+const checklistOrientado = slugMaterial === "checklist-diagnostico-digital";
+const ancoraConteudo = ctaDestino.startsWith("#")
+  ? ctaDestino.slice(1)
+  : "";
 
 const conteudoHtml = conteudoMarkdown
   ? `
-    <section class="material-article">
-      ${markdownSeguroParaHtml(conteudoMarkdown)}
+    <section
+      class="material-article${checklistOrientado ? " material-article-checklist" : ""}"
+      ${ancoraConteudo ? `id="${escaparAtributo(ancoraConteudo)}"` : ""}
+    >
+      ${markdownSeguroParaHtml(conteudoMarkdown, {
+        modoChecklist: checklistOrientado,
+      })}
     </section>
   `
+  : "";
+
+const ctaHeroHtml = ctaDestino
+  ? `
+      <div class="material-actions material-actions-hero">
+        ${criarLinkBotao({
+          url: ctaDestino,
+          texto: textoCta,
+          classe: "button button-primary",
+          tipoMetrica: "clique",
+          material,
+        })}
+      </div>
+    `
   : "";
 
   const proximoSlug =
@@ -420,6 +494,7 @@ const conteudoHtml = conteudoMarkdown
     "Continuar aprendendo";
   const urlProximoPasso =
     validarUrl(obterCampo(material, ["urlProximoPasso"])) ||
+    validarUrl(configuracaoEditorial.urlProximoPasso) ||
     (proximoSlug
       ? `material.html?slug=${encodeURIComponent(proximoSlug)}`
       : "");
@@ -494,6 +569,7 @@ const metadadosHtml = metadados
         <p class="material-summary">
           ${escaparHtml(resumo)}
         </p>
+        ${ctaHeroHtml}
         ${botoesHtml}
         ${videoHtml}
         ${metadadosHtml}
@@ -1040,6 +1116,10 @@ function validarUrl(valor) {
     return "";
   }
 
+  if (/^#[A-Za-z][A-Za-z0-9_-]*$/.test(texto)) {
+    return texto;
+  }
+
   if (
     texto.startsWith("/") ||
     texto.startsWith("./") ||
@@ -1074,6 +1154,7 @@ function formatarData(valor) {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+    timeZone: "UTC",
   }).format(data);
 }
 
@@ -1106,11 +1187,47 @@ function atualizarAno() {
   }
 }
 
-function markdownSeguroParaHtml(markdown) {
+function criarGrupoRespostaChecklist(texto, indice) {
+  const nome = `checklist-resposta-${indice}`;
+  const opcoes = [
+    ["sim", "Sim"],
+    ["parcial", "Parcial"],
+    ["nao", "Não"],
+    ["nao-se-aplica", "Não se aplica"],
+  ];
+  const respostas = opcoes
+    .map(
+      ([valor, rotulo]) => `
+        <label class="diagnostic-checklist-option">
+          <input
+            type="radio"
+            name="${nome}"
+            value="${valor}"
+            autocomplete="off"
+          >
+          <span>${rotulo}</span>
+        </label>
+      `
+    )
+    .join("");
+
+  return `
+    <fieldset class="diagnostic-checklist-item">
+      <legend>${formatarInlineSeguro(texto)}</legend>
+      <div class="diagnostic-checklist-options">
+        ${respostas}
+      </div>
+    </fieldset>
+  `;
+}
+
+function markdownSeguroParaHtml(markdown, opcoes = {}) {
   const linhas = String(markdown || "").split(/\r?\n/);
   const partes = [];
   let listaAberta = "";
   let citacaoAberta = false;
+  let codigoAberto = false;
+  let indiceChecklist = 0;
 
   function fecharLista() {
     if (listaAberta) {
@@ -1128,6 +1245,25 @@ function markdownSeguroParaHtml(markdown) {
 
   for (const linhaOriginal of linhas) {
     const linha = linhaOriginal.trim();
+
+    if (linha.startsWith("```")) {
+      fecharLista();
+      fecharCitacao();
+
+      if (codigoAberto) {
+        partes.push("</code></pre>");
+        codigoAberto = false;
+      } else {
+        partes.push("<pre><code>");
+        codigoAberto = true;
+      }
+      continue;
+    }
+
+    if (codigoAberto) {
+      partes.push(`${escaparHtml(linhaOriginal)}\n`);
+      continue;
+    }
 
     if (!linha) {
       fecharLista();
@@ -1162,6 +1298,14 @@ function markdownSeguroParaHtml(markdown) {
 
     fecharCitacao();
 
+    if (linha.startsWith("#### ")) {
+      fecharLista();
+      partes.push(
+        `<h4>${formatarInlineSeguro(linha.slice(5))}</h4>`
+      );
+      continue;
+    }
+
     if (linha.startsWith("### ")) {
       fecharLista();
       partes.push(
@@ -1182,6 +1326,17 @@ function markdownSeguroParaHtml(markdown) {
       fecharLista();
       partes.push(
         `<h2>${formatarInlineSeguro(linha.slice(2))}</h2>`
+      );
+      continue;
+    }
+
+    const itemChecklist = linha.match(/^-\s+\[\s\]\s+(.+)$/);
+
+    if (opcoes.modoChecklist && itemChecklist) {
+      fecharLista();
+      indiceChecklist += 1;
+      partes.push(
+        criarGrupoRespostaChecklist(itemChecklist[1], indiceChecklist)
       );
       continue;
     }
@@ -1215,11 +1370,16 @@ function markdownSeguroParaHtml(markdown) {
   fecharLista();
   fecharCitacao();
 
+  if (codigoAberto) {
+    partes.push("</code></pre>");
+  }
+
   return partes.join("");
 }
 
 function formatarInlineSeguro(texto) {
   return escaparHtml(texto)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>");
 }
@@ -1250,3 +1410,4 @@ function extrairYoutubeId(valor) {
 
   return "";
 }
+

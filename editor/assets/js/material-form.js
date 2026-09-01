@@ -235,9 +235,11 @@ function preencherFormulario(material) {
     ],
 
     cta: ["cta"],
+    ctaDestino: ["ctadestino", "ctaDestino"],
     territorio: ["territorio"],
     etapaJornada: ["etapajornada", "etapaJornada"],
     proximoSlug: ["proximoslug", "proximoSlug"],
+    urlProximoPasso: ["urlproximopasso", "urlProximoPasso"],
     tituloProximoPasso: [
       "tituloproximopasso",
       "tituloProximoPasso",
@@ -250,6 +252,8 @@ function preencherFormulario(material) {
       "ctaproximopasso",
       "ctaProximoPasso",
     ],
+    tituloSeo: ["tituloseo", "tituloSeo"],
+    descricaoSeo: ["descricaoseo", "descricaoSeo"],
     destaque: ["destaque"],
     status: ["status"],
 

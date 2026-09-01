@@ -26,6 +26,12 @@ assert.match(dashboardHtml, /id="ultima-atividade"/);
 const materialJs = read("assets/js/material.js");
 const mainJs = read("assets/js/main.js");
 const styleCss = read("assets/css/style.css");
+const materialHtml = read("biblioteca/material.html");
+const bibliotecaHtml = read("biblioteca.html");
+const indexHtml = read("index.html");
+const checklistDraft = read(
+  "docs/editorial/drafts/checklist-diagnostico-digital-v3.1.md"
+);
 assert.match(materialJs, /action:\s*"recordMetric"/);
 assert.match(mainJs, /class="card library-card-link"/);
 assert.match(mainJs, /isInternalMaterial/);
@@ -37,9 +43,38 @@ assert.match(materialJs, /material-cover-caption/);
 assert.match(materialJs, /material-next-step/);
 assert.match(materialJs, /biblioteca-card biblioteca-card-link/);
 assert.match(materialJs, /editorial-callout/);
+assert.match(materialJs, /ctaDestino/);
+assert.match(materialJs, /urlProximoPasso/);
+assert.match(materialJs, /checklist-diagnostico-digital-v2\.webp/);
+assert.match(materialJs, /ia-organizacoes-sociais-v2\.webp/);
+assert.match(materialJs, /plano-30-dias-organizacao-digital-v2\.webp/);
+assert.match(materialJs, /Imagem ilustrativa gerada por IA com OpenAI/);
+assert.match(materialJs, /criarMetadado\("Etapa da jornada", etapaJornada\)/);
+assert.match(materialJs, /"altCapa",\s*"textoAlternativoDaCapa"/);
+assert.match(materialJs, /diagnostic-checklist-item/);
+assert.match(materialJs, /modoChecklist/);
 assert.match(styleCss, /\.library-card-link:focus-visible/);
 assert.match(styleCss, /\.material-next-step/);
+assert.match(styleCss, /\.diagnostic-checklist-option:focus-within/);
+assert.match(styleCss, /\.diagnostic-checklist-option:has\(input:checked\)/);
+assert.match(materialHtml, /style\.css\?v=1\.7/);
+assert.match(materialHtml, /material\.js\?v=2\.1/);
+assert.match(bibliotecaHtml, /style\.css\?v=1\.7/);
+assert.match(bibliotecaHtml, /assets\/js\/main\.js\?v=1\.8/);
+assert.match(indexHtml, /assets\/js\/main\.js\?v=1\.8/);
+assert.match(mainJs, /checklist-diagnostico-digital-v2\.webp/);
+assert.equal(
+  (checklistDraft.match(/^- \[ \] /gm) || []).length,
+  25,
+  "o Piloto 02 deve manter exatamente 25 itens observáveis"
+);
 assert.ok(fs.existsSync(path.join(root, "assets/img/library/google-workspace-oscs-v2.webp")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/checklist-diagnostico-digital-v2.png")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/checklist-diagnostico-digital-v2.webp")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/ia-organizacoes-sociais-v2.png")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/ia-organizacoes-sociais-v2.webp")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/plano-30-dias-organizacao-digital-v2.png")));
+assert.ok(fs.existsSync(path.join(root, "assets/img/library/plano-30-dias-organizacao-digital-v2.webp")));
 
 assert.match(formJs, /action:\s*"getMaterial"/);
 assert.match(formJs, /modoEdicao\s*\?\s*"updateMaterial"\s*:\s*"createMaterial"/);
@@ -47,7 +82,15 @@ assert.match(formJs, /await carregarMaterial\(\)/);
 assert.match(formHtml, /name="altCapa"/);
 assert.match(formHtml, /name="creditoCapa"/);
 assert.match(formHtml, /name="proximoSlug"/);
+assert.match(formHtml, /name="urlProximoPasso"/);
+assert.match(formHtml, /name="ctaDestino"/);
+assert.match(formHtml, /name="tituloSeo"/);
+assert.match(formHtml, /name="descricaoSeo"/);
 assert.match(formJs, /ctaProximoPasso/);
+assert.match(formJs, /urlProximoPasso/);
+assert.match(formJs, /ctaDestino/);
+assert.match(formJs, /tituloSeo/);
+assert.match(formJs, /descricaoSeo/);
 assert.doesNotMatch(formHtml, /name="editorToken"/);
 assert.doesNotMatch(formJs, /paEditorToken|editorToken/);
 
