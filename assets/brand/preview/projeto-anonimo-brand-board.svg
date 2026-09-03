@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title description">
+  <title id="title">Prancha do sistema de marca Projeto Anônimo</title>
+  <desc id="description">Apresentação dos ícones escuro e claro, símbolo, assinatura horizontal, paleta e orientações de uso.</desc>
+
+  <rect width="1600" height="1000" fill="#F2FAF4"/>
+  <rect width="1600" height="176" fill="#111B18"/>
+  <text x="96" y="92" fill="#F2FAF4" font-family="IBM Plex Sans, Arial, sans-serif" font-size="54" font-weight="600">Projeto Anônimo</text>
+  <text x="98" y="136" fill="#D3EBD9" font-family="IBM Plex Sans, Arial, sans-serif" font-size="22" letter-spacing="3">SISTEMA DE IDENTIDADE VISUAL · V1</text>
+
+  <g transform="translate(96 236)">
+    <rect width="400" height="400" rx="52" fill="#111B18"/>
+    <g transform="translate(24 20) scale(.69)" fill-rule="evenodd" clip-rule="evenodd">
+      <path fill="#0D4D44" d="M256 312 412 370 256 428 100 370Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 237 412 295 256 353 100 295Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 162 412 220 256 278 100 220Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#0D4D44" d="M256 87 412 145 256 203 100 145Zm0 33-68 25 68 25 68-25Z"/>
+    </g>
+    <text x="0" y="446" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="24" font-weight="600">Ícone escuro</text>
+    <text x="0" y="478" fill="#0D4D44" font-family="IBM Plex Sans, Arial, sans-serif" font-size="18">Aplicativos, avatares e redes sociais</text>
+  </g>
+
+  <g transform="translate(552 236)">
+    <rect width="400" height="400" rx="52" fill="#E7F4EA"/>
+    <g transform="translate(24 20) scale(.69)" fill="#9BC8AB" fill-rule="evenodd" clip-rule="evenodd">
+      <path opacity=".9" d="M256 312 412 370 256 428 100 370Zm0 33-68 25 68 25 68-25Z"/>
+      <path opacity=".68" d="M256 237 412 295 256 353 100 295Zm0 33-68 25 68 25 68-25Z"/>
+      <path opacity=".78" d="M256 162 412 220 256 278 100 220Zm0 33-68 25 68 25 68-25Z"/>
+      <path d="M256 87 412 145 256 203 100 145Zm0 33-68 25 68 25 68-25Z"/>
+    </g>
+    <text x="0" y="446" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="24" font-weight="600">Ícone claro</text>
+    <text x="0" y="478" fill="#0D4D44" font-family="IBM Plex Sans, Arial, sans-serif" font-size="18">Superfícies claras e comunicação suave</text>
+  </g>
+
+  <g transform="translate(1008 236)">
+    <rect width="496" height="400" rx="32" fill="#FFFFFF" stroke="#D3EBD9" stroke-width="2"/>
+    <g transform="translate(80 12) scale(.66)" fill-rule="evenodd" clip-rule="evenodd">
+      <path fill="#0D4D44" d="M256 312 412 370 256 428 100 370Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 237 412 295 256 353 100 295Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 162 412 220 256 278 100 220Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#0D4D44" d="M256 87 412 145 256 203 100 145Zm0 33-68 25 68 25 68-25Z"/>
+    </g>
+    <text x="0" y="446" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="24" font-weight="600">Símbolo transparente</text>
+    <text x="0" y="478" fill="#0D4D44" font-family="IBM Plex Sans, Arial, sans-serif" font-size="18">Assinaturas, documentos e composições</text>
+  </g>
+
+  <g transform="translate(96 770)">
+    <g transform="translate(0 -55) scale(.32)" fill-rule="evenodd" clip-rule="evenodd">
+      <path fill="#0D4D44" d="M256 312 412 370 256 428 100 370Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 237 412 295 256 353 100 295Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#D3EBD9" d="M256 162 412 220 256 278 100 220Zm0 33-68 25 68 25 68-25Z"/>
+      <path fill="#0D4D44" d="M256 87 412 145 256 203 100 145Zm0 33-68 25 68 25 68-25Z"/>
+    </g>
+    <text x="190" y="70" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="62" font-weight="600" letter-spacing="-1.5">Projeto Anônimo</text>
+    <text x="192" y="108" fill="#0D4D44" font-family="IBM Plex Sans, Arial, sans-serif" font-size="19" letter-spacing="2">TECNOLOGIA · AUTONOMIA · IMPACTO SOCIAL</text>
+  </g>
+
+  <g transform="translate(1040 744)">
+    <text x="0" y="0" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="22" font-weight="600">Paleta essencial</text>
+    <rect x="0" y="32" width="104" height="104" rx="16" fill="#111B18"/>
+    <rect x="120" y="32" width="104" height="104" rx="16" fill="#0D4D44"/>
+    <rect x="240" y="32" width="104" height="104" rx="16" fill="#D3EBD9" stroke="#C1DDC8"/>
+    <rect x="360" y="32" width="104" height="104" rx="16" fill="#F2FAF4" stroke="#D3EBD9"/>
+    <text x="0" y="166" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="16">#111B18</text>
+    <text x="120" y="166" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="16">#0D4D44</text>
+    <text x="240" y="166" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="16">#D3EBD9</text>
+    <text x="360" y="166" fill="#111B18" font-family="IBM Plex Sans, Arial, sans-serif" font-size="16">#F2FAF4</text>
+  </g>
+</svg>

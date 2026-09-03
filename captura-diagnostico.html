@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Diagnóstico Digital Preliminar para organizações sociais.">
+<title>Diagnóstico Digital Preliminar — Projeto Anônimo</title>
+<link rel="icon" href="assets/brand/projeto-anonimo-favicon.svg" type="image/svg+xml">
+<style>
+:root {
+  --forest: #0b5d55;
+  --deep: #042b26;
+  --mint: #f4fbf6;
+  --lime: #ddefd8;
+  --text: #102a28;
+  --line: #d7e6de;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--mint);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+header {
+  background: white;
+  border-bottom: 1px solid var(--line);
+  padding: 22px 6%;
+}
+.logo { display: inline-flex; align-items: center; }
+.logo img { display: block; width: auto; height: 44px; max-width: min(240px, 70vw); }
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 70px 24px;
+}
+.hero {
+  background: white;
+  border: 1px solid var(--line);
+  padding: clamp(32px, 7vw, 80px);
+  text-align: center;
+}
+.tag {
+  display: inline-block;
+  background: var(--lime);
+  color: var(--deep);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+h1 {
+  color: var(--deep);
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1.08;
+  margin: 22px 0;
+}
+.hero p {
+  max-width: 680px;
+  margin: auto;
+  font-size: 1.15rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin: 28px 0;
+}
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 28px;
+}
+.card h2 { color: var(--forest); font-size: 1.2rem; }
+.cta {
+  background: var(--deep);
+  color: white;
+  text-align: center;
+  padding: 48px 24px;
+}
+.cta h2 { margin-top: 0; }
+.button {
+  display: inline-block;
+  background: var(--lime);
+  color: var(--deep);
+  padding: 14px 28px;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 4px;
+}
+footer {
+  text-align: center;
+  padding: 32px;
+  font-size: .85rem;
+}
+.footer-logo { display: block; width: auto; height: 42px; max-width: min(230px, 70vw); margin: 0 auto 12px; }
+footer p { margin: 0; }
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; }
+  main { padding: 32px 16px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="index.html" aria-label="Projeto Anônimo — página inicial"><img src="assets/brand/projeto-anonimo-logo-horizontal-on-light.svg" alt="Projeto Anônimo"></a>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="tag">Diagnóstico Digital</span>
+    <h1>Organize prioridades.<br>Fortaleça sua base digital.</h1>
+    <p>
+      Um diagnóstico técnico para identificar gargalos, organizar prioridades
+      e orientar investimentos futuros com mais segurança.
+    </p>
+  </section>
+
+  <section class="grid" aria-label="Detalhes do diagnóstico">
+    <article class="card">
+      <h2>O que identificamos</h2>
+      <p>Gargalos digitais, dependências críticas e riscos na organização das informações.</p>
+    </article>
+    <article class="card">
+      <h2>Como funciona</h2>
+      <p>Até 4 semanas, com até 32 horas de dedicação e acompanhamento consultivo.</p>
+    </article>
+    <article class="card">
+      <h2>Entregáveis</h2>
+      <p>Relatório técnico preliminar, mapa de prioridades e reunião de devolutiva.</p>
+    </article>
+  </section>
+
+  <section class="cta">
+    <h2>Vamos conversar sobre o próximo passo?</h2>
+    <p>O investimento é definido após compreendermos o contexto da organização.</p>
+    <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLScgYhlA28l7fQA8s3TNMfBmt_fMQJ3Ea_84rNfDKimOUwW_wA/viewform?usp=sharing&ouid=108472809593565418259" target="_blank" rel="noopener">Demonstrar interesse</a>
+  </section>
+</main>
+
+<footer>
+  <img class="footer-logo" src="assets/brand/projeto-anonimo-logo-horizontal-on-light.svg" alt="Projeto Anônimo">
+  <p>Projeto Anônimo Framework · v1.3.2</p>
+</footer>
+</body>
+</html>

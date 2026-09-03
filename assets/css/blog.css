@@ -1,0 +1,331 @@
+.blog-hero {
+  padding: clamp(4.5rem, 8vw, 7.5rem) 0 clamp(3.5rem, 6vw, 5.5rem);
+  overflow: hidden;
+}
+
+.blog-hero__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+}
+
+.blog-hero h1 {
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+.article-hero h1 {
+  max-width: 42ch;
+  text-wrap: balance;
+}
+
+.blog-visual {
+  position: relative;
+  min-height: 360px;
+  border-radius: 42px;
+  background: #111b18;
+  overflow: hidden;
+  box-shadow: 0 28px 70px rgba(17, 27, 24, .16);
+}
+
+.blog-visual::before,
+.blog-visual::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+}
+
+.blog-visual::before {
+  width: 280px;
+  height: 280px;
+  right: -70px;
+  top: -55px;
+  background: #0d4d44;
+}
+
+.blog-visual::after {
+  width: 190px;
+  height: 190px;
+  left: -50px;
+  bottom: -65px;
+  background: rgba(13, 77, 68, .55);
+}
+
+.network {
+  position: absolute;
+  inset: 54px;
+}
+
+.network span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #d3ebd9;
+  box-shadow: 0 0 0 9px rgba(211, 235, 217, .12);
+}
+
+.network span:nth-child(1) { left: 8%; top: 26%; }
+.network span:nth-child(2) { left: 43%; top: 8%; }
+.network span:nth-child(3) { right: 5%; top: 36%; }
+.network span:nth-child(4) { right: 23%; bottom: 8%; }
+.network span:nth-child(5) { left: 24%; bottom: 18%; }
+
+.network svg {
+  width: 100%;
+  height: 100%;
+}
+
+.network path {
+  fill: none;
+  stroke: #d3ebd9;
+  stroke-width: 3;
+  opacity: .82;
+}
+
+.blog-list {
+  padding-top: 0;
+}
+
+.article-card {
+  display: grid;
+  grid-template-columns: minmax(260px, .72fr) minmax(0, 1.28fr);
+  background: #fff;
+  border: 1px solid rgba(13, 77, 68, .14);
+  border-radius: 34px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(17, 27, 24, .08);
+}
+
+.article-card__visual {
+  min-height: 420px;
+  padding: 2rem;
+  display: flex;
+  align-items: flex-end;
+  background:
+    radial-gradient(circle at 78% 18%, #d3ebd9 0 7%, transparent 7.4%),
+    radial-gradient(circle at 52% 38%, #d3ebd9 0 5%, transparent 5.4%),
+    radial-gradient(circle at 24% 18%, #d3ebd9 0 4%, transparent 4.4%),
+    linear-gradient(145deg, #111b18, #0d4d44);
+}
+
+.article-card__visual strong {
+  max-width: 10ch;
+  color: #fff;
+  font-size: clamp(2.25rem, 4vw, 4rem);
+  line-height: .98;
+  letter-spacing: -.04em;
+}
+
+.article-card + .article-card {
+  margin-top: 2rem;
+}
+
+.article-card__visual--radar {
+  background:
+    linear-gradient(90deg, rgba(7, 20, 17, .18), rgba(7, 20, 17, .02)),
+    url("../img/blog/radar-oportunidades-01-master-v1.png") center / cover no-repeat;
+}
+
+.article-card__visual--manifesto {
+  background:
+    linear-gradient(90deg, rgba(7, 20, 17, .2), rgba(7, 20, 17, .04)),
+    url("../img/blog/manifesto-observatorio-master-v1.jpg") center / cover no-repeat;
+}
+
+.article-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+}
+
+.article-hero__image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 34px;
+  box-shadow: 0 24px 70px rgba(17, 27, 24, .12);
+}
+
+.article-card__body {
+  padding: clamp(2rem, 5vw, 4.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem 1.2rem;
+  margin: 1.2rem 0;
+  color: var(--muted);
+  font-size: .94rem;
+}
+
+.article-card h2 {
+  max-width: 19ch;
+  margin-bottom: .75rem;
+  text-wrap: balance;
+}
+
+.article-hero {
+  padding: clamp(4rem, 8vw, 7rem) 0 3.5rem;
+}
+
+.article-hero .lead {
+  max-width: 760px;
+}
+
+.article-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 760px) minmax(220px, 280px);
+  justify-content: center;
+  align-items: start;
+  gap: clamp(2.5rem, 6vw, 6rem);
+  padding-bottom: clamp(5rem, 10vw, 9rem);
+}
+
+.article-content {
+  font-size: clamp(1.05rem, 1.8vw, 1.18rem);
+  line-height: 1.82;
+}
+
+.article-content > * + * {
+  margin-top: 1.45rem;
+}
+
+.article-content h2 {
+  margin-top: 3.75rem;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.article-content h3 {
+  margin-top: 2.7rem;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+}
+
+.article-content ul,
+.article-content ol {
+  padding-left: 1.35rem;
+}
+
+.article-content li + li {
+  margin-top: .75rem;
+}
+
+.article-note,
+.scenario,
+.source-note {
+  padding: 1.5rem;
+  border-radius: 22px;
+  background: #e8f4ee;
+  border-left: 5px solid #0d4d44;
+}
+
+.scenario {
+  background: #fff;
+  border: 1px solid rgba(13, 77, 68, .16);
+  border-left: 5px solid #0d4d44;
+}
+
+.article-aside {
+  position: sticky;
+  top: 7.5rem;
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: #111b18;
+  color: #f4fbf6;
+}
+
+.article-aside h2 {
+  margin-bottom: .65rem;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.article-aside p {
+  color: #d3ebd9;
+}
+
+.article-aside .btn {
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.article-back {
+  display: flex;
+  width: fit-content;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.source-note {
+  margin-top: 3.5rem;
+  font-size: .96rem;
+}
+
+.source-note h2 {
+  margin-top: 0;
+  font-size: 1.35rem;
+}
+
+@media (max-width: 880px) {
+  .blog-hero__layout,
+  .article-card,
+  .article-hero__grid,
+  .article-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-hero h1,
+  .article-card h2 {
+    max-width: none;
+  }
+
+  .blog-visual {
+    min-height: 300px;
+  }
+
+  .article-card__visual {
+    min-height: 280px;
+  }
+
+  .article-aside {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .blog-hero,
+  .article-hero {
+    padding-top: 3rem;
+  }
+
+  .blog-visual {
+    min-height: 250px;
+    border-radius: 28px;
+  }
+
+  .network {
+    inset: 38px;
+  }
+
+  .article-card,
+  .article-note,
+  .scenario,
+  .source-note,
+  .article-aside {
+    border-radius: 18px;
+  }
+
+  .article-content {
+    line-height: 1.72;
+  }
+}
+

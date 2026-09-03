@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- Google Tag Manager -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'wait_for_update': 500 // Opcional: aguarda um pouco por um 'update'
+    });
+  </script>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KTMXHMZL');</script>
+  <!-- End Google Tag Manager -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico Organizacional Inteligente — Projeto Anônimo</title>
+  <meta name="description" content="Identifique gargalos, prioridades e oportunidades em processos, produtividade, IA e capacidade institucional.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preload WOFF2 font files to reduce CLS -->
+  <link rel="preload" href="https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPbF4Cw.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=optional" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/diagnostico-organizacional.css">
+  <link rel="icon" href="assets/brand/projeto-anonimo-favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTMXHMZL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <!-- Consent Banner -->
+  <div id="consent-banner" class="consent-banner" role="dialog" aria-modal="true" aria-labelledby="consent-title" aria-describedby="consent-desc" hidden>
+    <div class="consent-content">
+      <h2 id="consent-title">Privacidade e cookies</h2>
+      <p id="consent-desc">
+        Usamos tecnologias essenciais para o funcionamento do site e, com sua permissão, recursos de análise e marketing para entender o uso da página e medir nossas campanhas.
+        <a href="privacidade.html" target="_blank">Política de Privacidade</a>.
+      </p>
+    </div>
+    <div class="consent-actions">
+      <button id="consent-accept-all" class="button primary">Aceitar todos</button>
+      <button id="consent-reject-all" class="button secondary">Recusar não essenciais</button>
+      <button id="consent-manage" class="button secondary">Gerenciar preferências</button>
+    </div>
+  </div>
+
+  <!-- Consent Preferences Modal -->
+  <div id="consent-modal" class="consent-modal-overlay" hidden>
+    <div class="consent-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="consent-modal-header">
+        <h2 id="modal-title">Gerenciar preferências</h2>
+        <button id="consent-close-modal" class="close-button" aria-label="Fechar">&times;</button>
+      </header>
+      <div class="consent-modal-body">
+        <form id="consent-form">
+          <div class="consent-toggle">
+            <label for="consent-necessary"><strong>Necessários</strong></label>
+            <p>Esses recursos são essenciais para o funcionamento do site e não podem ser desativados.</p>
+          </div>
+          <div class="consent-toggle">
+            <label for="consent-analytics"><strong>Analytics</strong></label>
+            <input type="checkbox" id="consent-analytics" name="analytics" class="toggle-switch">
+            <p>Ajudam a entender como os visitantes interagem com o site, coletando informações anonimamente.</p>
+          </div>
+          <div class="consent-toggle">
+            <label for="consent-marketing"><strong>Marketing</strong></label>
+            <input type="checkbox" id="consent-marketing" name="marketing" class="toggle-switch">
+            <p>Usados para rastrear visitantes e exibir anúncios relevantes em outras plataformas.</p>
+          </div>
+        </form>
+      </div>
+      <footer class="consent-modal-footer">
+        <button id="consent-save-prefs" class="button primary">Salvar preferências</button>
+      </footer>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="container">
+      <a class="logo" href="index.html" aria-label="Projeto Anônimo — página inicial">
+        <img src="assets/brand/projeto-anonimo-logo-horizontal-on-dark.svg" alt="Projeto Anônimo">
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="container">
+        <h1>Descubra onde sua organização pode avançar com tecnologia e inteligência artificial.</h1>
+        <p class="lead">O Diagnóstico Organizacional Inteligente ajuda a identificar gargalos, prioridades e oportunidades em processos, produtividade, IA, organização digital e capacidade institucional.</p>
+        <div class="cta-group">
+          <a href="#form-diagnostico" id="diagnostic-hero-cta" class="button primary cta-action">Fazer meu diagnóstico</a>
+          <p class="support-text">Diagnóstico orientativo • Preenchimento online • Sem compromisso</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="campaign-video-section" id="campaign-video" aria-labelledby="campaign-video-title">
+      <div class="container video-layout">
+        <div class="video-copy">
+          <p class="eyebrow">Projeto Anônimo</p>
+          <h2 id="campaign-video-title">Veja como organizamos o diagnóstico</h2>
+          <p>Uma visão clara para transformar gargalos digitais em prioridades práticas.</p>
+        </div>
+        <div class="video-frame">
+          <video id="diagnostic-campaign-video" controls preload="metadata" playsinline>
+            <source src="assets/media/videos/campanhas/campanha-01/PA-CAM-001_SITE_VIDEO-PROMOCIONAL_v0.1.2_2026-08-27.mp4" type="video/mp4">
+            Seu navegador não consegue reproduzir este vídeo.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section" id="form-diagnostico">
+      <div class="container">
+        <div class="form-container">
+          <div class="form-progress" aria-live="polite">
+            <p id="progress-indicator">Etapa 1 de 7</p>
+          </div>
+
+        <form id="diag-form" novalidate>
+          <div class="form-status" id="form-status" aria-live="polite"></div>
+
+          <!-- Honeypot -->
+          <div class="visually-hidden">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <!-- Etapa 01: Você e sua organização -->
+          <fieldset data-step="1" class="form-step active">
+            <legend>01 — Você e sua organização</legend>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nome_completo">Nome completo</label>
+                <input type="text" id="nome_completo" name="nome_completo" required autocomplete="name">
+                <p class="error-message" id="error-nome_completo"></p>
+              </div>
+              <div class="form-group">
+                <label for="email_corporativo">E-mail de trabalho</label>
+                <input type="email" id="email_corporativo" name="email_corporativo" required autocomplete="email">
+                <p class="error-message" id="error-email_corporativo"></p>
+              </div>
+              <div class="form-group">
+                <label for="telefone">Telefone (com DDD)</label>
+                <input type="tel" id="telefone" name="telefone" required autocomplete="tel">
+                <p class="error-message" id="error-telefone"></p>
+              </div>
+              <div class="form-group">
+                <label for="cidade_estado">Cidade / Estado</label>
+                <input type="text" id="cidade_estado" name="cidade_estado" required placeholder="Ex: Campinas/SP">
+                <p class="error-message" id="error-cidade_estado"></p>
+              </div>
+              <div class="form-group">
+                <label for="instituicao">Nome da organização</label>
+                <input type="text" id="instituicao" name="instituicao" required autocomplete="organization">
+                <p class="error-message" id="error-instituicao"></p>
+              </div>
+              <div class="form-group">
+                <label for="cargo">Seu cargo</label>
+                <input type="text" id="cargo" name="cargo" required autocomplete="organization-title">
+                <p class="error-message" id="error-cargo"></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Etapa 02: Estrutura e contexto -->
+          <fieldset data-step="2" class="form-step" hidden>
+            <legend>02 — Estrutura e contexto</legend>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="tipo_organizacao">Tipo de organização</label>
+                <select id="tipo_organizacao" name="tipo_organizacao" required aria-required="true">
+                  <option value="">Selecione...</option>
+                  <option value="Empresa">Empresa</option>
+                  <option value="OSC">OSC</option>
+                  <option value="Escola">Escola</option>
+                  <option value="Universidade">Universidade</option>
+                  <option value="Poder Público">Poder Público</option>
+                  <option value="Coletivo">Coletivo</option>
+                  <option value="Outro">Outro</option>
+                </select>
+                <p class="error-message" id="error-tipo_organizacao"></p>
+              </div>
+              <div class="form-group">
+                <label for="colaboradores">Número de colaboradores</label>
+                <select id="colaboradores" name="colaboradores" required>
+                  <option value="">Selecione...</option>
+                  <option value="1 a 10">1 a 10</option>
+                  <option value="11 a 50">11 a 50</option>
+                  <option value="51 a 200">51 a 200</option>
+                  <option value="Mais de 200">Mais de 200</option>
+                </select>
+                <p class="error-message" id="error-colaboradores"></p>
+              </div>
+              <div class="form-group"> <!-- beneficiarios - agora opcional -->
+                <label for="beneficiarios">Beneficiários diretos por ano (aprox.)</label>
+                <input type="text" id="beneficiarios" name="beneficiarios">
+                <p class="error-message" id="error-beneficiarios"></p>
+              </div>
+              <div class="form-group"> <!-- area_atuacao - agora opcional -->
+                <label for="area_atuacao">Principal área de atuação</label>
+                <input type="text" id="area_atuacao" name="area_atuacao">
+                <p class="error-message" id="error-area_atuacao"></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Etapa 03: Organização digital -->
+          <fieldset data-step="3" class="form-step" hidden>
+            <legend>03 — Organização digital</legend>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="maturidade_digital">Como você classifica a maturidade digital da sua organização?</label> <!-- maturidade_digital - agora opcional -->
+                <select id="maturidade_digital" name="maturidade_digital">
+                  <option value="">Selecione...</option>
+                  <option value="Muito baixa">Muito baixa</option>
+                  <option value="Baixa">Baixa</option>
+                  <option value="Média">Média</option>
+                  <option value="Boa">Boa</option>
+                  <option value="Alta">Alta</option>
+                </select>
+                <p class="error-message" id="error-maturidade_digital"></p>
+              </div>
+              <div class="form-group full-width checkbox-group"> <!-- ferramentas_produtividade - agora opcional -->
+                <p>Quais ferramentas de produtividade vocês utilizam?</p>
+                <div><input type="checkbox" id="fp-gworkspace" name="ferramentas_produtividade" value="Google Workspace"><label for="fp-gworkspace">Google Workspace</label></div>
+                <div><input type="checkbox" id="fp-m365" name="ferramentas_produtividade" value="Microsoft 365"><label for="fp-m365">Microsoft 365</label></div>
+                <div><input type="checkbox" id="fp-notion" name="ferramentas_produtividade" value="Notion"><label for="fp-notion">Notion</label></div>
+                <div><input type="checkbox" id="fp-trello" name="ferramentas_produtividade" value="Trello"><label for="fp-trello">Trello</label></div>
+                <div><input type="checkbox" id="fp-clickup" name="ferramentas_produtividade" value="ClickUp"><label for="fp-clickup">ClickUp</label></div>
+                <div><input type="checkbox" id="fp-nenhuma" name="ferramentas_produtividade" value="Nenhuma"><label for="fp-nenhuma">Nenhuma</label></div>
+                <div><input type="checkbox" id="fp-outro" name="ferramentas_produtividade" value="Outro"><label for="fp-outro">Outro</label></div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Etapa 04: Inteligência artificial -->
+          <fieldset data-step="4" class="form-step" hidden>
+            <legend>04 — Inteligência artificial</legend>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="frequencia_ia">Com que frequência sua equipe utiliza ferramentas de IA (ChatGPT, Gemini, etc.)?</label> <!-- frequencia_ia - agora opcional -->
+                <select id="frequencia_ia" name="frequencia_ia">
+                  <option value="">Selecione...</option>
+                  <option value="Às vezes">Às vezes</option>
+                  <option value="Frequentemente">Frequentemente</option>
+                  <option value="Nunca">Nunca</option>
+                  <option value="Diariamente">Diariamente</option>
+                </select>
+                <p class="error-message" id="error-frequencia_ia"></p>
+              </div>
+              <div class="form-group full-width checkbox-group"> <!-- ferramentas_ia - agora opcional -->
+                <p>Quais ferramentas de IA vocês mais utilizam?</p>
+                <div><input type="checkbox" id="ia-chatgpt" name="ferramentas_ia" value="ChatGPT"><label for="ia-chatgpt">ChatGPT</label></div>
+                <div><input type="checkbox" id="ia-gemini" name="ferramentas_ia" value="Gemini"><label for="ia-gemini">Gemini</label></div>
+                <div><input type="checkbox" id="ia-claude" name="ferramentas_ia" value="Claude"><label for="ia-claude">Claude</label></div>
+                <div><input type="checkbox" id="ia-copilot" name="ferramentas_ia" value="Copilot"><label for="ia-copilot">Copilot</label></div>
+                <div><input type="checkbox" id="ia-nenhuma" name="ferramentas_ia" value="Nenhuma"><label for="ia-nenhuma">Nenhuma</label></div>
+                <div><input type="checkbox" id="ia-outro" name="ferramentas_ia" value="Outro"><label for="ia-outro">Outro</label></div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Etapa 05: Projetos e comunicação -->
+          <fieldset data-step="5" class="form-step" hidden>
+            <legend>05 — Projetos e comunicação</legend>
+            <div class="form-grid"> <!-- canais_comunicacao - agora opcional -->
+              <div class="form-group full-width checkbox-group">
+                <p>Quais são seus principais canais de comunicação externa?</p>
+                <div><input type="checkbox" id="cc-site" name="canais_comunicacao" value="Site"><label for="cc-site">Site</label></div>
+                <div><input type="checkbox" id="cc-instagram" name="canais_comunicacao" value="Instagram"><label for="cc-instagram">Instagram</label></div>
+                <div><input type="checkbox" id="cc-facebook" name="canais_comunicacao" value="Facebook"><label for="cc-facebook">Facebook</label></div>
+                <div><input type="checkbox" id="cc-linkedin" name="canais_comunicacao" value="LinkedIn"><label for="cc-linkedin">LinkedIn</label></div>
+                <div><input type="checkbox" id="cc-newsletter" name="canais_comunicacao" value="Newsletter"><label for="cc-newsletter">Newsletter</label></div>
+                <div><input type="checkbox" id="cc-crm" name="canais_comunicacao" value="CRM"><label for="cc-crm">CRM</label></div>
+                <div><input type="checkbox" id="cc-blog" name="canais_comunicacao" value="Blog"><label for="cc-blog">Blog</label></div>
+                <div><input type="checkbox" id="cc-youtube" name="canais_comunicacao" value="Canal YouTube"><label for="cc-youtube">Canal YouTube</label></div>
+                <div><input type="checkbox" id="cc-nenhum" name="canais_comunicacao" value="Nenhum"><label for="cc-nenhum">Nenhum</label></div>
+              </div>
+              <div class="form-group"> <!-- participa_editais - agora opcional -->
+                <label for="participa_editais">Sua organização participa de editais?</label>
+                <select id="participa_editais" name="participa_editais">
+                  <option value="">Selecione...</option>
+                  <option value="Nunca">Nunca</option>
+                  <option value="Poucas vezes">Poucas vezes</option>
+                  <option value="Frequentemente">Frequentemente</option>
+                </select>
+                <p class="error-message" id="error-participa_editais"></p>
+              </div>
+              <div class="form-group"> <!-- equipe_projetos - agora opcional -->
+                <label for="equipe_projetos">Vocês possuem uma equipe dedicada a projetos/captação?</label>
+                <select id="equipe_projetos" name="equipe_projetos">
+                  <option value="">Selecione...</option>
+                  <option value="Sim">Sim</option>
+                  <option value="Não">Não</option>
+                </select>
+                <p class="error-message" id="error-equipe_projetos"></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Etapa 06: Desafios e próximos passos -->
+          <fieldset data-step="6" class="form-step" hidden>
+            <legend>06 — Desafios e próximos passos</legend>
+            <div class="form-grid"> <!-- areas_desenvolver - agora opcional -->
+              <div class="form-group full-width checkbox-group">
+                <p>Quais áreas vocês mais gostariam de desenvolver?</p>
+                <div><input type="checkbox" id="ad-ia" name="areas_desenvolver" value="Inteligência Artificial"><label for="ad-ia">Inteligência Artificial</label></div>
+                <div><input type="checkbox" id="ad-robotica" name="areas_desenvolver" value="Robótica"><label for="ad-robotica">Robótica</label></div>
+                <div><input type="checkbox" id="ad-gworkspace" name="areas_desenvolver" value="Google Workspace"><label for="ad-gworkspace">Google Workspace</label></div>
+                <div><input type="checkbox" id="ad-projetos" name="areas_desenvolver" value="Projetos"><label for="ad-projetos">Projetos</label></div>
+                <div><input type="checkbox" id="ad-comunicacao" name="areas_desenvolver" value="Comunicação"><label for="ad-comunicacao">Comunicação</label></div>
+                <div><input type="checkbox" id="ad-captacao" name="areas_desenvolver" value="Captação de Recursos"><label for="ad-captacao">Captação de Recursos</label></div>
+                <div><input type="checkbox" id="ad-automacao" name="areas_desenvolver" value="Automação"><label for="ad-automacao">Automação</label></div>
+                <div><input type="checkbox" id="ad-sites" name="areas_desenvolver" value="Sites"><label for="ad-sites">Sites</label></div>
+                <div><input type="checkbox" id="ad-appsscript" name="areas_desenvolver" value="Apps Script"><label for="ad-appsscript">Apps Script</label></div>
+                <div><input type="checkbox" id="ad-gestao-dados" name="areas_desenvolver" value="Gestão de Dados"><label for="ad-gestao-dados">Gestão de Dados</label></div>
+                <div><input type="checkbox" id="ad-outro" name="areas_desenvolver" value="Outro"><label for="ad-outro">Outro</label></div>
+              </div>
+              <div class="form-group full-width">
+                <label for="maior_desafio">Qual o maior desafio de gestão ou tecnologia que vocês enfrentam hoje?</label>
+                <textarea id="maior_desafio" name="maior_desafio" rows="4" required></textarea>
+                <p class="error-message" id="error-maior_desafio"></p>
+              </div>
+              <div class="form-group full-width">
+                <label for="metas_12_meses">Quais as principais metas da organização para os próximos 12 meses?</label>
+                <textarea id="metas_12_meses" name="metas_12_meses" rows="4" required></textarea>
+                <p class="error-message" id="error-metas_12_meses"></p>
+              </div>
+              <div class="form-group full-width checkbox-group"> <!-- conteudos_servicos - agora opcional -->
+                <p>Que tipo de conteúdos ou serviços do Projeto Anônimo mais interessam a vocês?</p>
+                <div><input type="checkbox" id="cs-cursos" name="conteudos_servicos" value="Cursos"><label for="cs-cursos">Cursos</label></div>
+                <div><input type="checkbox" id="cs-eventos" name="conteudos_servicos" value="Eventos"><label for="cs-eventos">Eventos</label></div>
+                <div><input type="checkbox" id="cs-consultorias" name="conteudos_servicos" value="Consultorias"><label for="cs-consultorias">Consultorias</label></div>
+                <div><input type="checkbox" id="cs-materiais" name="conteudos_servicos" value="Materiais"><label for="cs-materiais">Materiais</label></div>
+                <div><input type="checkbox" id="cs-biblioteca" name="conteudos_servicos" value="Biblioteca Viva"><label for="cs-biblioteca">Biblioteca Viva</label></div>
+                <div><input type="checkbox" id="cs-newsletter" name="conteudos_servicos" value="Newsletter"><label for="cs-newsletter">Newsletter</label></div>
+                <div><input type="checkbox" id="cs-parcerias" name="conteudos_servicos" value="Parcerias"><label for="cs-parcerias">Parcerias</label></div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Etapa 07: Consentimento e envio -->
+          <fieldset data-step="7" class="form-step" hidden>
+            <legend>07 — Consentimento e envio</legend>
+            <div class="form-group consent-group">
+              <div class="checkbox-item">
+                <input type="checkbox" id="consent-contact" name="contact" required>
+                <label for="consent-contact">
+                  Autorizo o tratamento dos meus dados para análise deste diagnóstico e para que o Projeto Anônimo entre em contato comigo sobre esta solicitação.
+                </label>
+              </div>
+              <p class="error-message" id="error-contact"></p>
+
+              <div class="checkbox-item">
+                <input type="checkbox" id="lead-consent-marketing" name="marketing">
+                <label for="lead-consent-marketing">
+                  Quero receber conteúdos, novidades e oportunidades do Projeto Anônimo.
+                </label>
+              </div>
+              <p class="privacy-link">
+                Respeitamos sua privacidade. Conheça nossa <a href="privacidade.html" target="_blank">Política de Privacidade</a>.
+              </p>
+            </div>
+          </fieldset>
+
+          <div class="form-navigation">
+            <button type="button" id="prev-button" class="button secondary" hidden>Anterior</button>
+            <button type="button" id="next-button" class="button primary">Continuar</button>
+            <button type="submit" id="submit-button" class="button primary" hidden>Enviar diagnóstico</button>
+          </div>
+
+        </form>
+
+        <div id="success-message" class="success-message" hidden>
+          <h2>Diagnóstico enviado com sucesso!</h2>
+          <p>Agradecemos por compartilhar suas informações. Nossa equipe analisará os dados e entrará em contato em breve.</p>
+          <p class="submission-ref">ID de referência: <span id="submission-id"></span></p>
+          <button type="button" id="reset-button" class="button secondary">Enviar novo diagnóstico</button>
+        </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <img class="footer-logo" src="assets/brand/projeto-anonimo-logo-horizontal-on-dark.svg" alt="Projeto Anônimo">
+        <p>© 2026 Projeto Anônimo. Tecnologia com propósito.</p>
+        <button type="button" id="open-consent-preferences" class="privacy-prefs-link">Preferências de privacidade</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/diagnostico/config.js"></script>
+  <script src="assets/js/diagnostico/consent.js"></script>
+  <script src="assets/js/diagnostico/attribution.js"></script>
+  <script src="assets/js/diagnostico/tracking.js"></script>
+  <script src="assets/js/diagnostico/form.js"></script>
+
+</body>
+</html>

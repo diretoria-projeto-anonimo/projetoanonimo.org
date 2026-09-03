@@ -1,9 +1,13 @@
 const API_BIBLIOTECA =
+  (typeof window !== "undefined" &&
+    typeof window.PA_BIBLIOTECA_CONFIG?.apiUrl === "string" &&
+    window.PA_BIBLIOTECA_CONFIG.apiUrl.trim()) ||
   "https://script.google.com/macros/s/AKfycbzhh37NeK7hAaglGCilFvCME6pxgC7V_EdR5ct3wkmJEpywh50mq3i-xgnP1lQlqQ9PTA/exec";
 
 const state = {
   items: [],
   filtered: [],
+  visibleCount: 6,
   projects: [],
   filteredProjects: [],
   solutions: [],
@@ -41,6 +45,15 @@ const SELECTORS = {
 
 const moduleCache = {};
 const modulePromises = {};
+const BIBLIOTECA_PAGE_SIZE = 6;
+const BIBLIOTECA_CACHE_KEY = "PA_BIBLIOTECA_CACHE_V1";
+const BIBLIOTECA_CACHE_VERSION = 1;
+const BIBLIOTECA_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const BIBLIOTECA_SORT_OPTIONS = new Set([
+  "recentes",
+  "titulo-asc",
+  "titulo-desc",
+]);
 
 function getField(item, ...keys) {
   if (!item || typeof item !== "object") return undefined;
@@ -82,6 +95,177 @@ function isPublishedItem(item) {
   return !status || status === "publicado";
 }
 
+function normalizeModuleItem(item) {
+  return item && typeof item === "object" ? item : {};
+}
+
+function isEmail(value) {
+  if (!value || typeof value !== "string") return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function getUrlAttributes(value, fieldName) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return null;
+
+  if (fieldName === "email") {
+    return isEmail(trimmed) ? `mailto:${trimmed}` : null;
+  }
+}
+
+function isPublishedItem(item) {
+  const status = String(
+    getField(item, "status", "Status", "situacao", "situacaoPublicacao") || ""
+  )
+    .trim()
+    .toLowerCase();
+  return !status || status === "publicado";
+}
+
+function formatDatePtBr(value) {
+  const date = new Date(String(value || "").trim());
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function applyConfigToLink(element, value, fieldName) {
+  const href = getUrlAttributes(value, fieldName);
+
+https://github.com/diretoria-projeto-anonimo/projetoanonimo.org/pull/3/conflict?name=index.html&ancestor_oid=601e572337ae0da47ed1a265f4828d7339dc952d&base_oid=ff64e97547f3f90b94011bca7e2d14c3b79126aa&head_oid=e45df030a0e64df3447769065743edd86cfc5f21  if (!href) {
+    element.removeAttribute("href");
+    element.removeAttribute("target");
+    element.removeAttribute("rel");
+    element.hidden = true;
+    return;
+  }
+
+  element.hidden = false;
+  element.setAttribute("href", href);
+
+  if (/^https?:\/\//i.test(href)) {
+    element.setAttribute("target", "_blank");
+    element.setAttribute("rel", "noopener");
+  } else {
+    element.removeAttribute("target");
+    element.removeAttribute("rel");
+  }
+}
+
+function getCacheUrl(value) {
+  const url = getCacheText(value, 2048);
+  return isValidUrl(url) ? url : "";
+}
+
+function sanitizePublicItemForCache(item) {
+  const material = normalizarMaterial(item);
+  if (!isPublishedItem(material)) return null;
+
+  const slug = getCacheText(material.slug, 180);
+  const titulo = getCacheText(material.titulo || material["título"], 300);
+  if (!slug || !titulo) return null;
+
+  const palavrasChave = Array.isArray(material.palavrasChave)
+    ? material.palavrasChave
+        .map((palavra) => getCacheText(palavra, 120))
+        .filter(Boolean)
+        .slice(0, 30)
+    : getCacheText(material.palavrasChave || material["palavras-chave"], 1000);
+
+  return {
+    slug,
+    titulo,
+    categoria: getCacheText(material.categoria, 180),
+    formato: getCacheText(material.formato, 180),
+    nivel: getCacheText(material.nivel || material["nível"], 180),
+    tempoLeitura: getCacheText(material.tempoLeitura || material.tempoDeLeitura, 80),
+    versao: getCacheText(material.versao || material["versão"], 80),
+    resumo: getCacheText(material.resumo || material.descricao || material["descrição"]),
+    palavrasChave,
+    destaque: Boolean(material.destaque),
+    dataCadastro: getCacheText(material.dataCadastro, 80),
+    urlCapa: getCacheUrl(material.urlCapa || material.capaUrl),
+    paginaUrl: getCacheUrl(material.paginaUrl),
+    arquivoUrl: getCacheUrl(material.arquivoUrl),
+    formularioUrl: getCacheUrl(material.formularioUrl),
+    cta: getCacheText(material.cta, 120),
+  };
+}
+
+function writeBibliotecaCache(items, now = Date.now()) {
+  const storage = getBibliotecaStorage();
+  if (!storage || !Array.isArray(items)) return false;
+
+  const publicItems = items
+    .map(sanitizePublicItemForCache)
+    .filter(Boolean);
+  if (publicItems.length === 0) return false;
+
+  try {
+    storage.setItem(
+      BIBLIOTECA_CACHE_KEY,
+      JSON.stringify({
+        version: BIBLIOTECA_CACHE_VERSION,
+        savedAt: now,
+        items: publicItems,
+      })
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function clearBibliotecaCache() {
+  const storage = getBibliotecaStorage();
+  if (!storage) return;
+  try {
+    storage.removeItem(BIBLIOTECA_CACHE_KEY);
+  } catch {
+    // O cache é apenas uma otimização local; falhas não bloqueiam a Biblioteca.
+  }
+}
+
+function readBibliotecaCache(now = Date.now()) {
+  const storage = getBibliotecaStorage();
+  if (!storage) return null;
+
+  try {
+    const raw = storage.getItem(BIBLIOTECA_CACHE_KEY);
+    if (!raw) return null;
+
+    const cache = JSON.parse(raw);
+    const isValidCache =
+      cache &&
+      cache.version === BIBLIOTECA_CACHE_VERSION &&
+      Number.isFinite(cache.savedAt) &&
+      now - cache.savedAt >= 0 &&
+      now - cache.savedAt < BIBLIOTECA_CACHE_TTL_MS &&
+      Array.isArray(cache.items);
+
+    if (!isValidCache) {
+      clearBibliotecaCache();
+      return null;
+    }
+
+    const publicItems = cache.items
+      .map(sanitizePublicItemForCache)
+      .filter(Boolean);
+    if (publicItems.length === 0) {
+      clearBibliotecaCache();
+      return null;
+    }
+
+    return publicItems;
+  } catch {
+    clearBibliotecaCache();
+    return null;
+  }
+}
+
 function formatDatePtBr(value) {
   const date = new Date(String(value || "").trim());
   if (Number.isNaN(date.getTime())) return "";
@@ -96,6 +280,12 @@ function applyConfigToLink(element, value, fieldName) {
   const href = getUrlAttributes(value, fieldName);
 
   if (!href) {
+    const fallbackHref = String(element.getAttribute("href") || "").trim();
+    if (fallbackHref && fallbackHref !== "#") {
+      element.hidden = false;
+      return;
+    }
+
     element.removeAttribute("href");
     element.removeAttribute("target");
     element.removeAttribute("rel");
@@ -272,45 +462,206 @@ function escapeHTML(value) {
     .replace(/'/g, "&#39;");
 }
 
+function normalizarMaterial(item) {
+  if (!item || typeof item !== "object") {
+    return {};
+  }
+
+  const origem = item.material && typeof item.material === "object"
+    ? item.material
+    : item;
+
+  const campos = {
+    titulo: ["titulo"],
+    slug: ["slug"],
+    categoria: ["categoria"],
+    formato: ["formato"],
+    resumo: ["resumo", "descricao"],
+    publico: ["publico"],
+    nivel: ["nivel"],
+    tempoLeitura: ["tempodeleitura"],
+    versao: ["versao"],
+    status: ["status"],
+    cta: ["cta"],
+    urlCapa: ["urldacapa", "urlcapa", "capaurl"],
+    paginaUrl: ["urldapagina", "paginaurl"],
+    arquivoUrl: ["urldoarquivo", "urlarquivo", "arquivourl"],
+    formularioUrl: ["urldoformulario", "urlformulario", "formulariourl"],
+  };
+
+  const entradas = Object.entries(origem);
+  const material = { ...origem };
+
+  Object.entries(campos).forEach(([destino, aliases]) => {
+    if (material[destino] != null && material[destino] !== "") {
+      return;
+    }
+
+    const correspondencia = entradas.find(([chave]) =>
+      aliases.includes(normalizarChaveCampo(chave))
+    );
+
+    if (correspondencia) {
+      material[destino] = correspondencia[1];
+    }
+  });
+
+  return material;
+}
+
+function normalizarChaveCampo(chave) {
+  return String(chave || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
 function getFetchUrl(item) {
-  return escapeHTML(item.paginaUrl || item.arquivoUrl || item.formularioUrl || "#");
+  const material = normalizarMaterial(item);
+
+  if (material.slug) {
+    return `biblioteca/material.html?slug=${encodeURIComponent(
+      material.slug
+    )}`;
+  }
+
+  return getSafeUrl(
+    material.paginaUrl ||
+    material.arquivoUrl ||
+    material.formularioUrl
+  );
+} 
+
+const LIBRARY_COVER_IMAGES = Object.freeze({
+  "plano-30-dias-organizacao-digital": "assets/img/library/plano-30-dias-organizacao-digital-v2.webp",
+  "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v2.webp",
+  "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v2.webp",
+  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v2.webp"
+});
+
+function getSafeUrl(value) {
+  const trimmed = String(value || "").trim();
+  return isValidUrl(trimmed) ? escapeHTML(trimmed) : "#";
+}
+
+function renderParceiros(items) {
+  const section = document.getElementById("secao-parceiros");
+  const list = getElement(SELECTORS.parceirosList);
+  if (!section || !list) return;
+
+  const validItems = Array.isArray(items) ? items.filter(isPublishedItem) : [];
+  if (validItems.length === 0) {
+    section.hidden = true;
+    list.innerHTML = "";
+    return;
+  }
+
+  section.hidden = false;
+  list.innerHTML = validItems.map(buildParceiroCard).join("");
+}
+
+function renderEventos(items) {
+  const section = document.getElementById("secao-eventos");
+  const list = getElement(SELECTORS.eventosList);
+  if (!section || !list) return;
+
+  const validItems = Array.isArray(items) ? items.filter(isPublishedItem) : [];
+  if (validItems.length === 0) {
+    section.hidden = true;
+    list.innerHTML = "";
+    return;
+  }
+
+  section.hidden = false;
+  list.innerHTML = validItems.map(buildEventoCard).join("");
+}
+
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+  const slug = String(material.slug || "").trim();
+  return LIBRARY_COVER_IMAGES[slug] || "";
 }
 
 function buildCard(item) {
-  const title = escapeHTML(item.titulo || "Sem título");
-  const summary = escapeHTML(item.resumo || "Resumo não disponível.");
-  const category = escapeHTML(item.categoria || "Material");
-  const format = escapeHTML(item.formato || "Formato não informado");
-  const level = escapeHTML(item.nivel || "Nível não informado");
-  const time = escapeHTML(item.tempoLeitura || "");
-  const version = escapeHTML(item.versao || "");
-  const cta = escapeHTML(item.cta || "Acessar material");
-  const url = getFetchUrl(item);
-  const hasUrl = url !== "#";
-  const coverUrl = item.capaUrl ? escapeHTML(item.capaUrl) : "";
-  const coverStyle = coverUrl ? `style="background-image:url('${coverUrl}')"` : "";
-  const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
+  const material = normalizarMaterial(item);
 
-  return `
-    <article class="card">
-      <div class="cover" ${coverStyle}>
-        ${coverUrl ? "" : '<div class="cover-fallback">Biblioteca Viva</div>'}
+  const rawTitle = material.titulo || material["título"] || "Sem título";
+  const title = escapeHTML(rawTitle);
+
+  const summary = escapeHTML(
+    material.resumo ||
+    material.descricao ||
+    material["descrição"] ||
+    "Resumo não disponível."
+  );
+
+  const category = escapeHTML(
+    material.territorio || material.categoria || "Material"
+  );
+
+  const format = escapeHTML(
+    material.formato || "Formato não informado"
+  );
+
+  const level = escapeHTML(
+    material.nivel ||
+    material["nível"] ||
+    "Nível não informado"
+  );
+
+  const time = escapeHTML(
+    material.tempoLeitura ||
+    material.tempoDeLeitura ||
+    material["tempo de leitura"] ||
+    ""
+  );
+
+  const version = escapeHTML(
+    material.versao ||
+    material["versão"] ||
+    ""
+  );
+
+  const cta = escapeHTML(
+    material.cta || "Acessar material"
+  );
+
+  const url = getFetchUrl(material);
+  const hasUrl = url !== "#";
+
+  const coverUrl = getLibraryCoverImage(material);
+  const coverAlt = escapeHTML(`Ilustração do material ${rawTitle}`);
+
+  const isInternalMaterial = /^biblioteca\/material\.html(?:\?|$)/.test(url);
+  const targetAttrs = hasUrl && !isInternalMaterial
+    ? `target="_blank" rel="noopener"`
+    : "";
+
+  const cardContent = `
+    <div class="cover library-cover">
+      ${coverUrl ? `<img src="${coverUrl}" alt="${coverAlt}" width="1200" height="800" loading="lazy" decoding="async">` : '<div class="cover-fallback">Biblioteca Viva</div>'}
+    </div>
+    <div class="card-body">
+      <span class="tag">${category}</span>
+      <h3>${title}</h3>
+      <p class="summary">${summary}</p>
+      <div class="meta">
+        <span><strong>Formato:</strong> ${format}</span>
+        <span><strong>Nível:</strong> ${level}</span>
+        ${time ? `<span><strong>Tempo:</strong> ${time}</span>` : ""}
+        ${version ? `<span><strong>Versão:</strong> ${version}</span>` : ""}
       </div>
-      <div class="card-body">
-        <span class="tag">${category}</span>
-        <h3>${title}</h3>
-        <p class="summary">${summary}</p>
-        <div class="meta">
-          <span><strong>Formato:</strong> ${format}</span>
-          <span><strong>Nível:</strong> ${level}</span>
-          ${time ? `<span><strong>Tempo:</strong> ${time}</span>` : ""}
-          ${version ? `<span><strong>Versão:</strong> ${version}</span>` : ""}
-        </div>
-        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
-      </div>
-    </article>
+      <span class="card-cta" aria-hidden="true">${cta}</span>
+    </div>
   `;
-}
 
 function buildParceiroCard(item) {
   const name = escapeHTML(item.nome || item.titulo || item.name || "Parceiro");
@@ -381,6 +732,86 @@ function buildProjectCard(project) {
   const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
 
   return `
+    <a
+      class="card library-card-link"
+      href="${url}"
+      ${targetAttrs}
+      aria-label="${cta}: ${title}"
+    >
+      ${cardContent}
+    </a>
+  `;
+}
+
+function buildParceiroCard(item) {
+  const name = escapeHTML(item.nome || item.titulo || item.name || "Parceiro");
+  const type = escapeHTML(item.tipo || item.categoria || item.area || "Institucional");
+  const description = escapeHTML(item.descricao || item.resumo || item.description || "");
+  const site = getSafeUrl(item.site || item.url || item.link || item.siteUrl);
+  const logo = getSafeUrl(item.logo || item.logoUrl || item.imagem || "");
+  const logoAlt = escapeHTML(`Logo de ${name}`);
+  const hasSite = site !== "#";
+
+  return `
+    <article class="project-card">
+      ${logo ? `<div class="card-media"><img src="${logo}" alt="${logoAlt}"></div>` : '<div class="cover"><div class="cover-fallback">Parceiro</div></div>'}
+      <div class="card-body">
+        <span class="tag">${type}</span>
+        <h3>${name}</h3>
+        ${description ? `<p class="summary">${description}</p>` : ""}
+        ${hasSite ? `<a class="btn secondary card-cta" href="${site}" target="_blank" rel="noopener">Visitar site</a>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function buildEventoCard(evento) {
+  const title = escapeHTML(evento.titulo || evento.nome || evento.title || "Evento");
+  const category = escapeHTML(evento.categoria || evento.tipo || evento.area || "Evento");
+  const summary = escapeHTML(evento.resumo || evento.descricao || evento.description || "");
+  const eventDate = formatDatePtBr(evento.data || evento.dataInicio || evento.dataEvento);
+  const hour = escapeHTML(evento.hora || evento.tempo || evento.schedule || "");
+  const local = escapeHTML(evento.local || evento.lugar || evento.venue || "");
+  const format = escapeHTML(evento.formato || evento.formatoEvento || evento.type || "");
+  const url = getSafeUrl(evento.url || evento.link || evento.site || evento.paginaUrl || evento.eventoUrl);
+  const image = getSafeUrl(evento.imagem || evento.imagemUrl || evento.capaUrl || evento.logo || "");
+  const imageAlt = escapeHTML(`Imagem do evento ${title}`);
+  const cta = escapeHTML(evento.cta || "Saiba mais");
+  const hasUrl = url !== "#";
+  const metaItems = [
+    eventDate ? `<span><strong>Data:</strong> ${eventDate}</span>` : "",
+    hour ? `<span><strong>Hora:</strong> ${hour}</span>` : "",
+    local ? `<span><strong>Local:</strong> ${local}</span>` : "",
+    format ? `<span><strong>Formato:</strong> ${format}</span>` : "",
+  ]
+    .filter(Boolean)
+    .join("");
+
+  return `
+    <article class="project-card">
+      ${image ? `<div class="card-media"><img src="${image}" alt="${imageAlt}"></div>` : '<div class="cover"><div class="cover-fallback">Agenda</div></div>'}
+      <div class="card-body">
+        <span class="tag">${category}</span>
+        <h3>${title}</h3>
+        ${summary ? `<p class="summary">${summary}</p>` : ""}
+        ${metaItems ? `<div class="meta">${metaItems}</div>` : ""}
+        ${hasUrl ? `<a class="btn secondary card-cta" href="${url}" target="_blank" rel="noopener">${cta}</a>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function buildProjectCard(project) {
+  const title = escapeHTML(getField(project, "titulo", "Título") || "Sem título");
+  const area = escapeHTML(getField(project, "area", "Área") || "Área não informada");
+  const publico = escapeHTML(getField(project, "publico", "Público") || "Público não informado");
+  const resumo = escapeHTML(getField(project, "resumo", "Resumo") || "Resumo não disponível.");
+  const cta = escapeHTML(getField(project, "cta", "CTA") || "Conhecer projeto");
+  const url = getSafeUrl(getField(project, "url", "URL") || "");
+  const hasUrl = url !== "#";
+  const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
+
+  return `
     <article class="project-card">
       <div class="card-body">
         <div class="project-meta">
@@ -389,29 +820,47 @@ function buildProjectCard(project) {
         </div>
         <h3>${title}</h3>
         <p class="summary">${resumo}</p>
-        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
+        ${hasUrl ? `<a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>` : ""}
       </div>
     </article>
   `;
 }
 
+const SOLUTION_COVER_IMAGES = Object.freeze({
+  "Google Workspace para OSCs": "assets/img/solutions/google-workspace-oscs-v1.webp",
+  "CRM e Automação": "assets/img/solutions/crm-automacao-v1.webp",
+  "Comunicação para Projetos Culturais": "assets/img/solutions/comunicacao-projetos-culturais-v1.webp",
+  "IA para Organizações": "assets/img/solutions/ia-organizacoes-v1.webp",
+  "Cultura Maker e Robótica": "assets/img/solutions/cultura-maker-robotica-v1.webp",
+  "Biblioteca Viva": "assets/img/solutions/biblioteca-viva-v1.webp"
+});
+
+function getSolutionCoverImage(solution, title) {
+  const configuredImage = getField(solution, "imagem", "Imagem");
+  if (configuredImage) {
+    const safeImage = getSafeUrl(configuredImage);
+    if (safeImage !== "#") return safeImage;
+  }
+
+  return SOLUTION_COVER_IMAGES[title] || "";
+}
+
 function buildSolutionCard(solution) {
-  const title = escapeHTML(solution.titulo || "Sem título");
-  const categoria = escapeHTML(solution.categoria || "Categoria não informada");
-  const publico = escapeHTML(solution.publico || "Público não informado");
-  const resumo = escapeHTML(solution.resumo || "Resumo não disponível.");
-  const cta = escapeHTML(solution.cta || "Conhecer solução");
-  const url = getSafeUrl(solution.url || "#");
-  const imagem = escapeHTML(solution.imagem || "");
+  const rawTitle = String(getField(solution, "titulo", "Título") || "Sem título").trim();
+  const title = escapeHTML(rawTitle);
+  const categoria = escapeHTML(getField(solution, "categoria", "Categoria") || "Categoria não informada");
+  const publico = escapeHTML(getField(solution, "publico", "Público") || "Público não informado");
+  const resumo = escapeHTML(getField(solution, "resumo", "Resumo") || "Resumo não disponível.");
+  const cta = escapeHTML(getField(solution, "cta", "CTA") || "Conhecer solução");
+  const url = getSafeUrl(getField(solution, "url", "URL") || "");
+  const imagem = getSolutionCoverImage(solution, rawTitle);
+  const imageAlt = escapeHTML(`Ilustração da solução ${rawTitle}`);
   const hasUrl = url !== "#";
   const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
-  const coverStyle = imagem ? `style="background-image:url('${imagem}')"` : "";
 
   return `
-    <article class="project-card">
-      <div class="cover" ${coverStyle}>
-        ${imagem ? "" : '<div class="cover-fallback">Solução</div>'}
-      </div>
+    <article class="project-card solution-card">
+      ${imagem ? `<div class="cover solution-cover"><img src="${imagem}" alt="${imageAlt}" width="1200" height="800" loading="lazy" decoding="async"></div>` : ""}
       <div class="card-body">
         <div class="project-meta">
           <span class="badge">${categoria}</span>
@@ -419,7 +868,7 @@ function buildSolutionCard(solution) {
         </div>
         <h3>${title}</h3>
         <p class="summary">${resumo}</p>
-        <a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>
+        ${hasUrl ? `<a class="btn secondary card-cta" href="${url}" ${targetAttrs}>${cta}</a>` : ""}
       </div>
     </article>
   `;
@@ -454,7 +903,7 @@ function updateCounter(count, total) {
   const counter = getElement(SELECTORS.contador);
   if (!counter) return;
   const label = count === 1 ? "material encontrado" : "materiais encontrados";
-  counter.textContent = `${count} ${label}` + (total ? ` • ${total} disponível${total === 1 ? "" : "s"}` : "");
+  counter.textContent = `${count} ${label}` + (total ? ` • ${total} ${total === 1 ? "disponível" : "disponíveis"}` : "");
 }
 
 function updateProjectCounter(count, total) {
@@ -470,6 +919,31 @@ function toggleEmptyMessage(show) {
   emptyMessage.classList.toggle("hidden", !show);
 }
 
+function updateEmptyMessage(message) {
+  const emptyMessage = getElement(SELECTORS.empty);
+  if (!emptyMessage) return;
+  emptyMessage.textContent = message;
+}
+
+function toggleLibraryControl(id, show) {
+  const control = getElement(id);
+  if (!control) return;
+  control.classList.toggle("hidden", !show);
+}
+
+function updateProgressiveControls(totalFiltered) {
+  const loadMore = getElement(SELECTORS.loadMore);
+  if (!loadMore) return;
+
+  const remaining = Math.max(totalFiltered - state.visibleCount, 0);
+  loadMore.classList.toggle("hidden", remaining === 0);
+  loadMore.disabled = remaining === 0;
+  loadMore.textContent =
+    remaining > 0
+      ? `Carregar mais (${Math.min(BIBLIOTECA_PAGE_SIZE, remaining)})`
+      : "Todos os materiais foram exibidos";
+}
+
 function toggleProjectEmpty(show) {
   const emptyMessage = getElement(SELECTORS.projetosEmpty);
   if (!emptyMessage) return;
@@ -479,19 +953,29 @@ function toggleProjectEmpty(show) {
 function renderList(items) {
   const list = getElement(SELECTORS.list);
   if (!list) return;
+  list.setAttribute("aria-busy", "false");
+  toggleLibraryControl(SELECTORS.retry, false);
 
   if (!Array.isArray(items) || items.length === 0) {
     list.innerHTML = "";
+    updateEmptyMessage("Nenhum resultado encontrado para sua pesquisa.");
     toggleEmptyMessage(true);
     updateStatus("Nenhum resultado encontrado para sua pesquisa.");
     updateCounter(0, state.items.length);
+    updateProgressiveControls(0);
     return;
   }
 
+  const visibleItems = items.slice(0, state.visibleCount);
   toggleEmptyMessage(false);
-  updateStatus("");
+  updateStatus(
+    visibleItems.length < items.length
+      ? `Exibindo ${visibleItems.length} de ${items.length} materiais.`
+      : ""
+  );
   updateCounter(items.length, state.items.length);
-  list.innerHTML = items.map(buildCard).join("");
+  list.innerHTML = visibleItems.map(buildCard).join("");
+  updateProgressiveControls(items.length);
 }
 
 function renderHomeLibrary(items) {
@@ -554,10 +1038,10 @@ function populateFilters(items) {
 
 function populateProjectFilters(items) {
   const areas = Array.from(
-    new Set(items.map((item) => String(item.area || "").trim()).filter(Boolean))
+    new Set(items.map((item) => String(getField(item, "area", "Área") || "").trim()).filter(Boolean))
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
   const publicos = Array.from(
-    new Set(items.map((item) => String(item.publico || "").trim()).filter(Boolean))
+    new Set(items.map((item) => String(getField(item, "publico", "Público") || "").trim()).filter(Boolean))
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   populateFilter(SELECTORS.projetosArea, areas, "Todas as áreas");
@@ -579,36 +1063,154 @@ function getProjectSearchTerm() {
   return search ? String(search.value).trim().toLowerCase() : "";
 }
 
-function filterItems() {
-  const query = getSearchTerm();
-  const category = getSelectedValue(SELECTORS.category);
-  const format = getSelectedValue(SELECTORS.format);
+function getMaterialTimestamp(item) {
+  const material = normalizarMaterial(item);
+  const candidates = [
+    material.ultimaRevisao,
+    material.dataPublicacao,
+    material.data,
+    material.criadoEm,
+  ];
+
+  for (const value of candidates) {
+    if (!value) continue;
+    const timestamp = Date.parse(value);
+    if (Number.isFinite(timestamp)) return timestamp;
+  }
+
+  return 0;
+}
+
+function sortItems(items, order) {
+  const indexed = items.map((item, index) => ({ item, index }));
+
+  indexed.sort((left, right) => {
+    const materialLeft = normalizarMaterial(left.item);
+    const materialRight = normalizarMaterial(right.item);
+    const titleLeft = String(materialLeft.titulo || "");
+    const titleRight = String(materialRight.titulo || "");
+    let comparison = 0;
+
+    if (order === "titulo-asc") {
+      comparison = titleLeft.localeCompare(titleRight, "pt-BR", {
+        sensitivity: "base",
+      });
+    } else if (order === "titulo-desc") {
+      comparison = titleRight.localeCompare(titleLeft, "pt-BR", {
+        sensitivity: "base",
+      });
+    } else {
+      comparison =
+        getMaterialTimestamp(right.item) - getMaterialTimestamp(left.item);
+    }
+
+    return comparison || left.index - right.index;
+  });
+
+  return indexed.map(({ item }) => item);
+}
+
+function getLibraryFilterState() {
+  const order = getSelectedValue(SELECTORS.sort);
+  return {
+    query: getSearchTerm(),
+    category: getSelectedValue(SELECTORS.category),
+    format: getSelectedValue(SELECTORS.format),
+    order: BIBLIOTECA_SORT_OPTIONS.has(order) ? order : "recentes",
+  };
+}
+
+function syncLibraryFiltersToUrl(filters) {
+  if (!window.history || typeof window.history.replaceState !== "function") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  const values = {
+    busca: filters.query,
+    categoria: filters.category,
+    formato: filters.format,
+    ordem: filters.order === "recentes" ? "" : filters.order,
+  };
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, value);
+    else url.searchParams.delete(key);
+  });
+
+  window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function setSelectValueIfAvailable(id, value) {
+  const select = getElement(id);
+  if (!select || !value) return;
+  const optionExists = Array.from(select.options).some(
+    (option) => option.value === value
+  );
+  if (optionExists) select.value = value;
+}
+
+function restoreLibraryFiltersFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const search = getElement(SELECTORS.search);
+  if (search) search.value = params.get("busca") || "";
+
+  setSelectValueIfAvailable(SELECTORS.category, params.get("categoria"));
+  setSelectValueIfAvailable(SELECTORS.format, params.get("formato"));
+
+  const requestedOrder = params.get("ordem") || "recentes";
+  setSelectValueIfAvailable(
+    SELECTORS.sort,
+    BIBLIOTECA_SORT_OPTIONS.has(requestedOrder)
+      ? requestedOrder
+      : "recentes"
+  );
+}
+
+function updateClearFiltersControl(filters) {
+  const hasActiveFilters = Boolean(
+    filters.query ||
+      filters.category ||
+      filters.format ||
+      filters.order !== "recentes"
+  );
+  toggleLibraryControl(SELECTORS.clearFilters, hasActiveFilters);
+}
+
+function filterItems({ syncUrl = true, resetVisible = true } = {}) {
+  const filters = getLibraryFilterState();
 
   const filtered = state.items.filter((item) => {
-    const title = String(item.titulo || "").toLowerCase();
-    const summary = String(item.resumo || "").toLowerCase();
-    const categoryText = String(item.categoria || "").toLowerCase();
-    const formatText = String(item.formato || "").toLowerCase();
-    const keywords = Array.isArray(item.palavrasChave)
-      ? item.palavrasChave.join(" ").toLowerCase()
+    const material = normalizarMaterial(item);
+    const title = String(material.titulo || "").toLowerCase();
+    const summary = String(material.resumo || "").toLowerCase();
+    const categoryText = String(material.categoria || "").toLowerCase();
+    const formatText = String(material.formato || "").toLowerCase();
+    const keywords = Array.isArray(material.palavrasChave)
+      ? material.palavrasChave.join(" ").toLowerCase()
       : "";
 
     const matchesQuery =
-      !query ||
-      title.includes(query) ||
-      summary.includes(query) ||
-      categoryText.includes(query) ||
-      formatText.includes(query) ||
-      keywords.includes(query);
+      !filters.query ||
+      title.includes(filters.query) ||
+      summary.includes(filters.query) ||
+      categoryText.includes(filters.query) ||
+      formatText.includes(filters.query) ||
+      keywords.includes(filters.query);
 
-    const matchesCategory = !category || categoryText === category.toLowerCase();
-    const matchesFormat = !format || formatText === format.toLowerCase();
+    const matchesCategory =
+      !filters.category || categoryText === filters.category.toLowerCase();
+    const matchesFormat =
+      !filters.format || formatText === filters.format.toLowerCase();
 
     return matchesQuery && matchesCategory && matchesFormat;
   });
 
-  state.filtered = filtered;
-  renderList(filtered);
+  state.filtered = sortItems(filtered, filters.order);
+  if (resetVisible) state.visibleCount = BIBLIOTECA_PAGE_SIZE;
+  if (syncUrl) syncLibraryFiltersToUrl(filters);
+  updateClearFiltersControl(filters);
+  renderList(state.filtered);
 }
 
 function filterProjects() {
@@ -617,10 +1219,10 @@ function filterProjects() {
   const publico = getSelectedValue(SELECTORS.projetosPublico);
 
   const filtered = state.projects.filter((item) => {
-    const title = String(item.titulo || "").toLowerCase();
-    const summary = String(item.resumo || "").toLowerCase();
-    const areaText = String(item.area || "").toLowerCase();
-    const publicoText = String(item.publico || "").toLowerCase();
+    const title = String(getField(item, "titulo", "Título") || "").toLowerCase();
+    const summary = String(getField(item, "resumo", "Resumo") || "").toLowerCase();
+    const areaText = String(getField(item, "area", "Área") || "").toLowerCase();
+    const publicoText = String(getField(item, "publico", "Público") || "").toLowerCase();
 
     const matchesQuery =
       !query ||
@@ -643,6 +1245,10 @@ function attachFilters() {
   const search = getElement(SELECTORS.search);
   const category = getElement(SELECTORS.category);
   const format = getElement(SELECTORS.format);
+  const sort = getElement(SELECTORS.sort);
+  const clearFilters = getElement(SELECTORS.clearFilters);
+  const loadMore = getElement(SELECTORS.loadMore);
+  const retry = getElement(SELECTORS.retry);
 
   if (search) {
     search.addEventListener("input", filterItems);
@@ -653,6 +1259,33 @@ function attachFilters() {
   if (format) {
     format.addEventListener("change", filterItems);
   }
+  if (sort) {
+    sort.addEventListener("change", filterItems);
+  }
+  if (clearFilters) {
+    clearFilters.addEventListener("click", () => {
+      if (search) search.value = "";
+      if (category) category.value = "";
+      if (format) format.value = "";
+      if (sort) sort.value = "recentes";
+      filterItems();
+      if (search) search.focus();
+    });
+  }
+  if (loadMore) {
+    loadMore.addEventListener("click", () => {
+      state.visibleCount += BIBLIOTECA_PAGE_SIZE;
+      renderList(state.filtered);
+    });
+  }
+  if (retry) {
+    retry.addEventListener("click", carregarBiblioteca);
+  }
+
+  window.addEventListener("popstate", () => {
+    restoreLibraryFiltersFromUrl();
+    filterItems({ syncUrl: false });
+  });
 }
 
 function attachProjectFilters() {
@@ -676,9 +1309,27 @@ function setLoadingState() {
   const homeList = getElement(SELECTORS.homeList);
 
   if (list) {
-    list.innerHTML = "";
-    toggleEmptyMessage(true);
+    list.setAttribute("aria-busy", "true");
+    list.innerHTML = Array.from(
+      { length: 3 },
+      () => `
+        <article class="card skeleton-card" aria-hidden="true">
+          <div class="skeleton-block skeleton-cover"></div>
+          <div class="card-body">
+            <div class="skeleton-block skeleton-tag"></div>
+            <div class="skeleton-block skeleton-title"></div>
+            <div class="skeleton-block skeleton-text"></div>
+            <div class="skeleton-block skeleton-text short"></div>
+          </div>
+        </article>
+      `
+    ).join("");
+    toggleEmptyMessage(false);
+    const counter = getElement(SELECTORS.contador);
+    if (counter) counter.textContent = "Carregando biblioteca...";
     updateStatus("Carregando Biblioteca Viva...");
+    toggleLibraryControl(SELECTORS.retry, false);
+    updateProgressiveControls(0);
   }
 
   if (homeList) {
@@ -687,145 +1338,20 @@ function setLoadingState() {
   }
 }
 
-function updateSolutionStatus(message, isError = false) {
-  const status = getElement(SELECTORS.solucoesStatus);
-  if (!status) return;
-  status.textContent = message;
-  status.classList.toggle("error", isError);
-}
-
-function updateSolutionCounter(count, total) {
-  const counter = getElement(SELECTORS.solucoesContador);
-  if (!counter) return;
-  const label = count === 1 ? "solução disponível" : "soluções disponíveis";
-  counter.textContent = `${count} ${label}` + (total ? ` • ${total} no total` : "");
-}
-
-function toggleSolutionEmpty(show) {
-  const emptyMessage = getElement(SELECTORS.solucoesEmpty);
-  if (!emptyMessage) return;
-  emptyMessage.classList.toggle("hidden", !show);
-}
-
-function renderSolutions(items) {
-  const list = getElement(SELECTORS.solucoesList);
+function setLibraryErrorState() {
+  const list = getElement(SELECTORS.list);
   if (!list) return;
-
-  if (!Array.isArray(items) || items.length === 0) {
-    list.innerHTML = "";
-    toggleSolutionEmpty(true);
-    updateSolutionStatus("Nenhuma solução encontrada para os filtros aplicados.");
-    updateSolutionCounter(0, state.solutions.length);
-    return;
-  }
-
-  toggleSolutionEmpty(false);
-  updateSolutionStatus("");
-  updateSolutionCounter(items.length, state.solutions.length);
-  list.innerHTML = items.map(buildSolutionCard).join("");
-}
-
-function populateSolutionFilters(items) {
-  const categories = Array.from(
-    new Set(items.map((item) => String(item.categoria || "").trim()).filter(Boolean))
-  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
-
-  populateFilter(SELECTORS.solucoesCategoria, categories, "Todas as categorias");
-}
-
-function getSolutionSearchTerm() {
-  const search = getElement(SELECTORS.solucoesSearch);
-  return search ? String(search.value).trim().toLowerCase() : "";
-}
-
-function filterSolutions() {
-  const query = getSolutionSearchTerm();
-  const category = getSelectedValue(SELECTORS.solucoesCategoria);
-
-  const filtered = state.solutions.filter((item) => {
-    const title = String(item.titulo || "").toLowerCase();
-    const summary = String(item.resumo || "").toLowerCase();
-    const categoryText = String(item.categoria || "").toLowerCase();
-    const publicoText = String(item.publico || "").toLowerCase();
-
-    const matchesQuery =
-      !query ||
-      title.includes(query) ||
-      summary.includes(query) ||
-      categoryText.includes(query) ||
-      publicoText.includes(query);
-
-    const matchesCategory = !category || categoryText === category.toLowerCase();
-    return matchesQuery && matchesCategory;
-  });
-
-  state.filteredSolutions = filtered;
-  renderSolutions(filtered);
-}
-
-function attachSolutionFilters() {
-  const search = getElement(SELECTORS.solucoesSearch);
-  const category = getElement(SELECTORS.solucoesCategoria);
-
-  if (search) {
-    search.addEventListener("input", filterSolutions);
-  }
-  if (category) {
-    category.addEventListener("change", filterSolutions);
-  }
-}
-
-function initializeProjectPage() {
-  const list = getElement(SELECTORS.projetosList);
-  const status = getElement(SELECTORS.projetosStatus);
-  if (!list) return;
-
   list.innerHTML = "";
-  updateProjectStatus("Carregando projetos...");
-  toggleProjectEmpty(false);
-
-  fetchModulo("projetos")
-    .then((data) => {
-      state.projects = data.items;
-      state.filteredProjects = [...state.projects];
-
-      populateProjectFilters(state.projects);
-      renderProjects(state.projects);
-      attachProjectFilters();
-    })
-    .catch((error) => {
-      console.error(error);
-      list.innerHTML = "";
-      updateProjectStatus("Não foi possível carregar os projetos agora. Tente novamente mais tarde.", true);
-      updateProjectCounter(0, 0);
-      toggleProjectEmpty(true);
-    });
-}
-
-function initializeSolutionPage() {
-  const list = getElement(SELECTORS.solucoesList);
-  if (!list) return;
-
-  list.innerHTML = "";
-  updateSolutionStatus("Carregando soluções...");
-  toggleSolutionEmpty(false);
-
-  fetchModulo("solucoes")
-    .then((data) => {
-      state.solutions = data.items;
-      state.filteredSolutions = [...state.solutions];
-
-      populateSolutionFilters(state.solutions);
-      renderSolutions(state.solutions);
-      attachSolutionFilters();
-    })
-    .catch((error) => {
-      console.error(error);
-      list.innerHTML = "";
-      updateSolutionStatus("Não foi possível carregar as soluções agora. Tente novamente mais tarde.", true);
-      updateSolutionCounter(0, 0);
-      toggleSolutionEmpty(true);
-    });
+  list.setAttribute("aria-busy", "false");
+  toggleEmptyMessage(false);
+  const counter = getElement(SELECTORS.contador);
+  if (counter) counter.textContent = "Biblioteca temporariamente indisponível";
+  updateStatus(
+    "Não foi possível carregar a Biblioteca Viva agora. Verifique sua conexão e tente novamente.",
+    true
+  );
+  toggleLibraryControl(SELECTORS.retry, true);
+  updateProgressiveControls(0);
 }
 
 function initializeParceirosSection() {
@@ -891,12 +1417,18 @@ async function carregarBiblioteca() {
     }
 
     state.items = data.items;
+    writeBibliotecaCache(state.items);
     state.filtered = [...state.items];
 
     if (state.items.length === 0) {
       if (list) {
+        list.innerHTML = "";
+        list.setAttribute("aria-busy", "false");
+        updateEmptyMessage("Novos materiais serão publicados em breve.");
+        toggleEmptyMessage(true);
         updateStatus("A Biblioteca Viva ainda não possui materiais publicados.");
         updateCounter(0, 0);
+        updateProgressiveControls(0);
       }
       if (homeList) {
         updateHomeStatus("A Biblioteca Viva ainda não possui materiais publicados.");
@@ -906,7 +1438,8 @@ async function carregarBiblioteca() {
 
     if (list) {
       populateFilters(state.items);
-      filterItems();
+      restoreLibraryFiltersFromUrl();
+      filterItems({ syncUrl: false });
     }
 
     if (homeList) {
@@ -914,9 +1447,26 @@ async function carregarBiblioteca() {
     }
   } catch (error) {
     console.error(error);
+    const cachedItems = readBibliotecaCache();
+    if (cachedItems) {
+      state.items = cachedItems;
+      state.filtered = [...cachedItems];
+
+      if (list) {
+        populateFilters(state.items);
+        restoreLibraryFiltersFromUrl();
+        filterItems({ syncUrl: false });
+        updateStatus("Exibindo cópia local da Biblioteca Viva (modo offline).");
+      }
+      if (homeList) {
+        renderHomeLibrary(state.items);
+        updateHomeStatus("Exibindo cópia local da Biblioteca Viva (modo offline).");
+      }
+      return;
+    }
+
     if (list) {
-      setLoadingState();
-      updateStatus("Não foi possível carregar a Biblioteca Viva agora. Tente novamente mais tarde.", true);
+      setLibraryErrorState();
     }
     if (homeList) {
       homeList.innerHTML = "";
@@ -925,9 +1475,35 @@ async function carregarBiblioteca() {
   }
 }
 
+function initializeMobileNavigation() {
+  const toggle = document.querySelector(".toggle");
+  const links = document.querySelector(".links");
+  if (!toggle || !links) return;
+
+  toggle.setAttribute("aria-controls", "site-navigation");
+  links.id = links.id || "site-navigation";
+
+  toggle.addEventListener("click", () => {
+    const isOpen = links.classList.toggle("is-open");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.setAttribute("aria-label", isOpen ? "Fechar menu" : "Abrir menu");
+    toggle.textContent = isOpen ? "Fechar" : "Menu";
+  });
+
+  links.addEventListener("click", (event) => {
+    if (!event.target.closest("a")) return;
+    links.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Abrir menu");
+    toggle.textContent = "Menu";
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  initializeMobileNavigation();
   initializeConfig();
   if (getElement(SELECTORS.list) || getElement(SELECTORS.homeList)) {
+    if (getElement(SELECTORS.list)) attachFilters();
     carregarBiblioteca();
   }
   if (getElement(SELECTORS.projetosList)) {

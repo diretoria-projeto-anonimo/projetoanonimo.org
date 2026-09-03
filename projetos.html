@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
 
 <head>
@@ -14,12 +14,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="assets/brand/projeto-anonimo-favicon.svg" type="image/svg+xml">
 </head>
 
 <body>
   <header class="header">
     <div class="container nav">
-      <a class="brand" href="index.html"><span class="mark">PA</span><span>Projeto Anônimo</span></a>
+      <a class="brand brand-logo" href="index.html" aria-label="Projeto Anônimo — página inicial"><img class="brand-logo-image" src="assets/brand/projeto-anonimo-logo-horizontal-on-light.svg" alt="Projeto Anônimo"></a>
       <button class="toggle" aria-expanded="false" aria-label="Abrir menu">Menu</button>
       <nav class="links" aria-label="Navegação principal">
         <a href="index.html">Início</a>
@@ -27,6 +28,8 @@
         <a href="projetos.html" aria-current="page">Projetos</a>
         <a href="solucoes.html">Soluções</a>
         <a href="biblioteca.html">Biblioteca</a>
+        <a href="blog.html">Blog</a>
+        <a href="podcast.html">Podcast</a>
         <a class="btn primary" href="contato.html">Contato</a>
       </nav>
     </div>
@@ -35,12 +38,21 @@
   <main>
     <section class="pagehero">
       <div class="container">
-        <div class="crumb">Início / Projetos</div>
-        <span class="eyebrow">PROJETOS</span>
-        <h1>Tecnologia, educação e inovação em ação.</h1>
+        <div class="pagehero-heading">
+          <div class="crumb">Início / Projetos</div>
+          <span class="eyebrow">PROJETOS</span>
+          <h1>Tecnologia, educação e inovação em ação.</h1>
+        </div>
+        <div class="pagehero-grid">
+          <div class="pagehero-copy">
         <p class="lead">Projetos que podem ser realizados com escolas, organizações sociais, coletivos, comunidades, empresas e poder público. Construímos parcerias para aprendizado, transformação digital e inovação social.</p>
         <div class="actions">
           <a class="btn primary" href="contato.html">Propor uma parceria</a>
+        </div>
+          </div>
+          <figure class="pagehero-media">
+            <img src="assets/img/pages/projetos-hero-v1.png" alt="Ilustração em camadas de educação tecnológica, robótica e cultura maker">
+          </figure>
         </div>
       </div>
     </section>
@@ -128,24 +140,25 @@
     <div class="container">
       <div class="footgrid">
         <div>
-          <a class="brand" href="index.html"><span class="mark">PA</span><span data-config-text="site_nome">Projeto Anônimo</span></a>
+          <a class="brand brand-logo footer-brand" href="index.html" aria-label="Projeto Anônimo — página inicial"><img class="brand-logo-image" src="assets/brand/projeto-anonimo-logo-horizontal-on-dark.svg" alt="Projeto Anônimo"></a>
           <p class="muted">Tecnologia com propósito. Conhecimento que transforma pessoas, organizações e comunidades.</p>
         </div>
         <div>
           <h3>Contato</h3>
+          <a href="contato.html">Fale conosco</a>
           <a href="mailto:diretoria@projetoanonimo.org" data-config-href="email" data-config-text="email">diretoria@projetoanonimo.org</a>
           <a href="https://wa.me/5519981438968" data-config-href="whatsapp" target="_blank" rel="noopener">WhatsApp</a>
           <a href="https://www.instagram.com/projetoanonimoofc/" data-config-href="instagram">Instagram</a>
           <a href="https://www.linkedin.com/company/projeto-anonimo" data-config-href="linkedin">LinkedIn</a>
-          <a href="https://www.facebook.com/profile.php?id=61592700932684" data-config-href="facebook">Facebook</a>
-          <a href="https://www.youtube.com/@projetoanonimoorg" data-config-href="youtube">YouTube</a>
+          <a href="https://www.facebook.com/projetoanonimoofc/" data-config-href="facebook">Facebook</a>
+          <a href="https://www.youtube.com/channel/UCSRwXwAdXNJ_6xgPfqNEixg" data-config-href="youtube">YouTube</a>
         </div>
       </div>
       <div class="bottom"><span>© <span data-year></span> <span data-config-text="site_nome">Projeto Anônimo</span>.</span><span>Conhecimento aberto • Tecnologia responsável</span></div>
     </div>
   </footer>
 
-  <script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v=1.2"></script>
 </body>
 
 </html>

@@ -1,10 +1,62 @@
-# Projeto Anônimo — Site v2
-Pacote estático para GitHub Pages.
+# Projeto Anônimo — Framework 1.3.0 RC
 
-## Antes de publicar
-- Faça backup da versão atual.
-- Revise textos e links.
-- Adicione materiais individuais da Biblioteca Viva.
-- Adicione WhatsApp e YouTube quando disponíveis.
-- Revise juridicamente Privacidade e Termos.
-- Teste formulário: https://docs.google.com/forms/d/e/1FAIpQLScgYhlA28l7fQA8s3TNMfBmt_fMQJ3Ea_84rNfDKimOUwW_wA/viewform?usp=sharing&ouid=108472809593565418259
+Site estático preparado para GitHub Pages, integrado ao CMS e à Biblioteca Viva por Google Apps Script.
+
+## Executar localmente
+
+```powershell
+python -m http.server 8765
+```
+
+Acesse `http://127.0.0.1:8765/`.
+
+## Áreas principais
+
+- Site institucional
+- Projetos e soluções
+- Biblioteca Viva
+- Página individual de material
+- Painel editorial
+
+## Publicação
+
+1. Faça backup da versão publicada.
+2. Publique o conteúdo deste pacote na raiz do repositório.
+3. Confirme o domínio registrado em `CNAME`.
+4. Verifique Home, Biblioteca, material individual e formulário de contato.
+5. Teste o editor com uma conta Google presente na lista de editores.
+
+## Segurança editorial
+
+O diretório `/editor/` não deve ser indexado. A segurança das operações de leitura, atualização e upload depende da validação da credencial Google e do e-mail no Apps Script; ocultar a interface não substitui a autenticação do backend.
+
+## Escopo editorial desta versão
+
+A versão candidata declarada está em `/VERSAO.txt`: 1.3.0 RC — Sprint C0.1 / Cliente 0.
+
+- Consulta de publicados, rascunhos, revisão, preparação e arquivados.
+- Criação de material como rascunho ou publicado.
+- Reabertura e atualização de materiais existentes.
+- Upload de capa, PDF e anexos.
+- Autenticação Google com lista explícita de editores.
+- Métricas anônimas de visualização, clique, download, formulário e
+  compartilhamento.
+- Indicadores agregados e desempenho por material no Dashboard.
+- Ordenação, filtros persistentes e carregamento progressivo da Biblioteca Viva.
+- Estados acessíveis de carregamento, erro, nova tentativa e ausência de resultados.
+- Manifesto do Apps Script versionado para reproduzir a configuração do backend.
+
+O backend está em `/apps-script/`. A implantação editorial 1.1 foi configurada
+e homologada como referência histórica; `/apps-script/CONFIGURAR.md` permanece
+como referência de manutenção. O Client ID e a URL `/exec` ativos ficam centralizados em
+`/editor/assets/js/config.js`.
+
+O ensaio controlado do Cliente 0 deve seguir
+`/docs/cliente0/ROTEIRO-HOMOLOGACAO.md`. O roteiro usa dados sintéticos e não
+autoriza implantação, publicação nem tratamento de dados reais.
+
+## Revisões externas pendentes
+
+- Revisão jurídica de Privacidade e Termos.
+- Confirmação dos canais sociais e de contato.
+- Teste final de gravação e upload após configurar OAuth e implantar o backend.

@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /editor/
 Sitemap: https://projetoanonimo.org/sitemap.xml
