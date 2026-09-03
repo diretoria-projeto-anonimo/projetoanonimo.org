@@ -122,6 +122,33 @@
   margin-top: 2rem;
 }
 
+/* Cartões compactos para a coleção de artigos complementares. */
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.article-grid .article-card {
+  display: flex;
+  min-height: 100%;
+}
+
+.article-grid .article-card__body {
+  width: 100%;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.article-grid .article-card h2 {
+  font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+}
+
+.article-grid .article-card .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
 .article-card__visual--radar {
   background:
     linear-gradient(90deg, rgba(7, 20, 17, .18), rgba(7, 20, 17, .02)),
@@ -218,6 +245,98 @@
   margin-top: .75rem;
 }
 
+/* Layout editorial para páginas derivadas da Biblioteca Viva */
+.article {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 7vw, 6rem) clamp(1.25rem, 4vw, 3rem);
+  background: linear-gradient(145deg, #ffffff, #f4faf6);
+  border: 1px solid rgba(13, 77, 68, .12);
+  border-radius: 34px;
+  box-shadow: 0 24px 70px rgba(17, 27, 24, .08);
+}
+
+.article .eyebrow {
+  display: inline-flex;
+  margin-bottom: 1.25rem;
+  padding: .45rem .8rem;
+  border-radius: 999px;
+  background: #d3ebd9;
+  color: #0d4d44;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.article h1 {
+  max-width: 20ch;
+  margin: 0 0 2rem;
+  color: #111b18;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+
+.article h2 {
+  margin: 3.5rem 0 1rem;
+  color: #0d4d44;
+  font-size: clamp(1.55rem, 3vw, 2.35rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.article h3 {
+  margin: 2.25rem 0 .75rem;
+  color: #111b18;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+}
+
+.article p {
+  max-width: 68ch;
+  margin: 0 0 1.25rem;
+  color: #33433e;
+  font-size: clamp(1.05rem, 1.5vw, 1.18rem);
+  line-height: 1.8;
+}
+
+.article-note {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #0d4d44;
+  border-radius: 0 16px 16px 0;
+  background: #e7f3ea;
+  color: #23433a;
+}
+
+.article-cta {
+  margin-top: 3rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 24px;
+  background: #111b18;
+  color: #fff;
+}
+
+.article-cta h2 { margin-top: 0; color: #d3ebd9; }
+.article-cta p { color: #e7f3ea; }
+
+.audio-player {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgba(13, 77, 68, .16);
+  border-radius: 20px;
+  background: #f7fbf8;
+}
+
+.audio-player p { margin-bottom: .8rem; font-size: 1rem; }
+.audio-player button { opacity: .7; cursor: not-allowed; }
+
+@media (max-width: 640px) {
+  .article { border-radius: 22px; }
+  .article h1 { font-size: clamp(2rem, 11vw, 3rem); }
+}
+
 .article-note,
 .scenario,
 .source-note {
@@ -276,6 +395,10 @@
 }
 
 @media (max-width: 880px) {
+  .article-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .blog-hero__layout,
   .article-card,
   .article-hero__grid,
@@ -302,6 +425,10 @@
 }
 
 @media (max-width: 560px) {
+  .article-grid {
+    grid-template-columns: 1fr;
+  }
+
   .blog-hero,
   .article-hero {
     padding-top: 3rem;
