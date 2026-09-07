@@ -122,6 +122,33 @@
   margin-top: 2rem;
 }
 
+/* Cartões compactos para a coleção de artigos complementares. */
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.article-grid .article-card {
+  display: flex;
+  min-height: 100%;
+}
+
+.article-grid .article-card__body {
+  width: 100%;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.article-grid .article-card h2 {
+  font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+}
+
+.article-grid .article-card .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
 .article-card__visual--radar {
   background:
     linear-gradient(90deg, rgba(7, 20, 17, .18), rgba(7, 20, 17, .02)),
@@ -444,6 +471,10 @@
 }
 
 @media (max-width: 880px) {
+  .article-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .blog-hero__layout,
   .article-card,
   .article-hero__grid,
@@ -470,6 +501,10 @@
 }
 
 @media (max-width: 560px) {
+  .article-grid {
+    grid-template-columns: 1fr;
+  }
+
   .blog-hero,
   .article-hero {
     padding-top: 3rem;
