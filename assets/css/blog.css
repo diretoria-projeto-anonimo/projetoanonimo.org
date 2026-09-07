@@ -273,32 +273,30 @@
   max-width: 20ch;
   margin: 0 0 2rem;
   color: #111b18;
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  line-height: 1.02;
-  letter-spacing: -.045em;
+  font-size: clamp(1.85rem, 4.5vw, 3.2rem);
+  line-height: 1.08;
+  letter-spacing: -.035em;
   text-wrap: balance;
 }
-
 .article h2 {
-  margin: 3.5rem 0 1rem;
+  margin: 2.6rem 0 .85rem;
   color: #0d4d44;
-  font-size: clamp(1.55rem, 3vw, 2.35rem);
-  line-height: 1.12;
+  font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+  line-height: 1.2;
   text-wrap: balance;
 }
-
 .article h3 {
-  margin: 2.25rem 0 .75rem;
+  margin: 1.8rem 0 .6rem;
   color: #111b18;
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  line-height: 1.25;
 }
-
 .article p {
   max-width: 68ch;
-  margin: 0 0 1.25rem;
+  margin: 0 0 .95rem;
   color: #33433e;
-  font-size: clamp(1.05rem, 1.5vw, 1.18rem);
-  line-height: 1.8;
+  font-size: clamp(1rem, 1.2vw, 1.08rem);
+  line-height: 1.62;
 }
 
 .article-note {
@@ -357,9 +355,9 @@
 
 .article-page .article > h1 + p {
   color: #587069;
-  font-size: 1rem;
-  line-height: 1.6;
-  padding-bottom: 1.25rem;
+  font-size: .92rem;
+  line-height: 1.5;
+  padding-bottom: 1rem;
   border-bottom: 1px solid rgba(13, 77, 68, .13);
 }
 
@@ -410,7 +408,7 @@
 
 @media (max-width: 640px) {
   .article { border-radius: 22px; }
-  .article h1 { font-size: clamp(2rem, 11vw, 3rem); }
+  .article h1 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
 }
 
 .article-note,
