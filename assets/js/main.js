@@ -2,7 +2,7 @@ const API_BIBLIOTECA =
   (typeof window !== "undefined" &&
     typeof window.PA_BIBLIOTECA_CONFIG?.apiUrl === "string" &&
     window.PA_BIBLIOTECA_CONFIG.apiUrl.trim()) ||
-  "https://script.google.com/macros/s/AKfycbzhh37NeK7hAaglGCilFvCME6pxgC7V_EdR5ct3wkmJEpywh50mq3i-xgnP1lQlqQ9PTA/exec";
+  "https://script.google.com/macros/s/AKfycbyvDGxtBB5GlNvfeVJ3wm5qEcSGec9nXklCD4oygewc2q_q0N-YtKCBWzlId94dOKTL5Q/exec";
 
 const state = {
   items: [],
