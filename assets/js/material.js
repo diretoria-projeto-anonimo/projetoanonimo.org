@@ -6,7 +6,7 @@ const localMaterialConfig =
 const MATERIAL_API_URL =
   (typeof localMaterialConfig?.apiUrl === "string" &&
     localMaterialConfig.apiUrl.trim()) ||
-  "https://script.google.com/macros/s/AKfycbyvDGxtBB5GlNvfeVJ3wm5qEcSGec9nXklCD4oygewc2q_q0N-YtKCBWzlId94dOKTL5Q/exec";
+  "https://script.google.com/macros/s/AKfycbykS5oFk8rz2AMxyrnDK7-HilYbk_j5nNgUw_cZu8M_-cX4gF1gTtS2n0W700BKL4Jqsw/exec";
 const MATERIAL_METRICS_API_URL =
   (typeof localMaterialConfig?.metricsApiUrl === "string" &&
     localMaterialConfig.metricsApiUrl.trim()) ||
