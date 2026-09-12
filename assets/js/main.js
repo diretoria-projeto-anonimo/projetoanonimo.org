@@ -6,6 +6,8 @@ const API_BIBLIOTECA =
 
 const state = {
   items: [],
+  count: 0,
+  totalPublished: 0,
   filtered: [],
   visibleCount: 6,
   projects: [],
@@ -833,7 +835,7 @@ function renderList(items) {
       ? `Exibindo ${visibleItems.length} de ${items.length} materiais.`
       : ""
   );
-  updateCounter(items.length, state.items.length);
+  updateCounter(items.length, state.totalPublished || state.items.length);
   list.innerHTML = visibleItems.map(buildCard).join("");
   updateProgressiveControls(items.length);
 }
@@ -1399,6 +1401,46 @@ function initializeEventosSection() {
     });
 }
 
+/**
+ * Busca o catálogo da Biblioteca Viva e devolve o resultado já validado pelo
+ * contrato PA-LIB-006. O parser aceita o formato canônico (v1) e o legado com
+ * colunas em português, então a página funciona antes e depois da API nova.
+ */
+async function carregarPayloadBiblioteca() {
+  const contrato = typeof window !== "undefined" ? window.PABibliotecaContract : null;
+  const response = await fetch(API_BIBLIOTECA);
+
+  if (!response.ok) {
+    throw new Error(`Falha na resposta da API (HTTP ${response.status})`);
+  }
+
+  let payload;
+  try {
+    payload = await response.json();
+  } catch {
+    throw new Error("Resposta da API inválida ou não é JSON");
+  }
+
+  if (contrato) {
+    const interpretado = contrato.parseEnvelope(payload);
+    return {
+      items: interpretado.items,
+      count: interpretado.count,
+      totalPublished: interpretado.totalPublished,
+    };
+  }
+
+  if (!payload || !payload.ok || !Array.isArray(payload.items)) {
+    throw new Error("Dados da API inválidos");
+  }
+
+  return {
+    items: payload.items,
+    count: payload.items.length,
+    totalPublished: payload.items.length,
+  };
+}
+
 async function carregarBiblioteca() {
   const list = getElement(SELECTORS.list);
   const homeList = getElement(SELECTORS.homeList);
@@ -1407,17 +1449,13 @@ async function carregarBiblioteca() {
   setLoadingState();
 
   try {
-    const response = await fetch(API_BIBLIOTECA);
-    if (!response.ok) {
-      throw new Error("Falha na resposta da API");
-    }
-
-    const data = await response.json();
-    if (!data.ok || !Array.isArray(data.items)) {
-      throw new Error("Dados da API inválidos");
-    }
+    const data = await carregarPayloadBiblioteca();
 
     state.items = data.items;
+    state.count = typeof data.count === "number" ? data.count : data.items.length;
+    state.totalPublished = typeof data.totalPublished === "number"
+      ? data.totalPublished
+      : data.items.length;
     writeBibliotecaCache(state.items);
     state.filtered = [...state.items];
 
@@ -1428,7 +1466,7 @@ async function carregarBiblioteca() {
         updateEmptyMessage("Novos materiais serão publicados em breve.");
         toggleEmptyMessage(true);
         updateStatus("A Biblioteca Viva ainda não possui materiais publicados.");
-        updateCounter(0, 0);
+        updateCounter(0, state.totalPublished || 0);
         updateProgressiveControls(0);
       }
       if (homeList) {

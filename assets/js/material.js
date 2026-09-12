@@ -147,6 +147,25 @@ async function buscarMaterial(slug) {
     return null;
   }
 
+  const contrato = typeof window !== "undefined" ? window.PABibliotecaContract : null;
+
+  if (contrato) {
+    /*
+     * Contrato PA-LIB-006: o detalhe já chega normalizado e completo
+     * (inclui o conteúdo), então a segunda requisição deixa de ser
+     * necessária — antes era preciso baixar o catálogo inteiro.
+     */
+    try {
+      const interpretado = contrato.parseEnvelope(dados);
+      if (interpretado.items.length) {
+        return contrato.normalizeItem(interpretado.items[0]);
+      }
+      return null;
+    } catch (erroContrato) {
+      console.warn("Payload de detalhe fora do contrato:", erroContrato.message);
+    }
+  }
+
   if (dados.item && typeof dados.item === "object") {
     const completo = await buscarMaterialCompletoNaLista(slug);
     return completo ? { ...completo, ...dados.item } : dados.item;
