@@ -59,3 +59,17 @@ expostos; URLs de formulário são higienizadas (sem `ouid`); nenhum dado pessoa
 Restaure a versão anterior do `Code.gs` e publique uma **nova versão** da mesma
 implantação. O frontend aceita tanto o contrato quanto o formato legado, então não
 é necessário reverter o site.
+
+> **Nota (19/09/2026) — implantação legada `AKfycbzhh37…`:** ela ainda responde HTTP 200
+> com o formato antigo, mas **não pertence à conta institucional**. Foram consultadas as
+> implantações dos 12 projetos Apps Script visíveis à conta
+> (`script.googleapis.com/v1/projects/{scriptId}/deployments`) e ela não está em nenhum:
+> é a API "v5", hospedada por uma **conta externa** — o mesmo motivo que levou à
+> substituição pelo endpoint institucional. Portanto **não é possível desativá-la daqui**;
+> a mitigação aplicada é garantir que nada institucional aponte para ela (nenhum arquivo do
+> site, do backend editorial ou das automações a referencia hoje). Para encerrá-la seria
+> preciso solicitar ao responsável por aquela conta.
+
+> **Nota (19/09/2026) — implantações ativas deste projeto:** `AKfycbykS5oF…` (versionada,
+> "PA-LIB-006 v1.0.0 - contrato único", usada pelo site) e `AKfycbzfqkx…` (`@HEAD`, de
+> teste). Ambas pertencem ao projeto `PA-LIB-006_Code-API-Biblioteca-Viva_v1`.
