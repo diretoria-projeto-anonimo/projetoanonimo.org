@@ -53,7 +53,7 @@ const moduleCache = {};
 const modulePromises = {};
 const BIBLIOTECA_PAGE_SIZE = 6;
 const BIBLIOTECA_CACHE_KEY = "PA_BIBLIOTECA_CACHE_V1";
-const BIBLIOTECA_CACHE_VERSION = 1;
+const BIBLIOTECA_CACHE_VERSION = 2;
 const BIBLIOTECA_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const BIBLIOTECA_SORT_OPTIONS = new Set([
   "recentes",
@@ -151,11 +151,26 @@ function sanitizePublicItemForCache(item) {
     urlCapa: getCacheUrl(material.urlCapa || material.capaUrl),
     paginaUrl: getCacheUrl(material.paginaUrl),
     arquivoUrl: getCacheUrl(material.arquivoUrl),
-    formularioUrl: getCacheUrl(material.formularioUrl),
+    formularioUrl: getCacheFormUrl(material.formularioUrl),
     cta: getCacheText(material.cta, 120),
   };
 }
 
+
+// Formulários institucionais chegam com o parâmetro de rastreio "ouid" da conta
+// antiga; ele não deve ser preservado no cache nem exibido ao visitante.
+function getCacheFormUrl(value) {
+  const url = getCacheUrl(value);
+  if (!url || url === "#") return "";
+
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("ouid");
+    return parsed.toString();
+  } catch {
+    return "";
+  }
+}
 function writeBibliotecaCache(items, now = Date.now()) {
   const storage = getBibliotecaStorage();
   if (!storage || !Array.isArray(items)) return false;
