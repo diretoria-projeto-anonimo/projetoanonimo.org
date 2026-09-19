@@ -66,3 +66,44 @@ prosseguir.
 5. Publique e confira o material na Biblioteca Viva.
 6. Saia e confirme que o painel redireciona ao login.
 7. Abra um material publicado e confirme que a visualização aparece no painel.
+
+## 5. Estado atual e verificação (19/09/2026)
+
+| Item | Valor |
+|---|---|
+| Projeto Apps Script | **PA Editorial API-Backup** |
+| scriptId | `19fBxQBRqxZ9lIHtuByUxLe1MzamHIzdajCkSa2nqgX684QTgzIPJRE6K` |
+| Implantação usada pelo painel | `AKfycby_YNT0…` (em `editor/assets/js/config.js`) |
+
+**Nome do arquivo:** no projeto em produção o arquivo principal chama-se `Código.js`;
+neste repositório ele é `apps-script/Code.gs`. O conteúdo está **em sincronia** com a
+produção — verificado em 19/09/2026 por `clasp pull`: mesmas 28 funções e diferença
+apenas de fim de linha.
+
+**Arquivos legados no projeto (sem uso):** `Auth.js`, `Config.js`, `Helpers.js`,
+`Spreadsheet.js`, `MaterialService.js`, `MaterialService.backup.txt.js` e `UploadService.js`
+contêm somente o comentário *"Módulo legado neutralizado. Backend consolidado em Código.gs."*,
+podem ser excluídos pelo editor sem impacto.
+
+**Como verificar a sincronia com a produção:**
+
+```powershell
+mkdir verif-editorial; cd verif-editorial
+'{ "scriptId": "19fBxQBRqxZ9lIHtuByUxLe1MzamHIzdajCkSa2nqgX684QTgzIPJRE6K", "rootDir": "" }' | Set-Content .clasp.json
+clasp pull -f
+# compare Código.js com apps-script/Code.gs: devem ter as mesmas funções
+```
+
+**Como implantar uma alteração:**
+
+1. edite `apps-script/Code.gs` e revise pelo pull request;
+2. no editor do Apps Script, substitua o conteúdo de `Código.js` pelo arquivo do repositório;
+3. **Implantar → Gerenciar implantações → Editar → Nova versão**, mantendo o mesmo ID/URL.
+
+> ⚠️ **Não rode `clasp push` a partir desta pasta:** o arquivo local é `Code.gs` e o do
+> projeto é `Código.js`; o push criaria os dois arquivos no projeto e as funções ficariam
+> duplicadas (o Apps Script recusa declarações duplicadas).
+
+A guarda `tests/apps-script-editorial-guard.test.cjs` roda no CI e falha se as funções
+essenciais do backend editorial desaparecerem, se houver mistura com o contrato público
+ou se o arquivo tiver erro de sintaxe.
