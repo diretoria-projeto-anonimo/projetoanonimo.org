@@ -5,6 +5,7 @@
 const Tracking = (() => {
   window.dataLayer = window.dataLayer || [];
   const submittedEventIds = new Set();
+  const viewedSteps = new Set();
 
   const sessionFlags = {
     qualifiedVisit: 'pa_diag01_qualified_visit_sent',
@@ -20,7 +21,10 @@ const Tracking = (() => {
    */
   function trackEvent(eventName, data = {}) {
     // NUNCA enviar PII ou respostas para o dataLayer
-    const piiKeys = ['name', 'email', 'phone', 'answers', 'nome_completo', 'email_corporativo', 'telefone', 'instituicao'];
+    const piiKeys = [
+      'name', 'email', 'phone', 'answers', 'nome_completo', 'email_corporativo', 'telefone', 'instituicao',
+      'cidade_estado', 'cargo', 'maior_desafio', 'metas_12_meses', 'beneficiarios', 'area_atuacao',
+    ];
     const safeData = { ...data };
     piiKeys.forEach(key => delete safeData[key]);
 
@@ -101,6 +105,38 @@ const Tracking = (() => {
     }
   }
 
+  /**
+   * Registra a visualização de uma etapa do wizard, uma única vez por etapa.
+   * @param {number} step - Número da etapa exibida.
+   */
+  function fireDiagnosticStepView(step) {
+    if (!step || viewedSteps.has(step)) return;
+    viewedSteps.add(step);
+    trackEvent('diagnostic_step_view', { step });
+  }
+
+  /**
+   * Registra a tentativa de envio, antes de qualquer chamada de rede.
+   * Repetições legítimas (retry com o mesmo event_id) permanecem distinguíveis.
+   * @param {string} eventId - Identificador idempotente da submissão.
+   * @param {number} step - Etapa em que a tentativa ocorreu.
+   */
+  function fireDiagnosticSubmitAttempt(eventId, step) {
+    trackEvent('diagnostic_submit_attempt', { event_id: eventId, step });
+  }
+
+  /**
+   * Registra uma falha técnica. Nunca inclui a mensagem original nem o corpo
+   * da resposta, para não transportar dados pessoais para o dataLayer.
+   * @param {string} stage - 'server' ou 'transport'.
+   * @param {number} [status] - Código HTTP quando disponível.
+   */
+  function fireDiagnosticError(stage, status) {
+    const payload = { stage };
+    if (typeof status === 'number') payload.http_status = status;
+    trackEvent('diagnostic_error', payload);
+  }
+
   function fireDiagnosticSubmit(eventId) {
     if (eventId && !submittedEventIds.has(eventId)) {
       submittedEventIds.add(eventId);
@@ -110,5 +146,12 @@ const Tracking = (() => {
 
   document.addEventListener('DOMContentLoaded', init);
 
-  return { trackEvent, fireDiagnosticStart, fireDiagnosticSubmit };
+  return {
+    trackEvent,
+    fireDiagnosticStart,
+    fireDiagnosticStepView,
+    fireDiagnosticSubmitAttempt,
+    fireDiagnosticSubmit,
+    fireDiagnosticError
+  };
 })();
