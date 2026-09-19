@@ -270,8 +270,8 @@ function renderizarMaterial(material) {
     obterCampo(material, ["urlDoArquivo", "urlArquivo"])
   );
 
-  const urlFormulario = validarUrl(
-    obterCampo(material, ["urlDoFormulario", "urlFormulario"])
+  const urlFormulario = sanitizarUrlFormulario(
+    validarUrl(obterCampo(material, ["urlDoFormulario", "urlFormulario"]))
   );
 
   const urlCapa =
@@ -1177,6 +1177,23 @@ function formatarData(valor) {
   }).format(data);
 }
 
+
+// Remove o parâmetro de rastreio "ouid" (conta antiga) da URL do formulário
+// antes de exibi-la ao visitante, preservando links relativos e âncoras.
+function sanitizarUrlFormulario(valor) {
+  const texto = String(valor || "").trim();
+  if (!texto || texto.startsWith("#") || texto.startsWith("/")) {
+    return texto;
+  }
+
+  try {
+    const url = new URL(texto);
+    url.searchParams.delete("ouid");
+    return url.toString();
+  } catch {
+    return texto;
+  }
+}
 function normalizarTexto(valor) {
   return String(valor || "")
     .normalize("NFD")
