@@ -51,6 +51,31 @@ const SELECTORS = {
 
 const moduleCache = {};
 const modulePromises = {};
+
+// Conteudo institucional versionado no repositorio (projetos e solucoes).
+// A API publica PA-LIB-006 expoe apenas o modulo biblioteca; para os demais
+// modulos o repositorio e a fonte da verdade.
+const CONTEUDO_ESTATICO_URL = "assets/data/site-content.json";
+let conteudoEstaticoPromise = null;
+
+function carregarConteudoEstatico() {
+  if (!conteudoEstaticoPromise) {
+    conteudoEstaticoPromise = fetch(CONTEUDO_ESTATICO_URL)
+      .then((resposta) => (resposta.ok ? resposta.json() : null))
+      .catch(() => null);
+  }
+  return conteudoEstaticoPromise;
+}
+
+async function fetchModuloEstatico(moduleKey) {
+  const conteudo = await carregarConteudoEstatico();
+  const modulo =
+    conteudo && typeof conteudo === "object" ? conteudo[moduleKey] : null;
+  if (!modulo || !Array.isArray(modulo.items)) return null;
+
+  return { ...modulo, items: modulo.items.map(normalizeModuleItem) };
+}
+
 const BIBLIOTECA_PAGE_SIZE = 6;
 const BIBLIOTECA_CACHE_KEY = "PA_BIBLIOTECA_CACHE_V1";
 const BIBLIOTECA_CACHE_VERSION = 2;
@@ -306,36 +331,53 @@ async function fetchModulo(moduleName, options = {}) {
   const url = `${API_BIBLIOTECA}?${params.toString()}`;
 
   const promise = (async () => {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Falha na resposta da API para o módulo ${moduleKey}`);
+    // 1) Conteúdo versionado no repositório: fonte da verdade, sem depender
+    //    da latência da API pública.
+    const estatico = await fetchModuloEstatico(moduleKey);
+    if (estatico) {
+      moduleCache[moduleKey] = estatico;
+      return estatico;
     }
 
-    let data;
+    // 2) API pública: cobre os módulos que ainda não são versionados aqui.
     try {
-      data = await response.json();
-    } catch {
-      throw new Error("Resposta da API inválida ou não é JSON");
-    }
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Falha na resposta da API para o módulo ${moduleKey}`);
+      }
 
-    if (!data || !data.ok) {
-      throw new Error("Dados da API inválidos");
-    }
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error("Resposta da API inválida ou não é JSON");
+      }
 
-    if (options.raw) {
-      const result = { ...data, items: data.items };
+      if (!data || !data.ok) {
+        throw new Error("Dados da API inválidos");
+      }
+
+      if (options.raw) {
+        const result = { ...data, items: data.items };
+        moduleCache[moduleKey] = result;
+        return result;
+      }
+
+      if (!Array.isArray(data.items)) {
+        throw new Error("Dados da API inválidos");
+      }
+
+      const items = data.items.map(normalizeModuleItem);
+      const result = { ...data, items };
       moduleCache[moduleKey] = result;
       return result;
+    } catch (error) {
+      // Módulo que a API não expõe e o repositório não versiona.
+      if (error && typeof error === "object") {
+        error.moduloAusente = true;
+      }
+      throw error;
     }
-
-    if (!Array.isArray(data.items)) {
-      throw new Error("Dados da API inválidos");
-    }
-
-    const items = data.items.map(normalizeModuleItem);
-    const result = { ...data, items };
-    moduleCache[moduleKey] = result;
-    return result;
   })();
 
   modulePromises[moduleKey] = promise;
@@ -347,8 +389,13 @@ async function fetchModulo(moduleName, options = {}) {
 }
 
 async function fetchConfig() {
-  const data = await fetchModulo("config", { raw: true });
-  return data && typeof data.config === "object" ? data.config : {};
+  // A configuração canônica do site é versionada em
+  // assets/data/site-content.json. A API pública não expõe o módulo config,
+  // e os atributos `data-config-*` do HTML permanecem como fallback.
+  const conteudo = await carregarConteudoEstatico();
+  return conteudo && conteudo.config && typeof conteudo.config === "object"
+    ? conteudo.config
+    : {};
 }
 
 function isValidUrl(value) {
@@ -392,9 +439,26 @@ async function initializeConfig() {
   }
 }
 
+// Caminho interno do próprio site (ex.: "contato.html", "/blog/x.html",
+// "?utm=1#topo"). Recusa esquemas perigosos (javascript:, data:), URLs
+// protocolo-relativas e valores com espaço, aspas ou sinal de marcação.
+function isRelativeUrl(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed || trimmed.startsWith("//")) return false;
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) return false;
+  return !/[\s"'<>]/.test(trimmed);
+}
+
+function isInternalUrl(value) {
+  const trimmed = String(value || "").trim();
+  if (isRelativeUrl(trimmed)) return true;
+  return /^https?:\/\/(www\.)?projetoanonimo\.org(\/|$)/i.test(trimmed);
+}
+
 function getSafeUrl(value) {
   const trimmed = String(value || "").trim();
-  return isValidUrl(trimmed) ? escapeHTML(trimmed) : "#";
+  if (isValidUrl(trimmed)) return escapeHTML(trimmed);
+  return isRelativeUrl(trimmed) ? escapeHTML(trimmed) : "#";
 }
 
 function renderParceiros(items) {
@@ -686,7 +750,7 @@ function buildProjectCard(project) {
   const cta = escapeHTML(getField(project, "cta", "CTA") || "Conhecer projeto");
   const url = getSafeUrl(getField(project, "url", "URL") || "");
   const hasUrl = url !== "#";
-  const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
+  const targetAttrs = hasUrl && !isInternalUrl(url) ? "target=\"_blank\" rel=\"noopener\"" : "";
 
   return `
     <article class="project-card">
@@ -733,7 +797,7 @@ function buildSolutionCard(solution) {
   const imagem = getSolutionCoverImage(solution, rawTitle);
   const imageAlt = escapeHTML(`Ilustração da solução ${rawTitle}`);
   const hasUrl = url !== "#";
-  const targetAttrs = hasUrl ? "target=\"_blank\" rel=\"noopener\"" : "";
+  const targetAttrs = hasUrl && !isInternalUrl(url) ? "target=\"_blank\" rel=\"noopener\"" : "";
 
   return `
     <article class="project-card solution-card">
@@ -1383,7 +1447,9 @@ function initializeParceirosSection() {
       renderParceiros(state.parceiros);
     })
     .catch((error) => {
-      console.error(error);
+      if (!error || !error.moduloAusente) {
+        console.error(error);
+      }
       const section = document.getElementById("secao-parceiros");
       if (section) {
         section.hidden = true;
@@ -1405,7 +1471,9 @@ function initializeEventosSection() {
       renderEventos(state.eventos);
     })
     .catch((error) => {
-      console.error(error);
+      if (!error || !error.moduloAusente) {
+        console.error(error);
+      }
       const section = document.getElementById("secao-eventos");
       if (section) {
         section.hidden = true;
