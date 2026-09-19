@@ -1,5 +1,9 @@
 # Projeto Anônimo — Framework 1.3.0 RC
 
+**Repositório canônico do Projeto Anônimo** (definido em 2026-09-10). É aqui que o site, o CMS, a Biblioteca Viva e a documentação editorial são mantidos. As demais pastas locais (`projetoanonimo.org-canonico`, `projetoanonimo.org-brand-system-v1` e `projetoanonimo.org-framework-cliente0-v1`) estão **arquivadas para edição** — todas apontam para o mesmo repositório remoto; em caso de divergência, prevalece esta.
+
+Convenções de documentação, taxonomia `PA-AAA-NNN`, ciclo de status e mapa de fonte única: `docs/editorial/notebooklm/plano-documentacao-projeto.md`. Auditoria de estratégia e marketing: `docs/editorial/notebooklm/prompt-auditor-estrategia-marketing.md`.
+
 Site estático preparado para GitHub Pages, integrado ao CMS e à Biblioteca Viva por Google Apps Script.
 
 ## Executar localmente
