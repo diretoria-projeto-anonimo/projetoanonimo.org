@@ -11,6 +11,14 @@ const Attribution = (() => {
     'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
     'gclid', 'gbraid', 'wbraid', 'fbclid'
   ];
+  // Contexto do CTA não é atribuição de campanha. Mantê-lo separado evita
+  // que uma navegação interna apague os UTMs já capturados.
+  const CONTEXT_PARAMS = ['pa_cta_position'];
+
+  function safeContextValue(value) {
+    const normalized = String(value || '').trim();
+    return /^[a-z0-9_-]{1,80}$/i.test(normalized) ? normalized : '';
+  }
 
   /**
    * Inicializa a captura de atribuição.
@@ -18,11 +26,12 @@ const Attribution = (() => {
   function init() {
     const urlParams = new URLSearchParams(window.location.search);
     const hasExplicitParams = PARAMS_TO_CAPTURE.some(param => urlParams.has(param));
+    const hasContextParams = CONTEXT_PARAMS.some(param => urlParams.has(param));
 
     const existingData = getStoredData();
     // Salva na primeira visita e atualiza o canal quando uma visita posterior
     // trouxer parâmetros explícitos. O instante do primeiro acesso é preservado.
-    if (!existingData.first_seen_at || hasExplicitParams) {
+    if (!existingData.first_seen_at || hasExplicitParams || hasContextParams) {
       const attributionData = {
         // Mantém o 'first_seen_at' original se já existir
         first_seen_at: existingData.first_seen_at || new Date().toISOString(),
@@ -30,7 +39,16 @@ const Attribution = (() => {
       };
 
       PARAMS_TO_CAPTURE.forEach(param => {
-        attributionData[param] = urlParams.get(param) || '';
+        // Somente uma atribuição explícita substitui a atribuição anterior.
+        attributionData[param] = hasExplicitParams
+          ? urlParams.get(param) || ''
+          : existingData[param] || '';
+      });
+
+      CONTEXT_PARAMS.forEach(param => {
+        // O contexto do CTA pode chegar sozinho, preservando a campanha
+        // recebida anteriormente.
+        attributionData[param] = safeContextValue(urlParams.get(param)) || safeContextValue(existingData[param]);
       });
 
       try {
@@ -65,8 +83,10 @@ const Attribution = (() => {
     const payloadData = {};
 
     // Garante que todos os campos existam no objeto retornado
-    ['first_seen_at', 'referrer', ...PARAMS_TO_CAPTURE].forEach(key => {
-      payloadData[key] = data[key] || '';
+    ['first_seen_at', 'referrer', ...PARAMS_TO_CAPTURE, ...CONTEXT_PARAMS].forEach(key => {
+      payloadData[key] = CONTEXT_PARAMS.includes(key)
+        ? safeContextValue(data[key])
+        : data[key] || '';
     });
 
     // Aplica o fallback APENAS se a campanha estiver vazia

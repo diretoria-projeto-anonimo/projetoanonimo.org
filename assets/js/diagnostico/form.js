@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     progressIndicator.textContent = `Etapa ${currentStep} de ${TOTAL_STEPS}`;
+    Tracking.fireDiagnosticStepView(currentStep);
     prevButton.hidden = currentStep === 1;
     nextButton.hidden = currentStep === TOTAL_STEPS;
     submitButton.hidden = currentStep !== TOTAL_STEPS;
@@ -195,6 +196,7 @@ const fieldNames = new Set(
 
     updateState('submitting', 'Enviando diagnóstico...');
     if (!currentEventId) currentEventId = generateUUID();
+    Tracking.fireDiagnosticSubmitAttempt(currentEventId, currentStep);
 
     const payload = {
       metadata: {
@@ -228,11 +230,14 @@ const fieldNames = new Set(
         Tracking.fireDiagnosticSubmit(currentEventId);
         updateState('success');
         document.getElementById('submission-id').textContent = result.submission_id || 'N/A';
-      } else {
-        throw new Error(result.message || 'Ocorreu um erro no servidor.');
+        return;
       }
+
+      Tracking.fireDiagnosticError('server', response.status);
+      updateState('error', 'Falha ao enviar. Por favor, tente novamente.');
     } catch (error) {
       console.error('Erro na submissão:', error);
+      Tracking.fireDiagnosticError('transport');
       updateState('error', 'Falha ao enviar. Por favor, tente novamente.');
       // Mantém o event_id para a nova tentativa
     }
