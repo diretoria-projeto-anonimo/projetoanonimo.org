@@ -1,5 +1,7 @@
 # Configuração do backend editorial
 
+> **Nota (19/09/2026):** esta pasta é o **backend editorial** (painel editor/). A **API pública** da Biblioteca Viva é um projeto Apps Script separado, versionado em [public-api/](public-api/README.md). Não misture os dois: a API pública não expõe ações editoriais.
+
 Esta pasta substitui o backend editorial anterior. A API pública da Biblioteca
 Viva pode continuar no endereço atual.
 
