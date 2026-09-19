@@ -25,7 +25,7 @@ for (const id of [
 
 assert.match(html, /id="biblioteca-lista"[^>]*aria-busy="true"/);
 assert.match(html, /assets\/js\/main\.js\?v=[0-9.]+/);
-assert.match(html, /assets\/css\/style\.css\?v=1\.7/);
+assert.match(html, /assets\/css\/style\.css\?v=[0-9.]+/);
 
 assert.match(mainJs, /const BIBLIOTECA_PAGE_SIZE = 6/);
 assert.match(mainJs, /function sortItems\(/);

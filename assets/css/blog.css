@@ -170,10 +170,18 @@
 
 .article-hero__image {
   width: 100%;
+  /* altura automatica: os atributos width/height das capas do podcast
+     viram altura definida e anulariam o aspect-ratio abaixo. */
+  height: auto;
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 34px;
   box-shadow: 0 24px 70px rgba(17, 27, 24, .12);
+}
+
+/* Capas do podcast sao 16:9; as imagens mestras do blog sao quadradas. */
+.article-hero__image--wide {
+  aspect-ratio: 16 / 9;
 }
 
 .article-card__body {

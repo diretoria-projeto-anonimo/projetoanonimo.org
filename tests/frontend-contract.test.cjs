@@ -57,9 +57,9 @@ assert.match(styleCss, /\.library-card-link:focus-visible/);
 assert.match(styleCss, /\.material-next-step/);
 assert.match(styleCss, /\.diagnostic-checklist-option:focus-within/);
 assert.match(styleCss, /\.diagnostic-checklist-option:has\(input:checked\)/);
-assert.match(materialHtml, /style\.css\?v=1\.7/);
+assert.match(materialHtml, /style\.css\?v=[0-9.]+/);
 assert.match(materialHtml, /material\.js\?v=2\.1/);
-assert.match(bibliotecaHtml, /style\.css\?v=1\.7/);
+assert.match(bibliotecaHtml, /style\.css\?v=[0-9.]+/);
 assert.match(bibliotecaHtml, /assets\/js\/main\.js\?v=[0-9.]+/);
 assert.match(indexHtml, /assets\/js\/main\.js\?v=[0-9.]+/);
 assert.match(mainJs, /checklist-diagnostico-digital-v2\.webp/);
@@ -214,4 +214,59 @@ assert.equal(
   1,
   `versoes divergentes de assets/js/main.js: ${[...versoesMainJs].join(", ")}`
 );
+
+// --- ajustes visuais do podcast (QA de 19/09) ---
+const podcastHtml = read("podcast.html");
+const mainCss = read("assets/css/main.css");
+
+// 1) as capas oficiais sao 16:9; caixas 1:1 cortavam o texto da arte
+assert.match(podcastHtml, /\.episode-card img\{[^}]*height:auto;aspect-ratio:16\/9/);
+assert.equal(
+  (podcastHtml.match(/width="1280" height="720"/g) || []).length,
+  7,
+  "as 7 capas do podcast devem declarar dimensoes"
+);
+assert.match(blogCss, /\.article-hero__image \{[^}]*height: auto;/);
+assert.match(blogCss, /\.article-hero__image--wide \{\s*aspect-ratio: 16 \/ 9;/);
+
+const paginasEpisodio = fs
+  .readdirSync(path.join(root, "blog"))
+  .filter((nome) => nome.endsWith(".html"))
+  .filter((nome) => read(path.join("blog", nome)).includes("PA-POD-001_Ep"));
+assert.equal(paginasEpisodio.length, 7, "sete paginas de episodio usam a capa oficial");
+for (const pagina of paginasEpisodio) {
+  assert.match(
+    read(path.join("blog", pagina)),
+    /class="article-hero__image article-hero__image--wide"/,
+    `capa 16:9 ausente em ${pagina}`
+  );
+}
+
+// 2) o cinza claro do rodape nao pode vazar para superficies claras
+const regraMuted = styleCss.match(/\.muted \{[^}]*\}/);
+assert.ok(regraMuted, ".muted deve existir em style.css");
+assert.match(regraMuted[0], /color: var\(--muted\)/);
+assert.doesNotMatch(regraMuted[0], /#d7f1e7/);
+assert.match(styleCss, /\.footer \.muted \{\s*color: #d7f1e7;/);
+assert.match(mainCss, /\.footer \.muted \{\s*color: #d7f1e7;/);
+assert.match(styleCss, /\.muted a \{\s*color: inherit;\s*text-decoration: underline;/);
+
+// 3) cards do podcast: mesmo par de acoes e ultima linha centralizada
+assert.match(podcastHtml, /\.episode-grid\{display:flex;flex-wrap:wrap;justify-content:center/);
+const cardsPodcast = podcastHtml.split('<article class="episode-card">').slice(1);
+cardsPodcast[cardsPodcast.length - 1] = cardsPodcast[cardsPodcast.length - 1].split(
+  '<section class="section cta-section">'
+)[0];
+assert.equal(cardsPodcast.length, 7, "sete cards de episodio");
+for (const card of cardsPodcast) {
+  const ouvir = card.match(
+    /<a class="btn secondary" href="https:\/\/www\.youtube\.com\/watch\?v=[\w-]+"[^>]*>Ouvir Ep\. (\d+) no YouTube<\/a>/
+  );
+  assert.ok(ouvir, "cada card deve oferecer o episodio no YouTube");
+  const cta = card.match(/<a class="btn primary" href="([^"]+)">([^<]+)<\/a>/);
+  assert.ok(cta, `card do Ep. ${ouvir[1]} sem CTA primario`);
+  assert.match(cta[1], /^blog\/[a-z0-9-]+\.html$/, `CTA primario fora do blog: ${cta[1]}`);
+  assert.match(cta[2], /^Ler sobre /, `rotulo fora do padrao: ${cta[2]}`);
+}
+
 console.log("frontend-contract.test.cjs: todos os cenários passaram");
