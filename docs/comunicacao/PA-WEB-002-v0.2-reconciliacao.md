@@ -3,7 +3,7 @@
 **Código do ativo:** PA-WEB-002
 **Versão da proposta:** v0.2
 **Data da auditoria:** 2026-09-03
-**Status:** PROPOSTA REVISADA — AGUARDANDO APROVAÇÃO HUMANA
+**Status:** APROVADA E APLICADA — alterações publicadas entre 03/09/2026 e 19/09/2026 (ver §H)
 **Escopo:** reconciliar a documentação do site com as rotas, CTAs e metadados
 existentes no workspace canônico, sem publicar ou alterar documentos do Drive.
 **Ambiente da evidência:** `C:\Users\Martins-note\Documents\PA\projetoanonimo.org-canonico`
@@ -132,7 +132,7 @@ comercial não foi validado pela governança.
 Esta proposta usa os quatro documentos do Drive listados na matriz A e a leitura
 dos arquivos físicos do workspace canônico. Ela cobre rotas públicas, CTAs,
 metadados básicos de SEO, o hub do Podcast e a relação com o formulário oficial.
-Seu status é **PROPOSTA REVISADA — AGUARDANDO APROVAÇÃO HUMANA**; não está em
+Seu status é **APROVADA E APLICADA** (§H registra os pull requests); foi aprovada e não está mais em
 produção e não deve ser tratada como documento normativo aprovado.
 
 ### F.2. Metadados SEO aplicados localmente
@@ -190,6 +190,28 @@ formulários.
 7. Qualquer publicação no GitHub Pages, alteração no Drive, formulário, CRM,
    automação ou campanha requer autorização específica posterior.
 
-**Controle de mudança desta proposta:** somente alterações locais no workspace
-canônico foram preparadas; não houve commit, push, pull request, merge, deploy,
-edição no Drive, alteração de formulário ou alteração no CRM.
+**Controle de mudança desta proposta:** as alterações deixaram de ser locais: foram
+revisadas por pull request e publicadas no repositório canônico. O histórico está na §H.
+
+## H. Histórico de aplicação (19/09/2026)
+
+A proposta foi aprovada e aplicada. Registro dos pull requests que a implementaram:
+
+| PR | Conteúdo |
+|---|---|
+| #68 | Páginas dos episódios Ep01–Ep07 no padrão do post, com tocador de áudio, capas oficiais e links de YouTube/playlist/Spotify |
+| #69 | Script `inbound.js` da API pública, que estava referenciado e ausente (corrigia 404) |
+| #70 | Página legada `automacao-oscs` no padrão do post, com aviso apontando para o Ep. 02 |
+| #71 | Funil inbound completo (wiring das páginas, `pa_cta_position`, tracking, testes) |
+| #72 | Correção do logo do rodapé em 6 páginas (imagem 404) |
+| #73 | Publicação de 5 artigos, 11 cards no índice do blog e sitemap (22 → 33 URLs) |
+| #74 | Troca da rota curta `/diagnostico` pela rota canônica `diagnostico-organizacional.html` |
+| #75 | Cache v2 da Biblioteca, higienização de `ouid` no formulário e teste de preview no CI |
+| #76 | Fonte canônica da API pública da Biblioteca Viva versionada (`apps-script/public-api/`) |
+| #77 | Suíte de contrato da Biblioteca Viva no repositório e no CI (107 asserções) |
+| #78 | Disciplina do backend editorial documentada + guarda no CI |
+
+Situação dos itens da §G: os links reais do podcast e os metadados de SEO das páginas
+foram aplicados; a homologação das rotas em ambiente publicado (§G.4) pode ser feita com
+o script `tools/verificar-links.mjs`, que hoje reporta 0 links quebrados; a separação de
+escopo PA-COM-001 na governança do Drive (§G.5) permanece com a diretoria.
