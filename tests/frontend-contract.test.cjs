@@ -60,8 +60,8 @@ assert.match(styleCss, /\.diagnostic-checklist-option:has\(input:checked\)/);
 assert.match(materialHtml, /style\.css\?v=1\.7/);
 assert.match(materialHtml, /material\.js\?v=2\.1/);
 assert.match(bibliotecaHtml, /style\.css\?v=1\.7/);
-assert.match(bibliotecaHtml, /assets\/js\/main\.js\?v=1\.8/);
-assert.match(indexHtml, /assets\/js\/main\.js\?v=1\.8/);
+assert.match(bibliotecaHtml, /assets\/js\/main\.js\?v=[0-9.]+/);
+assert.match(indexHtml, /assets\/js\/main\.js\?v=[0-9.]+/);
 assert.match(mainJs, /checklist-diagnostico-digital-v2\.webp/);
 assert.equal(
   (checklistDraft.match(/^- \[ \] /gm) || []).length,
@@ -123,4 +123,95 @@ assert.match(blogCss, /\.article-card__visual--manifesto/);
 assert.match(sitemapXml, /https:\/\/projetoanonimo\.org\/blog\/manifesto-observatorio\.html/);
 assert.ok(fs.existsSync(path.join(root, "assets/img/blog/manifesto-observatorio-master-v1.jpg")));
 
+// --- conteudo institucional versionado (projetos e solucoes) ---
+const conteudoEstaticoPath = path.join(root, "assets/data/site-content.json");
+assert.ok(
+  fs.existsSync(conteudoEstaticoPath),
+  "assets/data/site-content.json deve existir (fonte da verdade do conteudo institucional)"
+);
+const conteudoEstatico = JSON.parse(fs.readFileSync(conteudoEstaticoPath, "utf8"));
+
+for (const modulo of ["projetos", "solucoes"]) {
+  const blocoModulo = conteudoEstatico[modulo];
+  assert.ok(blocoModulo && Array.isArray(blocoModulo.items), `site-content.json: ${modulo}.items`);
+  assert.ok(blocoModulo.items.length >= 6, `${modulo}: esperado ao menos 6 itens publicados`);
+
+  for (const item of blocoModulo.items) {
+    assert.ok(item.ID, `${modulo}: item sem ID`);
+    assert.ok(item["Título"], `${modulo}: item sem Título`);
+    assert.ok(item["Público"], `${modulo}: item sem Público`);
+    assert.ok(item.Resumo, `${modulo}: item sem Resumo`);
+    assert.ok(item.CTA, `${modulo}: item sem CTA`);
+    assert.ok(item.URL, `${modulo}: item sem URL`);
+    assert.equal(
+      String(item.Status).trim().toLowerCase(),
+      "publicado",
+      `${modulo}: somente itens publicados entram no arquivo`
+    );
+  }
+}
+
+// as solucoes usam capa oficial mapeada por titulo em main.js
+const mapaCapas = mainJs.match(/const SOLUTION_COVER_IMAGES = Object\.freeze\(\{([\s\S]*?)\}\);/);
+assert.ok(mapaCapas, "SOLUTION_COVER_IMAGES deve existir em main.js");
+for (const item of conteudoEstatico.solucoes.items) {
+  assert.ok(
+    mapaCapas[1].includes(`"${item["Título"]}"`),
+    `sem capa mapeada para a solucao: ${item["Título"]}`
+  );
+}
+
+// a pagina anuncia 6 projetos disponiveis: o conteudo precisa cobrir esse numero
+assert.match(read("projetos.html"), /id="projetos-contador">6 projetos disponíveis/);
+
+// config canonica versionada (o modulo config do CMS historico tinha links quebrados)
+assert.ok(conteudoEstatico.config && typeof conteudoEstatico.config === "object");
+assert.match(conteudoEstatico.config.youtube, /^https:\/\/www\.youtube\.com\/channel\//);
+assert.doesNotMatch(conteudoEstatico.config.youtube, /projetoanonimoorg/);
+assert.match(conteudoEstatico.config.email, /^[^@]+@projetoanonimo\.org$/);
+
+// fallback estatico implementado no front-end
+assert.match(mainJs, /CONTEUDO_ESTATICO_URL = "assets\/data\/site-content\.json"/);
+assert.match(mainJs, /async function fetchModuloEstatico\(moduleKey\)/);
+assert.match(mainJs, /error\.moduloAusente = true/);
+assert.doesNotMatch(mainJs, /fetchModulo\("config", \{ raw: true \}\)/);
+
+// o conteudo versionado tem precedencia sobre a API (sem esperar a rede)
+const posicaoEstatico = mainJs.indexOf("const estatico = await fetchModuloEstatico(moduleKey);");
+const posicaoApi = mainJs.indexOf("const response = await fetch(url);");
+assert.ok(posicaoEstatico > 0, "fetchModulo deve consultar o conteudo versionado");
+assert.ok(
+  posicaoEstatico < posicaoApi,
+  "o conteudo versionado deve ser consultado antes da API publica"
+);
+
+// links internos do proprio site sao aceitos (senao o CTA do card desaparece)
+assert.match(mainJs, /function isRelativeUrl\(value\) \{/);
+assert.match(mainJs, /function isInternalUrl\(value\) \{/);
+assert.match(mainJs, /return isRelativeUrl\(trimmed\) \? escapeHTML\(trimmed\) : "#";/);
+assert.match(
+  mainJs,
+  /const targetAttrs = hasUrl && !isInternalUrl\(url\) \? "target=\\"_blank\\" rel=\\"noopener\\"" : "";/
+);
+
+// os cards de projeto e solucao apontam para paginas internas
+for (const item of [...conteudoEstatico.projetos.items, ...conteudoEstatico.solucoes.items]) {
+  assert.match(
+    item.URL,
+    /^[a-z0-9._-]+\.html$/i,
+    `URL interna esperada no item ${item.ID}: ${item.URL}`
+  );
+}
+
+// todas as paginas carregam a mesma versao do bundle
+const versoesMainJs = new Set();
+for (const pagina of fs.readdirSync(root).filter((nome) => nome.endsWith(".html"))) {
+  const versao = read(pagina).match(/assets\/js\/main\.js\?v=([0-9.]+)/);
+  if (versao) versoesMainJs.add(versao[1]);
+}
+assert.equal(
+  versoesMainJs.size,
+  1,
+  `versoes divergentes de assets/js/main.js: ${[...versoesMainJs].join(", ")}`
+);
 console.log("frontend-contract.test.cjs: todos os cenários passaram");
