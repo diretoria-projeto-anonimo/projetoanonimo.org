@@ -31,12 +31,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=1.8">
   <link rel="icon" href="assets/brand/projeto-anonimo-favicon.svg" type="image/svg+xml">
   <style>
-    .episode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:24px}
-    .episode-card{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--green);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px}
-    .episode-card img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--border)}
+    .episode-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-top:24px}
+    .episode-card{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--green);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;flex:1 1 300px;max-width:420px}
+    /* Tres cards por linha, todos com a mesma largura: a ultima linha fica
+       centralizada e o card restante nao cresce alem dos demais. */
+    @media (min-width:1024px){.episode-card{flex:0 1 calc((100% - 48px)/3);max-width:none}}
+    .episode-card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid var(--border);background:var(--surface-strong)}
     .episode-tag{font-family:var(--font-mono,monospace);font-size:12px;letter-spacing:.06em;color:var(--green);text-transform:uppercase}
     .episode-card h3{margin:0;font-size:1.15rem;line-height:1.3}
     .episode-card p{margin:0;color:var(--muted);font-size:.95rem}
@@ -93,17 +96,17 @@
 
         <div class="episode-grid">
           <article class="episode-card">
-            <img src="assets/img/podcast/PA-POD-001_Ep01_Official-Capa.png" alt="Capa do episódio 01 — Organização Digital Profissional Atrai Recursos">
+            <img src="assets/img/podcast/PA-POD-001_Ep01_Official-Capa.png" alt="Capa do episódio 01 — Organização Digital Profissional Atrai Recursos" width="1280" height="720" loading="lazy" decoding="async">
             <span class="episode-tag">Ep. 01</span>
             <h3>Organização Digital Profissional Atrai Recursos</h3>
             <p>Visão Geral &amp; Diagnóstico</p>
             <div class="episode-meta"><span class="dur">19 min</span><span>Temporada 01</span></div>
             <a class="btn secondary" href="https://www.youtube.com/watch?v=4v-95q5gKL4" target="_blank" rel="noopener">Ouvir Ep. 01 no YouTube</a>
-            <a class="btn primary" href="diagnostico-organizacional.html">Fazer Diagnóstico</a>
+            <a class="btn primary" href="blog/organizacao-30-dias.html">Ler sobre organização em 30 dias</a>
           </article>
 
           <article class="episode-card">
-            <img src="assets/img/podcast/PA-POD-001_Ep02_Official-Capa.png" alt="Capa do episódio 02 — Maturidade Digital e Automação Ética para ONGs">
+            <img src="assets/img/podcast/PA-POD-001_Ep02_Official-Capa.png" alt="Capa do episódio 02 — Maturidade Digital e Automação Ética para ONGs" width="1280" height="720" loading="lazy" decoding="async">
             <span class="episode-tag">Ep. 02</span>
             <h3>Maturidade Digital e Automação Ética para ONGs</h3>
             <p>Processos e Gestão</p>
@@ -113,7 +116,7 @@
           </article>
 
           <article class="episode-card">
-            <img src="assets/img/podcast/PA-POD-001_Ep03_Official-Capa.png" alt="Capa do episódio 03 — Como Usar IA com Segurança em ONGs">
+            <img src="assets/img/podcast/PA-POD-001_Ep03_Official-Capa.png" alt="Capa do episódio 03 — Como Usar IA com Segurança em ONGs" width="1280" height="720" loading="lazy" decoding="async">
             <span class="episode-tag">Ep. 03</span>
             <h3>Como Usar IA com Segurança em ONGs</h3>
             <p>Inteligência Artificial &amp; LGPD</p>
@@ -123,7 +126,7 @@
           </article>
 
           <article class="episode-card">
-            <img src="assets/img/podcast/PA-POD-001_Ep04_Official-Capa.png" alt="Capa do episódio 04 — Pare de Perder Editais por Falhas Administrativas">
+            <img src="assets/img/podcast/PA-POD-001_Ep04_Official-Capa.png" alt="Capa do episódio 04 — Pare de Perder Editais por Falhas Administrativas" width="1280" height="720" loading="lazy" decoding="async">
             <span class="episode-tag">Ep. 04</span>
             <h3>Pare de Perder Editais por Falhas Administrativas</h3>
             <p>Captação &amp; MROSC</p>
@@ -133,7 +136,7 @@
           </article>
 
           <article class="episode-card">
-            <img src="assets/img/podcast/PA-POD-001_Ep05_Official-Capa.png" alt="Capa do episódio 05 — Segurança e Governança Digital para ONGs">
+            <img src="assets/img/podcast/PA-POD-001_Ep05_Official-Capa.png" alt="Capa do episódio 05 — Segurança e Governança Digital para ONGs" width="1280" height="720" loading="lazy" decoding="async">
             <span class="episode-tag">Ep. 05</span>
             <h3>Segurança e Governança Digital para ONGs</h3>
             <p>Google Workspace &amp; Grupos</p>
@@ -143,7 +146,7 @@
           </article>
 
           <article class="episode-card">
-            <img src="assets/img/podcast/PA-POD-001_Ep06_Official-Capa.png" alt="Capa do episódio 06 — Autonomia Tecnológica sem Orçamentos Milionários">
+            <img src="assets/img/podcast/PA-POD-001_Ep06_Official-Capa.png" alt="Capa do episódio 06 — Autonomia Tecnológica sem Orçamentos Milionários" width="1280" height="720" loading="lazy" decoding="async">
             <span class="episode-tag">Ep. 06</span>
             <h3>Autonomia Tecnológica sem Orçamentos Milionários</h3>
             <p>Robótica Livre &amp; Maker</p>
@@ -153,13 +156,13 @@
           </article>
 
           <article class="episode-card">
-            <img src="assets/img/podcast/PA-POD-001_Ep07_Official-Capa.png" alt="Capa do episódio 07 — Proteja o Patrimônio Digital da sua ONG">
+            <img src="assets/img/podcast/PA-POD-001_Ep07_Official-Capa.png" alt="Capa do episódio 07 — Proteja o Patrimônio Digital da sua ONG" width="1280" height="720" loading="lazy" decoding="async">
             <span class="episode-tag">Ep. 07</span>
             <h3>Proteja o Patrimônio Digital da sua ONG</h3>
             <p>Soberania, CRM &amp; Backup</p>
             <div class="episode-meta"><span class="dur">33 min</span><span>Temporada 01</span></div>
             <a class="btn secondary" href="https://www.youtube.com/watch?v=ov_1VBiQdwc" target="_blank" rel="noopener">Ouvir Ep. 07 no YouTube</a>
-            <a class="btn primary" href="biblioteca.html">Explorar a Biblioteca Viva</a>
+            <a class="btn primary" href="blog/soberania-backup.html">Ler sobre soberania e backup</a>
           </article>
         </div>
       </div>

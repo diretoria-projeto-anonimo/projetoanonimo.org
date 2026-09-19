@@ -622,8 +622,18 @@ select:focus-visible {
 }
 
 .muted {
-  color: #d7f1e7;
+  color: var(--muted);
   margin-top: 0.75rem;
+}
+
+.footer .muted {
+  color: #d7f1e7;
+}
+
+.muted a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .bottom {

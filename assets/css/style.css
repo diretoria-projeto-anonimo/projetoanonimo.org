@@ -906,9 +906,21 @@ select:focus-visible {
   color: #ffffff;
 }
 
+/* Cinza claro do rodape: so vale sobre superficie escura. */
 .muted {
-  color: #d7f1e7;
+  color: var(--muted);
   margin-top: 0.75rem;
+}
+
+.footer .muted {
+  color: #d7f1e7;
+}
+
+/* Dentro de um paragrafo, o link precisa se distinguir do texto. */
+.muted a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .bottom {
