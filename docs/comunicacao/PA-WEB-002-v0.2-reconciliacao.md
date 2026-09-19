@@ -210,6 +210,30 @@ A proposta foi aprovada e aplicada. Registro dos pull requests que a implementar
 | #76 | Fonte canônica da API pública da Biblioteca Viva versionada (`apps-script/public-api/`) |
 | #77 | Suíte de contrato da Biblioteca Viva no repositório e no CI (107 asserções) |
 | #78 | Disciplina do backend editorial documentada + guarda no CI |
+| #79 | Aviso do repositório corrigido, SEO de `biblioteca/material.html` e status de PA-WEB-002 |
+| #80 | Documentação do NotebookLM versionada (caderno de fontes do projeto) |
+| #81 | PA-DOC-002: organização do Drive, árvore canônica e plano de arquivamento |
+| #82 | Correção de vazamento de metadados editoriais em 4 páginas |
+| #83 | Conteúdo de Projetos e Soluções restaurado (a API pública expõe apenas `biblioteca`) e CTA dos cards internos |
+| #84 | Capas do podcast em 16:9 com arte corrigida, contraste do tocador (1,14 → 5,56) e CTAs padronizados |
+
+### H.1. Onde vive o conteúdo (19/09/2026)
+
+A API pública (`PA-LIB-006`) expõe **apenas** o módulo `biblioteca`. Os módulos
+`config`, `projetos`, `solucoes`, `parceiros` e `eventos` respondiam
+`MODULE_NOT_FOUND` e deixavam `projetos.html` e `solucoes.html` sem conteúdo.
+
+A partir do PR #83:
+
+- **Projetos e Soluções:** conteúdo versionado em `assets/data/site-content.json`
+  (6 projetos e 6 soluções publicados). Alterações passam por PR neste repositório;
+  o arquivo tem precedência sobre a API.
+- **Configuração do site:** a mesma fonte versionada (`config`), refletindo os
+  valores publicados no HTML. O módulo `config` do CMS histórico não é usado:
+  apontava o YouTube para `@projetoanonimoorg` (HTTP 404).
+- **Biblioteca Viva:** continua dinâmica, servida pela API pública com contrato v1.0.0.
+- **Parceiros e Eventos:** sem conteúdo publicado (0 itens no CMS); as seções
+  permanecem ocultas e não geram mais erro de console.
 
 Situação dos itens da §G: os links reais do podcast e os metadados de SEO das páginas
 foram aplicados; a homologação das rotas em ambiente publicado (§G.4) pode ser feita com
