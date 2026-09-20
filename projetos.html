@@ -90,19 +90,35 @@
             <div class="field">
               <label for="projetos-area">Área</label>
               <select id="projetos-area">
+                <!-- opcoes-projetos-area:inicio -->
                 <option value="">Todas as áreas</option>
+                <option value="Comunicação">Comunicação</option>
+                <option value="Conhecimento aberto">Conhecimento aberto</option>
+                <option value="Cultura digital">Cultura digital</option>
+                <option value="Educação tecnológica">Educação tecnológica</option>
+                <option value="Inteligência artificial">Inteligência artificial</option>
+                <option value="Transformação digital">Transformação digital</option>
+<!-- opcoes-projetos-area:fim -->
               </select>
             </div>
             <div class="field">
               <label for="projetos-publico">Público</label>
               <select id="projetos-publico">
+                <!-- opcoes-projetos-publico:inicio -->
                 <option value="">Todos os públicos</option>
+                <option value="Cooperativas, redes e projetos sociais">Cooperativas, redes e projetos sociais</option>
+                <option value="Educadores, organizações e comunidades">Educadores, organizações e comunidades</option>
+                <option value="Educadores, OSCs e comunidades">Educadores, OSCs e comunidades</option>
+                <option value="Escolas e comunidades">Escolas e comunidades</option>
+                <option value="Escolas, coletivos e comunidades">Escolas, coletivos e comunidades</option>
+                <option value="Organizações sociais">Organizações sociais</option>
+<!-- opcoes-projetos-publico:fim -->
               </select>
             </div>
           </div>
         </div>
         <div class="status-row">
-          <p id="projetos-contador">6 projetos disponíveis</p>
+          <p id="projetos-contador">6 projetos disponíveis • 6 no total</p>
           <p id="projetos-status" class="status-message" aria-live="polite"></p>
         </div>
       </div>
@@ -110,7 +126,76 @@
 
     <section class="section">
       <div class="container">
-        <div id="projetos-lista" class="projects-grid" aria-live="polite"></div>
+        <div id="projetos-lista" class="projects-grid" aria-live="polite">
+        <!-- cards-projetos:inicio -->
+          <article class="project-card" data-titulo="Robótica para Todos" data-area="Educação tecnológica" data-publico="Escolas e comunidades" data-resumo="Aprenda a programar um robô brincando, com atividades acessíveis, práticas e progressivas.">
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Educação tecnológica</span>
+                <span class="badge secondary">Escolas e comunidades</span>
+              </div>
+              <h3>Robótica para Todos</h3>
+              <p class="summary">Aprenda a programar um robô brincando, com atividades acessíveis, práticas e progressivas.</p>
+              <a class="btn secondary card-cta" href="contato.html">Conhecer projeto</a>
+            </div>
+          </article>
+          <article class="project-card" data-titulo="IA para Todos" data-area="Inteligência artificial" data-publico="Educadores, OSCs e comunidades" data-resumo="Formação prática, acessível e responsável para compreender e utilizar ferramentas de inteligência artificial.">
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Inteligência artificial</span>
+                <span class="badge secondary">Educadores, OSCs e comunidades</span>
+              </div>
+              <h3>IA para Todos</h3>
+              <p class="summary">Formação prática, acessível e responsável para compreender e utilizar ferramentas de inteligência artificial.</p>
+              <a class="btn secondary card-cta" href="contato.html">Conhecer projeto</a>
+            </div>
+          </article>
+          <article class="project-card" data-titulo="Cultura Maker" data-area="Cultura digital" data-publico="Escolas, coletivos e comunidades" data-resumo="Oficinas mão na massa para criar, experimentar, prototipar e resolver problemas de forma colaborativa.">
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Cultura digital</span>
+                <span class="badge secondary">Escolas, coletivos e comunidades</span>
+              </div>
+              <h3>Cultura Maker</h3>
+              <p class="summary">Oficinas mão na massa para criar, experimentar, prototipar e resolver problemas de forma colaborativa.</p>
+              <a class="btn secondary card-cta" href="contato.html">Conhecer projeto</a>
+            </div>
+          </article>
+          <article class="project-card" data-titulo="Transformação Digital para OSCs" data-area="Transformação digital" data-publico="Organizações sociais" data-resumo="Organização de processos, Google Workspace, formulários, CRM e automações para fortalecer a gestão.">
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Transformação digital</span>
+                <span class="badge secondary">Organizações sociais</span>
+              </div>
+              <h3>Transformação Digital para OSCs</h3>
+              <p class="summary">Organização de processos, Google Workspace, formulários, CRM e automações para fortalecer a gestão.</p>
+              <a class="btn secondary card-cta" href="contato.html">Solicitar diagnóstico</a>
+            </div>
+          </article>
+          <article class="project-card" data-titulo="Mídia Solidária" data-area="Comunicação" data-publico="Cooperativas, redes e projetos sociais" data-resumo="Comunicação e campanhas alinhadas à economia solidária, à cultura e ao impacto social.">
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Comunicação</span>
+                <span class="badge secondary">Cooperativas, redes e projetos sociais</span>
+              </div>
+              <h3>Mídia Solidária</h3>
+              <p class="summary">Comunicação e campanhas alinhadas à economia solidária, à cultura e ao impacto social.</p>
+              <a class="btn secondary card-cta" href="contato.html">Propor campanha</a>
+            </div>
+          </article>
+          <article class="project-card" data-titulo="Biblioteca Viva" data-area="Conhecimento aberto" data-publico="Educadores, organizações e comunidades" data-resumo="Guias, modelos, checklists e recursos gratuitos para aprender, aplicar e compartilhar.">
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Conhecimento aberto</span>
+                <span class="badge secondary">Educadores, organizações e comunidades</span>
+              </div>
+              <h3>Biblioteca Viva</h3>
+              <p class="summary">Guias, modelos, checklists e recursos gratuitos para aprender, aplicar e compartilhar.</p>
+              <a class="btn secondary card-cta" href="biblioteca.html">Explorar biblioteca</a>
+            </div>
+          </article>
+<!-- cards-projetos:fim -->
+        </div>
         <div id="projetos-vazio" class="empty-message hidden">Nenhum projeto encontrado para os filtros aplicados.</div>
       </div>
     </section>

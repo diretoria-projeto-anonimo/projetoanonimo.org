@@ -232,6 +232,11 @@ A partir do PR #83:
   valores publicados no HTML. O módulo `config` do CMS histórico não é usado:
   apontava o YouTube para `@projetoanonimoorg` (HTTP 404).
 - **Biblioteca Viva:** continua dinâmica, servida pela API pública com contrato v1.0.0.
+- **Cards estáticos:** os cards de Projetos e Soluções são escritos no HTML por
+  `tools/gerar-cards-estaticos.cjs` a partir do JSON, então o conteúdo existe sem
+  JavaScript (SEO e leitores sem JS). O JavaScript apenas filtra os cards presentes
+  na página. O teste `tests/cards-estaticos.test.cjs` falha se o HTML sair de
+  sincronia com o JSON — nesse caso rode o gerador.
 - **Parceiros e Eventos:** sem conteúdo publicado (0 itens no CMS); as seções
   permanecem ocultas e não geram mais erro de console.
 
