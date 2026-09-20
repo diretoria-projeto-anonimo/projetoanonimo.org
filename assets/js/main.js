@@ -938,6 +938,22 @@ function renderProjects(items) {
   const list = getElement(SELECTORS.projetosList);
   if (!list) return;
 
+  if (state.projects.some((item) => item && item.elemento)) {
+    const visiveis = new Set(Array.isArray(items) ? items : []);
+    for (const item of state.projects) {
+      if (item && item.elemento) item.elemento.hidden = !visiveis.has(item);
+    }
+    if (visiveis.size === 0) {
+      toggleProjectEmpty(true);
+      updateProjectStatus("Nenhum projeto encontrado para os filtros aplicados.");
+    } else {
+      toggleProjectEmpty(false);
+      updateProjectStatus("");
+    }
+    updateProjectCounter(visiveis.size, state.projects.length);
+    return;
+  }
+
   if (!Array.isArray(items) || items.length === 0) {
     list.innerHTML = "";
     toggleProjectEmpty(true);
@@ -1319,6 +1335,22 @@ function renderSolutions(items) {
   const list = getElement(SELECTORS.solucoesList);
   if (!list) return;
 
+  if (state.solutions.some((item) => item && item.elemento)) {
+    const visiveis = new Set(Array.isArray(items) ? items : []);
+    for (const item of state.solutions) {
+      if (item && item.elemento) item.elemento.hidden = !visiveis.has(item);
+    }
+    if (visiveis.size === 0) {
+      toggleSolutionEmpty(true);
+      updateSolutionStatus("Nenhuma solução encontrada para os filtros aplicados.");
+    } else {
+      toggleSolutionEmpty(false);
+      updateSolutionStatus("");
+    }
+    updateSolutionCounter(visiveis.size, state.solutions.length);
+    return;
+  }
+
   if (!Array.isArray(items) || items.length === 0) {
     list.innerHTML = "";
     toggleSolutionEmpty(true);
@@ -1383,10 +1415,38 @@ function attachSolutionFilters() {
   }
 }
 
+// Le os cards ja presentes no HTML (conteudo estatico gerado por
+// tools/gerar-cards-estaticos.cjs) e devolve itens com os mesmos campos que o
+// caminho dinamico usa, para reaproveitar filtros, contador e busca.
+function lerCardsEstaticos(list, seletor, campoCategoria) {
+  return Array.from(list.querySelectorAll(seletor), (card) => {
+    const item = {
+      elemento: card,
+      titulo: card.dataset.titulo || "",
+      resumo: card.dataset.resumo || "",
+      publico: card.dataset.publico || "",
+    };
+    item[campoCategoria] = card.dataset[campoCategoria] || "";
+    return item;
+  });
+}
+
 function initializeProjectPage() {
   const list = getElement(SELECTORS.projetosList);
-  const status = getElement(SELECTORS.projetosStatus);
   if (!list) return;
+
+  const cardsEstaticos = lerCardsEstaticos(list, "article.project-card", "area");
+  if (cardsEstaticos.length > 0) {
+    // Conteudo no HTML: filtra os cards existentes (funciona sem JavaScript).
+    state.projects = cardsEstaticos;
+    state.filteredProjects = [...state.projects];
+    populateProjectFilters(state.projects);
+    updateProjectStatus("");
+    updateProjectCounter(state.projects.length, state.projects.length);
+    toggleProjectEmpty(false);
+    attachProjectFilters();
+    return;
+  }
 
   list.innerHTML = "";
   updateProjectStatus("Carregando projetos...");
@@ -1413,6 +1473,19 @@ function initializeProjectPage() {
 function initializeSolutionPage() {
   const list = getElement(SELECTORS.solucoesList);
   if (!list) return;
+
+  const cardsEstaticos = lerCardsEstaticos(list, "article.solution-card", "categoria");
+  if (cardsEstaticos.length > 0) {
+    // Conteudo no HTML: filtra os cards existentes (funciona sem JavaScript).
+    state.solutions = cardsEstaticos;
+    state.filteredSolutions = [...state.solutions];
+    populateSolutionFilters(state.solutions);
+    updateSolutionStatus("");
+    updateSolutionCounter(state.solutions.length, state.solutions.length);
+    toggleSolutionEmpty(false);
+    attachSolutionFilters();
+    return;
+  }
 
   list.innerHTML = "";
   updateSolutionStatus("Carregando soluções...");

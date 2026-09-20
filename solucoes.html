@@ -83,13 +83,21 @@
             <div class="field">
               <label for="solucoes-categoria">Categoria</label>
               <select id="solucoes-categoria">
+                <!-- opcoes-solucoes-categoria:inicio -->
                 <option value="">Todas as categorias</option>
+                <option value="Automação">Automação</option>
+                <option value="Comunicação">Comunicação</option>
+                <option value="Conhecimento aberto">Conhecimento aberto</option>
+                <option value="Educação tecnológica">Educação tecnológica</option>
+                <option value="Inteligência artificial">Inteligência artificial</option>
+                <option value="Transformação digital">Transformação digital</option>
+<!-- opcoes-solucoes-categoria:fim -->
               </select>
             </div>
           </div>
         </div>
         <div class="status-row">
-          <p id="solucoes-contador">0 soluções disponíveis</p>
+          <p id="solucoes-contador">6 soluções disponíveis • 6 no total</p>
           <p id="solucoes-status" class="status-message" aria-live="polite">
 </p>
         </div>
@@ -99,7 +107,93 @@
     <section class="section">
       <div class="container">
         <div id="solucoes-lista" class="projects-grid" aria-live="polite">
-</div>
+        <!-- cards-solucoes:inicio -->
+          <article class="project-card solution-card" data-titulo="Google Workspace para OSCs" data-categoria="Transformação digital" data-publico="Organizações sociais e coletivos" data-resumo="Organização de documentos, formulários, calendários, comunicação e colaboração em um ambiente integrado.">
+            <div class="cover solution-cover">
+              <img src="assets/img/solutions/google-workspace-oscs-v1.webp" alt="Ilustração da solução Google Workspace para OSCs" width="1200" height="800" loading="lazy" decoding="async">
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Transformação digital</span>
+                <span class="badge secondary">Organizações sociais e coletivos</span>
+              </div>
+              <h3>Google Workspace para OSCs</h3>
+              <p class="summary">Organização de documentos, formulários, calendários, comunicação e colaboração em um ambiente integrado.</p>
+              <a class="btn secondary card-cta" href="contato.html">Solicitar diagnóstico</a>
+            </div>
+          </article>
+          <article class="project-card solution-card" data-titulo="CRM e Automação" data-categoria="Automação" data-publico="OSCs, projetos e pequenas equipes" data-resumo="Estruturação de cadastros, fluxos, respostas, acompanhamento e indicadores com Google Sheets e Apps Script.">
+            <div class="cover solution-cover">
+              <img src="assets/img/solutions/crm-automacao-v1.webp" alt="Ilustração da solução CRM e Automação" width="1200" height="800" loading="lazy" decoding="async">
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Automação</span>
+                <span class="badge secondary">OSCs, projetos e pequenas equipes</span>
+              </div>
+              <h3>CRM e Automação</h3>
+              <p class="summary">Estruturação de cadastros, fluxos, respostas, acompanhamento e indicadores com Google Sheets e Apps Script.</p>
+              <a class="btn secondary card-cta" href="contato.html">Conhecer solução</a>
+            </div>
+          </article>
+          <article class="project-card solution-card" data-titulo="Comunicação para Projetos Culturais" data-categoria="Comunicação" data-publico="Coletivos, produtores e organizações" data-resumo="Planejamento de campanhas, identidade, conteúdo, canais digitais e relacionamento com públicos.">
+            <div class="cover solution-cover">
+              <img src="assets/img/solutions/comunicacao-projetos-culturais-v1.webp" alt="Ilustração da solução Comunicação para Projetos Culturais" width="1200" height="800" loading="lazy" decoding="async">
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Comunicação</span>
+                <span class="badge secondary">Coletivos, produtores e organizações</span>
+              </div>
+              <h3>Comunicação para Projetos Culturais</h3>
+              <p class="summary">Planejamento de campanhas, identidade, conteúdo, canais digitais e relacionamento com públicos.</p>
+              <a class="btn secondary card-cta" href="contato.html">Propor projeto</a>
+            </div>
+          </article>
+          <article class="project-card solution-card" data-titulo="IA para Organizações" data-categoria="Inteligência artificial" data-publico="OSCs, escolas e equipes" data-resumo="Capacitação, políticas de uso, prompts, automações e apoio à adoção responsável de inteligência artificial.">
+            <div class="cover solution-cover">
+              <img src="assets/img/solutions/ia-organizacoes-v1.webp" alt="Ilustração da solução IA para Organizações" width="1200" height="800" loading="lazy" decoding="async">
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Inteligência artificial</span>
+                <span class="badge secondary">OSCs, escolas e equipes</span>
+              </div>
+              <h3>IA para Organizações</h3>
+              <p class="summary">Capacitação, políticas de uso, prompts, automações e apoio à adoção responsável de inteligência artificial.</p>
+              <a class="btn secondary card-cta" href="contato.html">Solicitar formação</a>
+            </div>
+          </article>
+          <article class="project-card solution-card" data-titulo="Cultura Maker e Robótica" data-categoria="Educação tecnológica" data-publico="Escolas e comunidades" data-resumo="Oficinas, experiências práticas e projetos educativos com programação, prototipagem e criatividade.">
+            <div class="cover solution-cover">
+              <img src="assets/img/solutions/cultura-maker-robotica-v1.webp" alt="Ilustração da solução Cultura Maker e Robótica" width="1200" height="800" loading="lazy" decoding="async">
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Educação tecnológica</span>
+                <span class="badge secondary">Escolas e comunidades</span>
+              </div>
+              <h3>Cultura Maker e Robótica</h3>
+              <p class="summary">Oficinas, experiências práticas e projetos educativos com programação, prototipagem e criatividade.</p>
+              <a class="btn secondary card-cta" href="projetos.html">Conhecer proposta</a>
+            </div>
+          </article>
+          <article class="project-card solution-card" data-titulo="Biblioteca Viva" data-categoria="Conhecimento aberto" data-publico="Organizações, educadores e comunidades" data-resumo="Estruturação e publicação de guias, materiais, modelos e recursos educativos acessíveis.">
+            <div class="cover solution-cover">
+              <img src="assets/img/solutions/biblioteca-viva-v1.webp" alt="Ilustração da solução Biblioteca Viva" width="1200" height="800" loading="lazy" decoding="async">
+            </div>
+            <div class="card-body">
+              <div class="project-meta">
+                <span class="badge">Conhecimento aberto</span>
+                <span class="badge secondary">Organizações, educadores e comunidades</span>
+              </div>
+              <h3>Biblioteca Viva</h3>
+              <p class="summary">Estruturação e publicação de guias, materiais, modelos e recursos educativos acessíveis.</p>
+              <a class="btn secondary card-cta" href="biblioteca.html">Explorar biblioteca</a>
+            </div>
+          </article>
+<!-- cards-solucoes:fim -->
+        </div>
         <div id="solucoes-vazio" class="empty-message hidden">Nenhuma solução encontrada para os filtros aplicados.</div>
       </div>
     </section>
