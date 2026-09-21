@@ -578,7 +578,11 @@ const LIBRARY_COVER_IMAGES = Object.freeze({
   "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v2.webp",
   "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v2.webp",
   "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v2.webp",
-  "3-sinais-de-desorganizacao": "assets/img/library/3-sinais-de-desorganizacao-v2.webp"
+  "3-sinais-de-desorganizacao": "assets/img/library/3-sinais-de-desorganizacao-v2.webp",
+  "verificar-origem-e-linhagem-de-dado-publico": "assets/img/library/verificar-origem-e-linhagem-de-dado-publico-v2.webp",
+  "opacidade-documental-paralisa-projetos": "assets/img/library/opacidade-documental-paralisa-projetos-v2.webp",
+  "metricas-que-importam-alcance-e-impacto": "assets/img/library/metricas-que-importam-alcance-e-impacto-v2.webp",
+  "proteger-dados-de-beneficiarios-em-planilhas": "assets/img/library/proteger-dados-de-beneficiarios-em-planilhas-v2.webp"
 });
 
 function getLibraryCoverImage(material) {
