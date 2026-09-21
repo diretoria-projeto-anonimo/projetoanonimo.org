@@ -577,7 +577,8 @@ const LIBRARY_COVER_IMAGES = Object.freeze({
   "plano-30-dias-organizacao-digital": "assets/img/library/plano-30-dias-organizacao-digital-v2.webp",
   "ia-para-organizacoes-sociais": "assets/img/library/ia-organizacoes-sociais-v2.webp",
   "google-workspace-para-oscs": "assets/img/library/google-workspace-oscs-v2.webp",
-  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v2.webp"
+  "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v2.webp",
+  "3-sinais-de-desorganizacao": "assets/img/library/3-sinais-de-desorganizacao-v2.webp"
 });
 
 function getLibraryCoverImage(material) {
