@@ -580,7 +580,8 @@ const LIBRARY_COVER_IMAGES = Object.freeze({
   "checklist-diagnostico-digital": "assets/img/library/checklist-diagnostico-digital-v2.webp",
   "3-sinais-de-desorganizacao": "assets/img/library/3-sinais-de-desorganizacao-v2.webp",
   "maturidade-digital-pronta-para-automatizar": "assets/img/library/maturidade-digital-pronta-para-automatizar-v2.webp",
-  "governanca-de-grupos-membros-acessos": "assets/img/library/governanca-de-grupos-membros-acessos-v2.webp"
+  "governanca-de-grupos-membros-acessos": "assets/img/library/governanca-de-grupos-membros-acessos-v2.webp",
+  "seguranca-basica-no-google-workspace-para": "assets/img/library/seguranca-basica-no-google-workspace-para-v2.webp"
 });
 
 function getLibraryCoverImage(material) {
