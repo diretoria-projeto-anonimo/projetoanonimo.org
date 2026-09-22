@@ -586,7 +586,7 @@ const LIBRARY_COVER_IMAGES = Object.freeze({
   "metricas-que-importam-alcance-e-impacto": "assets/img/library/metricas-que-importam-alcance-e-impacto-v2.webp",
   "proteger-dados-de-beneficiarios-em-planilhas": "assets/img/library/proteger-dados-de-beneficiarios-em-planilhas-v2.webp",
   "seguranca-basica-google-workspace": "assets/img/library/seguranca-basica-google-workspace-v2.webp",
-  "3-sinais-de-que-sua-organizacao-perde-tempo": "assets/img/library/3-sinais-de-que-sua-organizacao-perde-tempo-v2.webp"
+  "seguranca-basica-no-google-workspace-para": "assets/img/library/seguranca-basica-no-google-workspace-para-v2.webp"
 });
 
 function getLibraryCoverImage(material) {
