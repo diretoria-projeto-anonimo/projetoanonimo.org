@@ -584,7 +584,8 @@ const LIBRARY_COVER_IMAGES = Object.freeze({
   "verificar-origem-e-linhagem-de-dado-publico": "assets/img/library/verificar-origem-e-linhagem-de-dado-publico-v2.webp",
   "opacidade-documental-paralisa-projetos": "assets/img/library/opacidade-documental-paralisa-projetos-v2.webp",
   "metricas-que-importam-alcance-e-impacto": "assets/img/library/metricas-que-importam-alcance-e-impacto-v2.webp",
-  "proteger-dados-de-beneficiarios-em-planilhas": "assets/img/library/proteger-dados-de-beneficiarios-em-planilhas-v2.webp"
+  "proteger-dados-de-beneficiarios-em-planilhas": "assets/img/library/proteger-dados-de-beneficiarios-em-planilhas-v2.webp",
+  "seguranca-basica-google-workspace": "assets/img/library/seguranca-basica-google-workspace-v2.webp"
 });
 
 function getLibraryCoverImage(material) {
