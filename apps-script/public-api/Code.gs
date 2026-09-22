@@ -4,7 +4,7 @@
  * Conteúdo: src/biblioteca-contract.js + src/wrapper.gs.
  * Fonte canônica do projeto Apps Script da API pública (endpoint institucional).
  */
-﻿/**
+/**
  * PA-LIB-006 — Contrato da API da Biblioteca Viva (implementação de referência)
  * Versão: 1.0.0 — sandbox, não implantado.
  *
@@ -95,7 +95,12 @@ var KEY_ALIASES = {
   conteudo: "conteudoMarkdown",
   sumario: "sumario", indice: "sumario",
   tipodemidia: "tipoMidia", tipomidia: "tipoMidia",
-  legendadamidia: "legendaMidia", legendadacapa: "legendaMidia",
+  // `legendadacapa` NAO entra aqui: a normalizacao faz
+  // `item[canonicalKey(key)] = source[key]`, entao a ULTIMA coluna lida vence.
+  // Com as duas apontando para `legendaMidia`, criar a coluna "Legenda da capa"
+  // sobrescreveria a legenda da midia em silencio. Sem o alias, ela normaliza
+  // para `legendadacapa`, que nao esta em PUBLIC_FIELDS: visivel e inofensiva.
+  legendadamidia: "legendaMidia",
   creditodemidia: "creditoMidia",
   creditodacapa: "creditoCapa",
   anexos: "anexos",
@@ -138,27 +143,51 @@ function slugify(value) {
   return accentFold(value).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+/** Parâmetros removidos por exporem identidade de conta ou rastro de sessão. */
+var SENSITIVE_URL_PARAMS = ["ouid", "usp", "authuser", "email", "token", "access_token"];
+
 /**
  * Higieniza URL: aceita http(s) e caminhos relativos do site; remove
  * parâmetros que expõem identidade de conta (ouid) ou rastros de sessão (usp).
+ *
+ * POR QUE NÃO USA `new URL()`
+ *   O runtime V8 do Apps Script não expõe a Web API `URL` (nem `searchParams`).
+ *   A versão anterior chamava `new URL(raw)` dentro de um try/catch que devolvia
+ *   "" — então TODO url absoluto vindo da planilha (urlCapa, urlPagina,
+ *   urlArquivo, urlVideo, urlPdf…) chegava vazio na API pública, sem erro
+ *   visível. Provado por experimento: um caminho relativo (`/assets/...`) passa
+ *   e é devolvido, enquanto o mesmo caminho em URL absoluto volta "".
+ *   A limpeza por regex resolve o mesmo caso sem depender de API de plataforma.
  */
 function sanitizeUrl(value) {
   var raw = cleanText(value, 2048);
   if (!raw) return "";
   if (raw.indexOf("/") === 0 && raw.indexOf("//") !== 0) return raw; // caminho relativo
-  var url;
-  try {
-    url = new URL(raw);
-  } catch (e) {
-    return "";
+  if (!/^https?:\/\//i.test(raw)) return "";
+
+  var corte = raw.search(/[?#]/);
+  if (corte < 0) return raw;
+  var base = raw.slice(0, corte);
+  var cauda = raw.slice(corte);
+  var fragmento = "";
+  var posHash = cauda.indexOf("#");
+  if (posHash >= 0) {
+    fragmento = cauda.slice(posHash);
+    cauda = cauda.slice(0, posHash);
   }
-  if (url.protocol !== "http:" && url.protocol !== "https:") return "";
-  ["ouid", "usp", "authuser", "email", "token", "access_token"].forEach(function (param) {
-    url.searchParams.delete(param);
+  if (cauda.charAt(0) !== "?") return base + cauda + fragmento;
+
+  var mantidos = cauda.slice(1).split("&").filter(function (par) {
+    if (!par) return false;
+    var nome = par.split("=")[0];
+    try {
+      nome = decodeURIComponent(nome);
+    } catch (e) {
+      // nome cru já serve para a comparação
+    }
+    return SENSITIVE_URL_PARAMS.indexOf(nome.toLowerCase()) === -1;
   });
-  var query = url.searchParams.toString();
-  var base = url.origin + url.pathname + (query ? "?" + query : "");
-  return base + (url.hash || "");
+  return base + (mantidos.length ? "?" + mantidos.join("&") : "") + fragmento;
 }
 
 function toBoolean(value) {
