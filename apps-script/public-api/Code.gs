@@ -95,7 +95,12 @@ var KEY_ALIASES = {
   conteudo: "conteudoMarkdown",
   sumario: "sumario", indice: "sumario",
   tipodemidia: "tipoMidia", tipomidia: "tipoMidia",
-  legendadamidia: "legendaMidia", legendadacapa: "legendaMidia",
+  // `legendadacapa` NAO entra aqui: a normalizacao faz
+  // `item[canonicalKey(key)] = source[key]`, entao a ULTIMA coluna lida vence.
+  // Com as duas apontando para `legendaMidia`, criar a coluna "Legenda da capa"
+  // sobrescreveria a legenda da midia em silencio. Sem o alias, ela normaliza
+  // para `legendadacapa`, que nao esta em PUBLIC_FIELDS: visivel e inofensiva.
+  legendadamidia: "legendaMidia",
   creditodemidia: "creditoMidia",
   creditodacapa: "creditoCapa",
   anexos: "anexos",
