@@ -581,6 +581,11 @@ const LIBRARY_COVER_IMAGES = Object.freeze({
   "3-sinais-de-desorganizacao": "assets/img/library/3-sinais-de-desorganizacao-v2.webp",
   "maturidade-digital-pronta-para-automatizar": "assets/img/library/maturidade-digital-pronta-para-automatizar-v2.webp",
   "governanca-de-grupos-membros-acessos": "assets/img/library/governanca-de-grupos-membros-acessos-v2.webp",
+  "verificar-origem-e-linhagem-de-dado-publico": "assets/img/library/verificar-origem-e-linhagem-de-dado-publico-v2.webp",
+  "opacidade-documental-paralisa-projetos": "assets/img/library/opacidade-documental-paralisa-projetos-v2.webp",
+  "metricas-que-importam-alcance-e-impacto": "assets/img/library/metricas-que-importam-alcance-e-impacto-v2.webp",
+  "proteger-dados-de-beneficiarios-em-planilhas": "assets/img/library/proteger-dados-de-beneficiarios-em-planilhas-v2.webp",
+  "seguranca-basica-google-workspace": "assets/img/library/seguranca-basica-google-workspace-v2.webp",
   "seguranca-basica-no-google-workspace-para": "assets/img/library/seguranca-basica-no-google-workspace-para-v2.webp"
 });
 
