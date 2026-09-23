@@ -1,0 +1,3 @@
+# Forca LF no mapa de capas: branches antigos traziam CRLF e, no merge,
+# o arquivo inteiro virava diff — a versao antiga vencia e apagava entradas.
+assets/js/main.js text eol=lf
