@@ -254,3 +254,22 @@ test("13. envelope de detalhe (slug) e não encontrado", () => {
   const porId = C.buildDetailEnvelope({ items: catalogoReal.items, slugOrId: "PA-LIB-003" });
   assert.equal(porId.item.slug, "checklist-diagnostico-digital");
 });
+
+// PDFs publicados: o catalogo aponta "URL do arquivo" para estes enderecos.
+// Sem os arquivos no repositorio, o botao principal da pagina do material quebra.
+test("PDFs publicados existem em assets/media/library", () => {
+  const pdfs = [
+    "ia-para-organizacoes-sociais-v3.1.pdf",
+    "google-workspace-para-oscs-v3.1.pdf",
+    "checklist-diagnostico-digital-v3.1.pdf",
+  ];
+
+  for (const nome of pdfs) {
+    const caminho = path.join(__dirname, "..", "assets", "media", "library", nome);
+    assert.ok(fs.existsSync(caminho), `PDF ausente: ${nome}`);
+
+    const conteudo = fs.readFileSync(caminho);
+    assert.equal(conteudo.subarray(0, 5).toString("latin1"), "%PDF-", `${nome} nao e um PDF`);
+    assert.ok(conteudo.length > 50 * 1024, `${nome} parece truncado (${conteudo.length} bytes)`);
+  }
+});
