@@ -585,7 +585,9 @@ const LIBRARY_COVER_IMAGES = Object.freeze({
   "opacidade-documental-paralisa-projetos": "assets/img/library/opacidade-documental-paralisa-projetos-v2.webp",
   "metricas-que-importam-alcance-e-impacto": "assets/img/library/metricas-que-importam-alcance-e-impacto-v2.webp",
   "proteger-dados-de-beneficiarios-em-planilhas": "assets/img/library/proteger-dados-de-beneficiarios-em-planilhas-v2.webp",
-  "seguranca-basica-google-workspace": "assets/img/library/seguranca-basica-google-workspace-v2.webp"
+  "seguranca-basica-google-workspace": "assets/img/library/seguranca-basica-google-workspace-v2.webp",
+  "sistema-de-templates-no-canva": "assets/img/library/sistema-de-templates-no-canva-v2.webp",
+  "manual-de-marca-e-design-system": "assets/img/library/manual-de-marca-e-design-system-v2.webp"
 });
 
 function getLibraryCoverImage(material) {
