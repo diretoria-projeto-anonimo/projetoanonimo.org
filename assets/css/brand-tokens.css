@@ -1,0 +1,13 @@
+/* PA-BRD-001: tokens de marca. Não substitui o CSS global do site. */
+:root {
+  --pa-ink: #111B18;
+  --pa-green: #0D4D44;
+  --pa-mint: #D3EBD9;
+  --pa-light: #F2FAF4;
+  --pa-support-surface: #E7F4EA;
+  --pa-support-mint: #9BC8AB;
+  --pa-support-border: #C1DDC8;
+  /* Medida social; não aplicar automaticamente ao layout web. */
+  --pa-social-safe-margin: 96px;
+}
+.pa-brand-logo { display: block; width: 100%; height: auto; object-fit: contain; }
