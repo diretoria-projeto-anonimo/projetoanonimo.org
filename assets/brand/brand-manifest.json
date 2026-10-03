@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "Projeto Anônimo",
+  "preparedAt": "2026-10-03",
+  "documentType": "DIRETRIZES_DE_IDENTIDADE",
+  "source": {
+    "code": "PA-BRD-001",
+    "sections": [1, 2, 3, 4, 5, 6, 7, 8]
+  },
+  "tagline": "TECNOLOGIA · AUTONOMIA · IMPACTO SOCIAL",
+  "manifesto": "Tecnologia não é um fim em si mesma. É infraestrutura para participação, autonomia e transformação real nos territórios.",
+  "symbol": {"description": "Quatro camadas isométricas vazadas", "recreationAllowed": false},
+  "colors": {
+    "essential": [
+      {"name": "Verde quase preto", "hex": "#111B18", "rgb": [17, 27, 24], "role": "Texto e fundos escuros"},
+      {"name": "Verde institucional", "hex": "#0D4D44", "rgb": [13, 77, 68], "role": "Elementos institucionais e símbolo"},
+      {"name": "Menta", "hex": "#D3EBD9", "rgb": [211, 235, 217], "role": "Destaques e camadas claras"},
+      {"name": "Superfície clara", "hex": "#F2FAF4", "rgb": [242, 250, 244], "role": "Fundos claros e texto sobre escuro"}
+    ],
+    "support": [
+      {"name": "Superfície de apoio", "hex": "#E7F4EA", "rgb": [231, 244, 234]},
+      {"name": "Menta médio", "hex": "#9BC8AB", "rgb": [155, 200, 171]},
+      {"name": "Borda menta", "hex": "#C1DDC8", "rgb": [193, 221, 200]}
+    ],
+    "legacyPaletteIsDefault": false
+  },
+  "typography": {
+    "wordmark": {"family": "IBM Plex Sans", "weight": 600, "format": "vector_paths", "status": "DOCUMENTADO_NO_MANUAL"},
+    "editorial": {
+      "status": "PENDENTE_DE_HOMOLOGACAO",
+      "titleCandidates": ["Inter", "Space Grotesk"],
+      "bodyCandidates": ["Roboto", "Montserrat"],
+      "metadataCandidate": "Inter",
+      "maximumFamiliesPerPiece": 2
+    }
+  },
+  "assets": [
+    {"file": "projeto-anonimo-symbol.svg", "kind": "symbol", "background": "transparent"},
+    {"file": "projeto-anonimo-logo-horizontal-on-light.svg", "kind": "horizontal_logo", "useOn": "light"},
+    {"file": "projeto-anonimo-logo-horizontal-on-dark.svg", "kind": "horizontal_logo", "useOn": "dark"},
+    {"file": "projeto-anonimo-logo-vertical.svg", "kind": "vertical_logo"},
+    {"file": "projeto-anonimo-icon-dark.svg", "kind": "icon", "use": "avatar"},
+    {"file": "projeto-anonimo-icon-light.svg", "kind": "icon"},
+    {"file": "projeto-anonimo-monochrome-dark.svg", "kind": "monochrome_symbol", "useOn": "light"},
+    {"file": "projeto-anonimo-monochrome-light.svg", "kind": "monochrome_symbol", "useOn": "dark"},
+    {"file": "projeto-anonimo-favicon.svg", "kind": "favicon"}
+  ],
+  "rules": {
+    "preserveAspectRatio": true,
+    "preserveVectorGeometry": true,
+    "decorativeLogoEffectsAllowed": false,
+    "logoClearSpaceExactPixels": null,
+    "socialMargins": {"pixels": 96, "appliesTo": [[1080, 1350], [1080, 1080]], "sourceSection": 7},
+    "storySafeAreaPixels": null,
+    "storySafeAreaStatus": "CONFIRMAR_NA_PLATAFORMA_DE_DESTINO",
+    "textContrastTarget": 7,
+    "socialAltTextRequired": true,
+    "automaticPublishingOfPiecesAllowed": false
+  },
+  "formats": [{"name": "Feed vertical", "width": 1080, "height": 1350}, {"name": "Feed quadrado", "width": 1080, "height": 1080}, {"name": "Vídeo vertical", "width": 1080, "height": 1920}, {"name": "Open Graph", "width": 1200, "height": 630}],
+  "automation": {"canvaImportTested": false, "machineReadableManifestIsNotGuaranteedCanvaInput": true}
+}
