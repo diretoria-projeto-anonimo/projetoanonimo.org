@@ -12,15 +12,15 @@ const manifest = JSON.parse(read("assets/brand/brand-manifest.json"));
 const css = read("assets/css/brand-tokens.css");
 const canonicalColors = ["#111B18", "#0D4D44", "#D3EBD9", "#F2FAF4", "#E7F4EA", "#9BC8AB", "#C1DDC8"];
 const originalHashes = {
-  "projeto-anonimo-symbol.svg": "d896382913f3f52b2b032ef6e423043934d7c6940baf44d07930cf932ddd14e8",
-  "projeto-anonimo-logo-horizontal-on-light.svg": "21ce1413c6ee4bb98b4498e7f8d90b5d5046ef5757b6f5c9dd3387d8f475963f",
-  "projeto-anonimo-logo-horizontal-on-dark.svg": "b0b14701178040f3de57e521c25106d465ccb48ea30e38d572881f7e4eb36103",
-  "projeto-anonimo-logo-vertical.svg": "3b600ca0cc9dea12da3b62646f3d98908a317d8f1fd4ea458c0bdb7802bc81d4",
-  "projeto-anonimo-icon-dark.svg": "78b6ae7b37310b1162f6f7888fcc5f98fefecfa8429e81e0dd1d3b10e362d3fe",
-  "projeto-anonimo-icon-light.svg": "34dedebff42303bb68b44f6165b84f76e435b7abe2160be466dc6b4123a3d4a7",
-  "projeto-anonimo-monochrome-dark.svg": "6c740c8b8474996f042e67a0fcbafa75798ce5a491f65d6931d2d487d16f9dac",
-  "projeto-anonimo-monochrome-light.svg": "f51337b3e9d68ed9811e9e41d85cd49469292c3c8fb8b69947d264602511cc97",
-  "projeto-anonimo-favicon.svg": "cb84d13418513229c2e548b94e5e03e69c7f67e77876f81ceaf132e2e1d56fec"
+  "projeto-anonimo-symbol.svg": "7d94f0b786a2be0baf0b29312619aa7a2e06153ec050932f00b8e4e75d19f6e2",
+  "projeto-anonimo-logo-horizontal-on-light.svg": "2a584e2d39c252fe153a38f65dec5f1ee04ac25b347521c8ba2c6f67abead874",
+  "projeto-anonimo-logo-horizontal-on-dark.svg": "fce28649cafff5414350326daa9748918a333fd3b9ff9531892f854d1eb84fbb",
+  "projeto-anonimo-logo-vertical.svg": "0c432d528559992fa20787fb13e85c14a30e62bcc200ff30b2de63def65d1279",
+  "projeto-anonimo-icon-dark.svg": "ac1569616c488bdd257aac0bebe908c2884ce987e7893f3f3e58f2278fd3736a",
+  "projeto-anonimo-icon-light.svg": "9d3796d892ca2851c0214837bbfcec56fa32a31c67a77a756dadd9981ae50788",
+  "projeto-anonimo-monochrome-dark.svg": "4d917a0a6355417f1c26ecf0548c2e40dc75345215255b7639763ff1aee0cccd",
+  "projeto-anonimo-monochrome-light.svg": "67065e51891ecd445095158fb1dff071e5e55b670d7bf4e0dc78506a100b800d",
+  "projeto-anonimo-favicon.svg": "d1c722247961933f5831c8a7c342c5f1505c24c6a0b4aa32066d94c199a3e0ec"
 };
 
 test("paleta canônica coincide entre manifesto, página e CSS", () => {
@@ -54,7 +54,12 @@ test("nove vetores existentes mantêm seus hashes e wordmarks em curvas", () => 
   assert.equal(manifest.assets.length, 9);
   for (const asset of manifest.assets) {
     const bytes = fs.readFileSync(path.join(root, "assets/brand", asset.file));
-    assert.equal(crypto.createHash("sha256").update(bytes).digest("hex"), originalHashes[asset.file], asset.file);
+    // Git converte LF/CRLF no checkout Windows. Normalizar só as quebras de
+    // linha mantém a verificação de todo o conteúdo, inclusive curvas e cores.
+    const canonicalText = bytes.toString("utf8").replace(/\r\n/g, "\n");
+    const fingerprint = text => crypto.createHash("sha256").update(text.replace(/\r\n/g, "\n"), "utf8").digest("hex");
+    assert.equal(fingerprint(canonicalText), originalHashes[asset.file], asset.file);
+    assert.equal(fingerprint(canonicalText.replace(/\n/g, "\r\n")), originalHashes[asset.file], "equivalência LF/CRLF");
     assert.match(bytes.toString("utf8"), /<svg\b/);
     assert.doesNotMatch(bytes.toString("utf8"), /<text\b|<image\b/);
   }
