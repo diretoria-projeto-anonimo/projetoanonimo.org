@@ -4,7 +4,7 @@
  * Conteúdo: src/biblioteca-contract.js + src/wrapper.gs.
  * Fonte canônica do projeto Apps Script da API pública (endpoint institucional).
  */
-/**
+﻿/**
  * PA-LIB-006 — Contrato da API da Biblioteca Viva (implementação de referência)
  * Versão: 1.0.0 — sandbox, não implantado.
  *
@@ -23,6 +23,55 @@
  */
 
 var CONTRACT_VERSION = "1.0.0";
+
+/*
+ * Slugs de acesso restrito.
+ *
+ * Um item restrito NUNCA sai na API pública: não aparece na listagem, não
+ * entra em `totalPublished` e o detalhe responde AUTH_REQUIRED sem corpo.
+ * A leitura autorizada acontece pelo endpoint editorial (ação getMaterial),
+ * que já valida credencial Google e lista de e-mails — nenhum mecanismo
+ * novo de autenticação foi criado para isso.
+ *
+ * O wrapper pode sobrepor esta lista pela propriedade de script
+ * PA_SLUGS_RESTRITOS (slugs separados por vírgula), para mudar a política
+ * sem tocar no código.
+ */
+var RESTRICTED_SLUGS_PADRAO = ["manual-de-marca-e-design-system"];
+var RESTRICTED_SLUGS = RESTRICTED_SLUGS_PADRAO.slice();
+
+/** Troca a política de restrição. Lista vazia restaura o padrão. */
+function setRestrictedSlugs(lista) {
+  var limpa = (lista || []).map(function (valor) {
+    return accentFold(valor);
+  }).filter(Boolean);
+  RESTRICTED_SLUGS = limpa.length ? limpa : RESTRICTED_SLUGS_PADRAO.slice();
+  return RESTRICTED_SLUGS.slice();
+}
+
+/** Lista ativa, para verificação e teste. */
+function restrictedSlugs() {
+  return RESTRICTED_SLUGS.slice();
+}
+
+/** Verdadeiro se o item está sob acesso restrito, por slug ou por id. */
+function isRestricted(item) {
+  if (!item) return false;
+  var slug = accentFold(item.slug);
+  var id = accentFold(item.id);
+  return RESTRICTED_SLUGS.some(function (alvo) {
+    return alvo === slug || alvo === id;
+  });
+}
+
+/**
+ * Regra única do que é exposto publicamente.
+ * Publicado E não restrito. Manter num só lugar evita que listagem e
+ * detalhe divirjam — foi a divergência entre os dois que abriu a exposição.
+ */
+function isPubliclyAvailable(item) {
+  return isPublished(item) && !isRestricted(item);
+}
 var PROJECT_NAME = "Projeto Anônimo";
 var MODULE_NAME = "Biblioteca Viva";
 var PUBLIC_STATUSES = ["publicado"];
@@ -95,11 +144,12 @@ var KEY_ALIASES = {
   conteudo: "conteudoMarkdown",
   sumario: "sumario", indice: "sumario",
   tipodemidia: "tipoMidia", tipomidia: "tipoMidia",
-  // `legendadacapa` NAO entra aqui: a normalizacao faz
-  // `item[canonicalKey(key)] = source[key]`, entao a ULTIMA coluna lida vence.
-  // Com as duas apontando para `legendaMidia`, criar a coluna "Legenda da capa"
-  // sobrescreveria a legenda da midia em silencio. Sem o alias, ela normaliza
-  // para `legendadacapa`, que nao esta em PUBLIC_FIELDS: visivel e inofensiva.
+  // `legendadacapa` NAO mapeia para `legendaMidia` — e o motivo esta em
+  // normalizeItem: `item[canonicalKey(key)] = source[key]` deixa a ULTIMA coluna
+  // lida vencer. Com as duas apontando para o mesmo campo, criar a coluna
+  // "Legenda da capa" sobrescreveria a legenda da midia em silencio, sem erro e
+  // sem aviso. Sem o alias, "Legenda da capa" normaliza para `legendadacapa`,
+  // que nao esta em PUBLIC_FIELDS: fica visivel e inofensiva, nao destrutiva.
   legendadamidia: "legendaMidia",
   creditodemidia: "creditoMidia",
   creditodacapa: "creditoCapa",
@@ -143,8 +193,12 @@ function slugify(value) {
   return accentFold(value).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+/**
+ * Higieniza URL: aceita http(s) e caminhos relativos do site; remove
+ * parâmetros que expõem identidade de conta (ouid) ou rastros de sessão (usp).
+ */
 /** Parâmetros removidos por exporem identidade de conta ou rastro de sessão. */
-var SENSITIVE_URL_PARAMS = ["ouid", "usp", "authuser", "email", "token", "access_token"];
+var SENSITIVE_URL_PARAMS = ["ouid", "usp", "authuser", "email", "token", "access_token", "auth_token"];
 
 /**
  * Higieniza URL: aceita http(s) e caminhos relativos do site; remove
@@ -379,7 +433,7 @@ function uniqueSlugs(items) {
 function buildEnvelope(options) {
   var opts = options || {};
   var items = (opts.items || []).map(normalizeItem);
-  var published = items.filter(isPublished);
+  var published = items.filter(isPubliclyAvailable);
   var detail = Boolean(opts.detail);
   var filtered = filterItems(published, opts.filters || {});
   var payload = detail ? filtered : filtered.map(toPublicSummary);
@@ -398,7 +452,24 @@ function buildEnvelope(options) {
 
 function buildDetailEnvelope(options) {
   var opts = options || {};
-  var published = (opts.items || []).map(normalizeItem).filter(isPublished);
+  var normalizados = (opts.items || []).map(normalizeItem);
+
+  /*
+   * A consulta ao material restrito vem ANTES do filtro público, para que a
+   * resposta seja AUTH_REQUIRED e não NOT_FOUND — é esse código que a página
+   * usa para oferecer o acesso autenticado. Nenhum campo do item acompanha a
+   * resposta: nem título, nem resumo, nem markdown.
+   */
+  if (findBySlugOrId(normalizados.filter(isRestricted), opts.slugOrId)) {
+    var negado = buildErrorEnvelope(
+      "AUTH_REQUIRED",
+      "Material de acesso restrito. Entre com uma conta autorizada."
+    );
+    negado.restricted = true;
+    return negado;
+  }
+
+  var published = normalizados.filter(isPubliclyAvailable);
   var item = findBySlugOrId(published, opts.slugOrId);
   if (!item) {
     return {
@@ -539,6 +610,10 @@ var PABibliotecaContract = {
   redactPII: redactPII,
   normalizeItem: normalizeItem,
   isPublished: isPublished,
+  isRestricted: isRestricted,
+  isPubliclyAvailable: isPubliclyAvailable,
+  restrictedSlugs: restrictedSlugs,
+  setRestrictedSlugs: setRestrictedSlugs,
   isEditoriallyApproved: isEditoriallyApproved,
   missingRequiredFields: missingRequiredFields,
   findBySlugOrId: findBySlugOrId,
@@ -585,6 +660,8 @@ function doGet(e) {
     if (moduleKey && moduleKey !== "biblioteca") {
       return bvJsonOut_(buildErrorEnvelope("MODULE_NOT_FOUND", "Módulo não encontrado."));
     }
+
+    setRestrictedSlugs(bvRestrictedSlugs_());
 
     var items = bvReadCatalogItems_();
     var detail = bvSlugParam_(params.include) === "detalhe";
@@ -675,6 +752,24 @@ function testarCatalogoBiblioteca() {
 
 function bvSlugParam_(value) {
   return accentFold(value) || "";
+}
+
+/**
+ * Política de acesso restrito.
+ *
+ * Sem a propriedade PA_SLUGS_RESTRITOS, vale o padrão declarado no contrato.
+ * Com ela, a lista separada por vírgula substitui o padrão — assim a política
+ * muda por configuração, sem editar e reimplantar código.
+ *
+ * Isto NÃO é um segredo: são slugs públicos. Nenhuma credencial é lida aqui.
+ */
+function bvRestrictedSlugs_() {
+  var bruto = PropertiesService.getScriptProperties()
+    .getProperty("PA_SLUGS_RESTRITOS");
+  if (!bruto) return null;
+  return String(bruto).split(",").map(function (valor) {
+    return valor.trim();
+  }).filter(Boolean);
 }
 
 /** Lê a aba do catálogo como objetos brutos (a normalização é do contrato). */

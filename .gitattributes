@@ -1,3 +1,22 @@
 # Forca LF no mapa de capas: branches antigos traziam CRLF e, no merge,
 # o arquivo inteiro virava diff — a versao antiga vencia e apagava entradas.
 assets/js/main.js text eol=lf
+
+# A MESMA ARMADILHA vale para a Biblioteca Viva, e aqui ela é pior: o teste
+# `tests/biblioteca-build-reprodutivel.test.cjs` compara o que o build monta a
+# partir das FONTES com o `Code.gs` VERSIONADO, e exige igualdade byte a byte.
+# Se o git converter um lado para CRLF no checkout (Windows com core.autocrlf=true)
+# e o outro não, a comparação falha — e o artefato parece divergente sem estar.
+# Foi assim que o `main.js` perdeu entradas de LIBRARY_COVER_IMAGES quatro vezes.
+apps-script/public-api/src/biblioteca-contract.js text eol=lf
+apps-script/public-api/src/wrapper.gs text eol=lf
+apps-script/public-api/Code.gs text eol=lf
+assets/js/biblioteca-contract.js text eol=lf
+
+# Os guardas e as evidências: a guarda anti-drift compara o contrato do frontend
+# com o canônico tolerando CRLF, mas manter tudo em LF evita a diferença existir.
+tests/biblioteca-contrato.test.cjs text eol=lf
+tests/biblioteca-api-referencia.test.cjs text eol=lf
+tests/biblioteca-build-reprodutivel.test.cjs text eol=lf
+tests/biblioteca-contrato-frontend-sync.test.cjs text eol=lf
+tests/fixtures/pa-lib-audit/evidence/*.json text eol=lf

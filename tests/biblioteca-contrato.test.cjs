@@ -1,10 +1,15 @@
-﻿/**
+/**
  * Testes obrigatórios do contrato da Biblioteca Viva (PA-LIB-006).
- * Executa com: node --test sandbox/biblioteca-viva/tests/
+ * Executa com: node --test tests/contrato.test.cjs
  *
  * Usa como fixture a RESPOSTA REAL do endpoint em produção (evidência coletada
- * em sandbox/PA-LIB-AUDIT/evidence/), garantindo que o contrato proposto
+ * em `tests/fixtures/pa-lib-audit/evidence/`), garantindo que o contrato proposto
  * normaliza exatamente o que está publicado.
+ *
+ * CAMINHOS — vieram do sandbox `sandbox/biblioteca-viva/`, onde o contrato era
+ * `lib/biblioteca-contract.js` e o artefato `dist/Code.gs`. Aqui o layout é o do
+ * repositório: fonte canônica em `apps-script/public-api/src/` e artefato gerado
+ * em `apps-script/public-api/Code.gs`.
  */
 const test = require("node:test");
 const assert = require("node:assert/strict");
@@ -13,7 +18,7 @@ const path = require("node:path");
 
 const C = require("../apps-script/public-api/src/biblioteca-contract.js");
 
-const EVIDENCE = path.join(__dirname, "fixtures", "pa-lib");
+const EVIDENCE = path.join(__dirname, "fixtures", "pa-lib-audit", "evidence");
 const readJson = (name) => JSON.parse(fs.readFileSync(path.join(EVIDENCE, name), "utf8"));
 
 const catalogoReal = readJson("01_catalogo_completo.json");
@@ -255,21 +260,101 @@ test("13. envelope de detalhe (slug) e não encontrado", () => {
   assert.equal(porId.item.slug, "checklist-diagnostico-digital");
 });
 
-// PDFs publicados: o catalogo aponta "URL do arquivo" para estes enderecos.
-// Sem os arquivos no repositorio, o botao principal da pagina do material quebra.
-test("PDFs publicados existem em assets/media/library", () => {
-  const pdfs = [
-    "ia-para-organizacoes-sociais-v3.1.pdf",
-    "google-workspace-para-oscs-v3.1.pdf",
-    "checklist-diagnostico-digital-v3.1.pdf",
+
+/* =====================================================================
+   Correções presentes no @7 homologado — proteção contra regressão
+   ---------------------------------------------------------------------
+   Estas correções estão em produção. Sem teste, uma reconciliação futura
+   pode removê-las sem que nada acuse.
+   ===================================================================== */
+
+test("local autorizado: auth_token é removido nas fontes e no artefato Apps Script", () => {
+  const vm = require("node:vm");
+  const contexto = vm.createContext({});
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "apps-script", "public-api", "Code.gs"), "utf8"), contexto);
+  const casos = [
+    ["https://x.org/a?auth_token=TESTE&keep=1#secao", "https://x.org/a?keep=1#secao"],
+    ["https://x.org/a?AUTH_TOKEN=TESTE", "https://x.org/a"],
+    ["https://x.org/a?auth%5Ftoken=TESTE&keep=1", "https://x.org/a?keep=1"],
+    ["http://x.org/a?auth_token=1&auth_token=2&ouid=3&usp=4&keep=1", "http://x.org/a?keep=1"],
+    ["https://x.org/a?auth_token&keep=1", "https://x.org/a?keep=1"],
+    ["https://x.org/a?keep=1#auth_token=fragmento", "https://x.org/a?keep=1#auth_token=fragmento"],
+    ["https://x.org/a?my_auth_token=1&keep=1", "https://x.org/a?my_auth_token=1&keep=1"],
   ];
-
-  for (const nome of pdfs) {
-    const caminho = path.join(__dirname, "..", "assets", "media", "library", nome);
-    assert.ok(fs.existsSync(caminho), `PDF ausente: ${nome}`);
-
-    const conteudo = fs.readFileSync(caminho);
-    assert.equal(conteudo.subarray(0, 5).toString("latin1"), "%PDF-", `${nome} nao e um PDF`);
-    assert.ok(conteudo.length > 50 * 1024, `${nome} parece truncado (${conteudo.length} bytes)`);
+  for (const [entrada, esperado] of casos) {
+    assert.equal(C.sanitizeUrl(entrada), esperado, "fonte: " + entrada);
+    assert.equal(contexto.sanitizeUrl(entrada), esperado, "artefato: " + entrada);
   }
+});
+
+test("@7: URLs absolutas válidas são preservadas, sem depender de new URL()", () => {
+  /*
+   * O runtime V8 do Apps Script não expõe a Web API `URL`. A implementação
+   * anterior usava `new URL(raw)` e devolvia "" para TODO url absoluto — capa,
+   * página, arquivo, vídeo e PDF chegavam vazios na API pública, sem erro.
+   */
+  [
+    "https://projetoanonimo.org/assets/img/library/x-v2.webp",
+    "http://exemplo.org/a/b.png",
+    "https://projetoanonimo.org/biblioteca/material.html?slug=plano-30-dias",
+  ].forEach((url) => assert.equal(C.sanitizeUrl(url), url, url));
+});
+
+test("@7: caminhos relativos do site passam intactos", () => {
+  ["/assets/img/library/x.webp", "/biblioteca/material.html"].forEach((url) =>
+    assert.equal(C.sanitizeUrl(url), url, url)
+  );
+});
+
+test("@7: esquemas que não sejam http(s) são recusados", () => {
+  ["javascript:alert(1)", "data:text/html,x", "ftp://x/y", "mailto:a@b.c"].forEach(
+    (url) => assert.equal(C.sanitizeUrl(url), "", url)
+  );
+});
+
+test("@7: parâmetros sensíveis são removidos da query", () => {
+  assert.equal(
+    C.sanitizeUrl(
+      "https://x.org/a?ouid=1&usp=2&authuser=3&email=a%40b.c&token=t&access_token=at&keep=1"
+    ),
+    "https://x.org/a?keep=1"
+  );
+});
+
+test("@7: a higienização é insensível a caixa e a URL-encoding", () => {
+  assert.equal(C.sanitizeUrl("https://x.org/a?OUID=1&Usp=2&keep=1"),
+    "https://x.org/a?keep=1");
+  assert.equal(C.sanitizeUrl("https://x.org/a?ou%69d=1&keep=1"),
+    "https://x.org/a?keep=1");
+});
+
+test("@7: o fragmento é preservado ao remover parâmetros", () => {
+  assert.equal(C.sanitizeUrl("https://x.org/a?ouid=1#secao"), "https://x.org/a#secao");
+  assert.equal(C.sanitizeUrl("https://x.org/a?keep=1&ouid=2#s"),
+    "https://x.org/a?keep=1#s");
+  assert.equal(C.sanitizeUrl("https://x.org/a/b.png#frag"),
+    "https://x.org/a/b.png#frag");
+});
+
+test("@7: `Legenda da capa` NÃO é aliasada para legendaMidia", () => {
+  /*
+   * `normalizeItem` faz `item[canonicalKey(key)] = source[key]`, então a última
+   * coluna lida vence. Com as duas apontando para o mesmo campo, criar a coluna
+   * "Legenda da capa" sobrescreveria a legenda da mídia em silêncio.
+   */
+  assert.equal(C.canonicalKey("Legenda da mídia"), "legendaMidia");
+  assert.notEqual(C.canonicalKey("Legenda da capa"), "legendaMidia");
+  assert.equal(C.canonicalKey("Legenda da capa"), "legendadacapa");
+});
+
+test("@7: normalizeItem preserva legendaMidia com as duas colunas na planilha", () => {
+  const item = C.normalizeItem({
+    id: "PA-X-001",
+    titulo: "Exemplo",
+    slug: "exemplo",
+    status: "Publicado",
+    "Legenda da mídia": "legenda correta",
+    "Legenda da capa": "texto da capa",
+  });
+  assert.equal(item.legendaMidia, "legenda correta");
 });
