@@ -58,7 +58,7 @@ assert.match(styleCss, /\.material-next-step/);
 assert.match(styleCss, /\.diagnostic-checklist-option:focus-within/);
 assert.match(styleCss, /\.diagnostic-checklist-option:has\(input:checked\)/);
 assert.match(materialHtml, /style\.css\?v=[0-9.]+/);
-assert.match(materialHtml, /material\.js\?v=2\.1/);
+assert.match(materialHtml, /material\.js\?v=2\.2/);
 assert.match(bibliotecaHtml, /style\.css\?v=[0-9.]+/);
 assert.match(bibliotecaHtml, /assets\/js\/main\.js\?v=[0-9.]+/);
 assert.match(indexHtml, /assets\/js\/main\.js\?v=[0-9.]+/);
