@@ -30,6 +30,8 @@ function doGet(e) {
       return bvJsonOut_(buildErrorEnvelope("MODULE_NOT_FOUND", "Módulo não encontrado."));
     }
 
+    setRestrictedSlugs(bvRestrictedSlugs_());
+
     var items = bvReadCatalogItems_();
     var detail = bvSlugParam_(params.include) === "detalhe";
 
@@ -119,6 +121,24 @@ function testarCatalogoBiblioteca() {
 
 function bvSlugParam_(value) {
   return accentFold(value) || "";
+}
+
+/**
+ * Política de acesso restrito.
+ *
+ * Sem a propriedade PA_SLUGS_RESTRITOS, vale o padrão declarado no contrato.
+ * Com ela, a lista separada por vírgula substitui o padrão — assim a política
+ * muda por configuração, sem editar e reimplantar código.
+ *
+ * Isto NÃO é um segredo: são slugs públicos. Nenhuma credencial é lida aqui.
+ */
+function bvRestrictedSlugs_() {
+  var bruto = PropertiesService.getScriptProperties()
+    .getProperty("PA_SLUGS_RESTRITOS");
+  if (!bruto) return null;
+  return String(bruto).split(",").map(function (valor) {
+    return valor.trim();
+  }).filter(Boolean);
 }
 
 /** Lê a aba do catálogo como objetos brutos (a normalização é do contrato). */
