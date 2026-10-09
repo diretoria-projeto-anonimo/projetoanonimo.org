@@ -106,6 +106,21 @@ async function iniciarPaginaMaterial() {
   try {
     const material = await buscarMaterial(slug);
 
+    if (material && material.__restrito) {
+      if (!window.PAAcessoRestrito) {
+        mostrarErroMaterial("Este material é de acesso restrito.");
+        return;
+      }
+
+      await window.PAAcessoRestrito.exigir(slug, (liberado) => {
+        renderizarMaterial(liberado);
+        atualizarSeo(liberado, slug);
+        /* Métricas públicas não registram material interno. */
+        carregarRelacionados(liberado);
+      });
+      return;
+    }
+
     if (!material) {
       mostrarErroMaterial("Material não encontrado ou ainda não publicado.");
       return;
@@ -142,6 +157,16 @@ async function buscarMaterial(slug) {
   }
 
   const dados = await resposta.json();
+
+  /*
+   * Material de acesso restrito: a API pública responde AUTH_REQUIRED e não
+   * devolve o corpo. Este código é o sinal para a página oferecer o acesso
+   * autenticado — ver assets/js/acesso-restrito.js. A proteção de fato está
+   * no servidor: sem autorização válida, o conteúdo nunca chega aqui.
+   */
+  if (dados.ok === false && dados.code === "AUTH_REQUIRED") {
+    return { __restrito: true, slug };
+  }
 
   if (dados.ok === false) {
     return null;
